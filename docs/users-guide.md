@@ -161,7 +161,8 @@ Sample output:
 prosidy-darn render \
   --input cues.jsonl \
   --format ssml \
-  --deliver file:./out.ssml \
+  --deliver file \
+  --deliver-to ./out.ssml \
   --json
 ```
 
@@ -190,7 +191,9 @@ configured.
 - `--json`: emits structured output to stdout.
 - `--limit <n>`: bounds list and explanation output.
 - `--dry-run`: previews consequential operations where supported.
-- `--deliver stdout|file:<path>|webhook:<url>`: routes render artefacts.
+- `--deliver stdout|file|webhook`: selects the render artefact destination.
+- `--deliver-to <path-or-url>`: supplies the file path or webhook URL when
+  `--deliver` is `file` or `webhook`.
 - `--force`: bypasses a destructive confirmation only where a command is
   explicitly destructive.
 
@@ -222,7 +225,8 @@ prosidy-darn explain \
 prosidy-darn render \
   --input cues.jsonl \
   --format ssml \
-  --deliver file:./story.ssml \
+  --deliver file \
+  --deliver-to ./story.ssml \
   --json
 ```
 
@@ -249,10 +253,10 @@ Use `audiobook_single_narrator` for ordinary audiobook-style narration,
 `dramatized_multivoice` for multi-voice rendering experiments, and
 `low_latency_streaming` for short synthesis windows.
 
-### Why did the CLI reject `--deliver=webhook:http://...`?
+### Why did the CLI reject `--deliver webhook --deliver-to http://...`?
 
-Webhook delivery is HTTPS-only by design. Plain HTTP URLs must be rejected
-before any POST is attempted.
+Webhook delivery targets are HTTPS-only by design. Plain HTTP URLs supplied to
+`--deliver-to` must be rejected before any POST is attempted.
 
 ### Why are source offsets present in every cue?
 

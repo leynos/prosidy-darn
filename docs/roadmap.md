@@ -139,21 +139,29 @@ See prosidy-darn-technical-design.md §§6, 7.1, and 10.
 - [ ] 2.1.1. Implement the Unicode source index.
   - Requires steps 1.1-1.3.
   - Provide character-to-byte and byte-to-character conversion for every valid
-    source boundary.
+    source boundary through the `SourceIndex` protocol.
+  - Include a memory smoke test or benchmark for ASCII-dominant and
+    multibyte-heavy Markdown documents.
   - Success: Hypothesis-generated Unicode inputs round-trip offsets without
-    slicing inside a UTF-8 code point.
+    slicing inside a UTF-8 code point, and the default index avoids
+    dict-per-byte memory growth.
 - [ ] 2.1.2. Implement source range types and range merging.
   - Requires 2.1.1.
+  - Use the `SourceRangeKind` enum for built-in structural ranges and document
+    custom adapter kinds through the v1 extension policy.
   - Merge overlapping or adjacent same-kind ranges so one structural violation
     receives one punishment.
   - See prosidy-darn-technical-design.md §§6 and 7.1.
-  - Success: representative fixtures produce deterministic merged range sets.
+  - Success: representative fixtures produce deterministic merged range sets
+    and reject misspelled built-in range kinds.
 - [ ] 2.1.3. Implement Markdown and plain-text structure parsers.
   - Requires 2.1.2 and 1.1.1.
-  - Add the selected Markdown parser adapter and a plain-text fallback adapter.
+  - Add the selected Markdown parser adapter, `mdast` version and compatibility
+    probes, the PyO3 fallback adapter, and a plain-text fallback adapter.
   - See prosidy-darn-technical-design.md §10.
   - Success: parser adapters return source ranges without rendering Markdown
-    back to text.
+    back to text, and incompatible `mdast` versions fail over with a parser
+    capability diagnostic.
 
 ### 2.2. Deliver the deterministic cue splitter
 
@@ -167,8 +175,11 @@ prosidy-darn-technical-design.md §§7.2-7.5.
   - Requires 2.1.3.
   - Include dialogue quotes, quote attribution, dialogue turns, parentheticals,
     abbreviations, initialisms, and pronunciation-sensitive tokens.
+  - Use the `SourceRangeKind` and `SpokenSpanKind` policies for emitted range
+    and spoken-span categories.
   - Success: fixture ranges cover every detector category without crashing on
-    malformed or unusual prose.
+    malformed or unusual prose, and built-in categories are not serialized as
+    arbitrary strings.
 - [ ] 2.2.2. Implement the boundary lattice and default punishment rules.
   - Requires 2.2.1.
   - Include priority tiers, shaped paragraph and heading penalties, dialogue
@@ -207,9 +218,12 @@ CLI configuration or adapter wiring. See prosidy-darn-technical-design.md §9.
   - Requires 2.3.1.
   - Preserve source offsets, spoken-text placeholders, unit kind, speaker,
     direction, subspans, and diagnostics.
-  - See prosidy-darn-technical-design.md §§6 and 11.
+  - Implement the explicit JSONL cue-sheet contract: UTF-8 text, one cue object
+    per line, tuple fields as arrays, stable optional fields as JSON null, and
+    unknown top-level fields rejected by default in v1.
+  - See prosidy-darn-technical-design.md §§6, 11, and 11.1.
   - Success: JSONL output round-trips through the library without losing source
-    span information.
+    span information and matches the documented wire contract.
 
 ## 3. Agent-native CLI cue loop
 
@@ -331,8 +345,10 @@ canonical storage. See prosidy-darn-technical-design.md §§11 and 13.
 
 - [ ] 4.2.1. Implement the `CueRenderer` port and JSONL renderer adapter.
   - Requires 4.1.1.
+  - Return `RenderResult` values from renderers rather than raw strings.
   - Keep renderer selection in the application layer, not the CLI adapter.
-  - Success: JSONL rendering matches the library serialization contract.
+  - Success: JSONL rendering matches the library serialization contract and
+    returns UTF-8 text metadata through `RenderResult`.
 - [ ] 4.2.2. Implement the SSML 1.1 renderer.
   - Requires 4.2.1 and 4.1.2.
   - Map unit identifiers, paragraph and sentence structure, breaks, emphasis,
@@ -357,18 +373,26 @@ prosidy-darn-technical-design.md §14.
   - Requires 4.2.3.
   - Read cue JSONL and render JSONL, SSML, or WebVTT-like placeholders as
     supported targets.
+  - Expose the canonical delivery grammar through Cyclopts and
+    `agent-context`.
   - See prosidy-darn-technical-design.md §§11 and 13.
   - Success: render failures use the stable exit code taxonomy.
-- [ ] 4.3.2. Implement `--deliver=stdout` and atomic file delivery.
+- [ ] 4.3.2. Implement `--deliver stdout` and atomic file delivery.
   - Requires 4.3.1.
+  - Use `--deliver file --deliver-to <path>` for file destinations.
   - Write files atomically in the destination directory.
   - See prosidy-darn-technical-design.md §14.
-  - Success: failed file writes do not leave corrupt target artefacts.
+  - Success: failed file writes do not leave corrupt target artefacts and use
+    the delivery-failure exit code.
 - [ ] 4.3.3. Implement webhook delivery.
   - Requires 4.3.2.
-  - Report HTTP status and preserve a local artefact when possible.
+  - Use `--deliver webhook --deliver-to <url>` for webhook destinations.
+  - Preserve a local artefact before posting, report HTTP status only after a
+    successful TLS-validated HTTPS POST attempt, and map delivery failures to
+    the delivery-failure exit code.
   - See prosidy-darn-technical-design.md §§14-15.
-  - Success: unknown delivery schemes enumerate the supported set.
+  - Success: unknown delivery schemes enumerate the supported set, and missing
+    `--deliver-to` values fail before rendering.
 
 ## 5. Semantic breaks and synthesis context
 

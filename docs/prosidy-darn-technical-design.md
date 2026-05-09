@@ -232,6 +232,7 @@ tools.
 ```python
 from __future__ import annotations
 
+import collections.abc as cabc
 import dataclasses as dc
 import enum
 import typing as typ
@@ -249,9 +250,36 @@ class UnitKind(enum.StrEnum):
     MIXED = "mixed"
 
 
+class SourceRangeKind(enum.StrEnum):
+    HEADING = "heading"
+    PARAGRAPH = "paragraph"
+    LIST = "list"
+    LIST_ITEM = "list_item"
+    BLOCKQUOTE = "blockquote"
+    CODE_BLOCK = "code_block"
+    TABLE = "table"
+    TABLE_ROW = "table_row"
+    TABLE_CELL = "table_cell"
+    WORD = "word"
+    SENTENCE = "sentence"
+    CLAUSE = "clause"
+    DIALOGUE_TURN = "dialogue_turn"
+    ATTRIBUTION = "attribution"
+    SCENE_BREAK = "scene_break"
+
+
+class SpokenSpanKind(enum.StrEnum):
+    SPOKEN_DIALOGUE = "spoken_dialogue"
+    ATTRIBUTION = "attribution"
+    NARRATION = "narration"
+    EMPHASIS = "emphasis"
+    PRONUNCIATION = "pronunciation"
+    PAUSE = "pause"
+
+
 @dc.dataclass(frozen=True, slots=True)
 class SourceRange:
-    kind: str
+    kind: SourceRangeKind
     start_char: int
     end_char: int
     start_byte: int
@@ -265,7 +293,7 @@ class SpokenSpan:
     source_end: int
     spoken_start: int
     spoken_end: int
-    kind: str
+    kind: SpokenSpanKind
     voice: str | None = None
     attributes: dict[str, object] = dc.field(default_factory=dict)
 
@@ -303,17 +331,52 @@ UTF-8 byte offsets. The index bridge is part of the core domain because source
 stability is a correctness property, not a parser implementation detail.
 
 ```python
-@dc.dataclass(frozen=True, slots=True)
-class SourceIndex:
+class SourceIndex(typ.Protocol):
     text: str
-    byte_to_char: dict[int, int]
-    char_to_byte: tuple[int, ...]
+
+    def byte_to_char(self, offset: int) -> int:
+        """Convert a UTF-8 byte offset to a Python character offset."""
+
+    def char_to_byte(self, offset: int) -> int:
+        """Convert a Python character offset to a UTF-8 byte offset."""
+
+    def is_char_boundary(self, offset: int) -> bool:
+        """Return true when the character offset is safe to slice."""
+
+    def slice(self, start: int, end: int) -> str:
+        """Return the original source substring for a character span."""
+
+
+@dc.dataclass(frozen=True, slots=True)
+class DenseSourceIndex:
+    text: str
+    byte_offsets_by_char: tuple[int, ...]
+    multibyte_byte_to_char: cabc.Mapping[int, int]
 ```
 
 `TTSUnit.source_text` must always equal
 `source_text[unit.source_start:unit.source_end]`. `spoken_text` may differ when
 Markdown syntax, pronunciation overrides, emphasis markers, or normalized
 symbols need a TTS-friendly rendering.
+
+`SourceRangeKind`, `SpokenSpanKind`, and `UnitKind` are closed built-in enums.
+Third-party adapters that need additional range or span categories must use
+`attributes["custom_kind"]` with a namespaced string such as
+`"vendor_name:custom_pause"` and set the enum to the closest built-in category.
+The v1 JSONL contract rejects arbitrary `kind` strings so misspellings cannot
+silently enter the domain model.
+
+`SourceIndex` is a domain protocol rather than one fixed dataclass. The default
+Python implementation must avoid a dict entry for every byte in large documents.
+ `DenseSourceIndex` stores one byte offset per character and a sparse mapping
+only for multibyte byte positions that cannot be derived directly. A
+Rust-backed adapter may provide a more compact implementation as long as it
+satisfies the same conversion, boundary-validation, and slicing methods.
+
+The v1 memory target is to process Markdown documents of at least 500 KB in the
+CLI without dict-per-byte memory growth. The implementation task must include a
+memory smoke test or benchmark that builds a `SourceIndex` for ASCII-dominant
+and multibyte-heavy inputs and records the observed allocation trend.
 
 ## 7. Segmentation algorithm
 
@@ -623,11 +686,30 @@ behind explicit options.
 
 The default adapter order is:
 
-1. use the `mdast` Python package if it exposes stable source positions;
+1. use the `mdast` Python package only if version and compatibility probes pass;
 2. use a local PyO3 range extractor around `markdown::to_mdast` if `mdast`
-   omits positions or exposes only line and column data;
+   omits positions, exposes only line and column data, or fails the
+   compatibility probe;
 3. use a plain-text fallback when Markdown parsing is unavailable and the input
    does not require Markdown-aware protection.
+
+The `mdast` adapter must declare a supported package-version range and must run
+a probe parse before it is selected for real input. The probe source includes a
+heading, paragraph, list item, emphasis span, and non-ASCII text with known
+byte and character offsets. The adapter is compatible only when returned ranges:
+
+- expose byte offsets, not only line and column data;
+- slice back to the expected literal source substrings;
+- report stable start-inclusive, end-exclusive bounds;
+- preserve non-ASCII byte and character offset conversion through `SourceIndex`;
+- include enough node kinds to protect headings, paragraphs, lists, code blocks,
+  and inline emphasis.
+
+If either the version check or probe parse fails, the adapter must emit a
+parser capability diagnostic and fall back to PyO3. Plain-text parsing is
+allowed only when Markdown-aware structure is not required; using it for
+Markdown input must produce a diagnostic that states structural protection has
+degraded.
 
 The PyO3 fallback should return a compact range stream rather than a complete
 abstract syntax tree:
@@ -647,13 +729,37 @@ original input slice.
 
 ## 11. Renderer strategy
 
-The renderer interface compiles `TTSUnit` records to target formats.
+The renderer interface compiles `TTSUnit` records to target formats. Renderers
+return a value object, not raw text, so later binary, multi-file, or provider
+payload renderers do not force a breaking protocol change.
 
 ```python
+@dc.dataclass(frozen=True, slots=True)
+class RenderedPart:
+    name: str
+    payload: str | bytes
+    media_type: str
+    encoding: str | None
+
+
+@dc.dataclass(frozen=True, slots=True)
+class RenderResult:
+    payload: str | bytes
+    media_type: str
+    encoding: str | None
+    extension: str
+    is_fragment: bool = False
+    manifest: tuple[RenderedPart, ...] = ()
+
+
 class Renderer(typ.Protocol):
     name: str
 
-    def render(self, units: cabc.Sequence[TTSUnit], options: RenderOptions) -> str:
+    def render(
+        self,
+        units: cabc.Sequence[TTSUnit],
+        options: RenderOptions,
+    ) -> RenderResult:
         """Render cue units to a target format."""
 ```
 
@@ -663,6 +769,47 @@ The first renderers are:
 - SSML 1.1 for standards-based TTS markup;
 - WebVTT-like cue export after timing data exists;
 - vendor payload renderers for engines that do not accept portable SSML.
+
+JSONL and SSML renderers return `RenderResult.payload` as `str` with
+`encoding="utf-8"`. Future vendor renderers may return `bytes`, or may return a
+primary payload plus `manifest` entries for multi-file output. Streaming output
+is intentionally deferred to a separate future port; the v1 `Renderer` protocol
+must not pretend that a generator or open file handle is interchangeable with a
+complete render result.
+
+### 11.1. JSONL cue-sheet contract
+
+JSONL cue sheets are UTF-8 text. Each line is one JSON object representing one
+`TTSUnit`. The file has no wrapping array, no blank lines, and ends with a
+final newline. The `segment` command writes this format by default, and the
+JSONL renderer must emit the same format so cue sheets can round-trip through
+the library.
+
+Each cue object uses these stable top-level fields:
+
+- `id`: string cue identifier;
+- `source_start` and `source_end`: integer character offsets into the source
+  text;
+- `source_text`: exact source substring for the cue;
+- `spoken_text`: renderer-facing text;
+- `spoken_spans`: array of spoken-span objects;
+- `kind`: string value from `UnitKind`;
+- `speaker`: string or `null`;
+- `direction`: performance-direction object;
+- `diagnostics`: array of strings.
+
+Each spoken-span object uses `source_start`, `source_end`, `spoken_start`,
+`spoken_end`, `kind`, `voice`, and `attributes`. `kind` must be a string value
+from `SpokenSpanKind`; `voice` is a string or `null`; `attributes` is an object
+whose values are JSON primitives, arrays, or objects. `PerformanceDirection`
+serializes `intent`, `pace`, `energy`, `pitch`, `volume`, `tension`,
+`pause_before_ms`, `pause_after_ms`, and `emphasis`.
+
+Tuple fields serialize as JSON arrays. Stable optional fields serialize as
+`null` rather than disappearing, so snapshots and downstream tools see a
+consistent shape. Unknown top-level fields are rejected by default in v1.
+Numeric offsets are always source-coordinate integers, not byte offsets, unless
+a field name explicitly ends in `_byte`.
 
 The SSML renderer maps:
 
@@ -740,7 +887,7 @@ prosidy-darn segment --input story.md --profile audiobook_single_narrator --json
 `render` converts an existing cue sheet to a target format:
 
 ```bash
-prosidy-darn render --input cues.jsonl --format ssml --output story.ssml --json
+prosidy-darn render --input cues.jsonl --format ssml --deliver file --deliver-to story.ssml --json
 ```
 
 `explain` emits the accepted boundaries and nearby rejected candidates:
@@ -763,6 +910,15 @@ discovery:
         "--json": {"type": "bool", "default": false},
         "--limit": {"type": "integer", "default": 100}
       }
+    },
+    "render": {
+      "flags": {
+        "--input": {"type": "path", "required": true},
+        "--format": {"type": "enum", "values": ["jsonl", "ssml", "webvtt"]},
+        "--deliver": {"type": "enum", "values": ["stdout", "file", "webhook"]},
+        "--deliver-to": {"type": "string", "required_when": ["file", "webhook"]},
+        "--json": {"type": "bool", "default": false}
+      }
     }
   },
   "available_profiles": ["audiobook_single_narrator", "dramatized_multivoice"]
@@ -771,24 +927,43 @@ discovery:
 
 Exit codes are stable:
 
-| Code | Meaning                                |
-| ---: | -------------------------------------- |
-| 0    | Success.                               |
-| 1    | Unexpected internal error.             |
-| 2    | Invalid invocation or malformed flags. |
-| 3    | Input file or output path error.       |
-| 4    | Input parsing failed.                  |
-| 5    | No valid segmentation path exists.     |
-| 6    | Rendering failed.                      |
-| 7    | Configuration or profile error.        |
+| Code | Meaning                                    |
+| ---: | ------------------------------------------ |
+| 0    | Success.                                   |
+| 1    | Unexpected internal error.                 |
+| 2    | Invalid invocation or malformed flags.     |
+| 3    | Input file or output path error.           |
+| 4    | Input parsing failed.                      |
+| 5    | No valid segmentation path exists.         |
+| 6    | Rendering failed.                          |
+| 7    | Configuration or profile error.            |
+| 8    | Delivery failed after rendering.           |
+| 9    | Feedback persistence or submission failed. |
+| 10   | Operation timed out.                       |
 
 _Table 6: CLI exit code taxonomy._
 
-All enum validation errors must include the valid values. Unknown delivery
-schemes must report the supported set:
+All enum validation errors must include the valid values. Delivery uses a
+canonical scheme plus optional destination grammar:
 
 ```plaintext
-error: --deliver scheme must be one of: stdout, file:<path>, webhook:<url>
+--deliver stdout
+--deliver file --deliver-to ./story.ssml
+--deliver webhook --deliver-to https://example.test/hook
+```
+
+`--deliver-to` is required for `file` and `webhook`, and must be absent for
+`stdout`. The parser must not accept colon-packed values such as
+`file:./story.ssml` or `webhook:https://example.test/hook` as the canonical
+form, because that grammar is ambiguous around URI colons and Windows drive
+letters. A future compatibility layer may accept those packed values as aliases
+only if `agent-context` still advertises the canonical form.
+
+Unknown delivery schemes must report the supported set:
+
+```plaintext
+error: --deliver must be one of: stdout, file, webhook (got: "s3")
+error: --deliver-to is required when --deliver is file or webhook
 ```
 
 Cyclopts is the command specification source. The CLI adapter defines commands
@@ -852,8 +1027,8 @@ punctuation.
 The CLI supports `--deliver` on commands that produce artefacts:
 
 - `stdout`,
-- `file:<path>`,
-- `webhook:<url>`.
+- `file` with `--deliver-to <path>`,
+- `webhook` with `--deliver-to <url>`.
 
 File delivery writes to a temporary file in the destination directory and then
 atomically replaces the target. Webhook delivery MUST accept only HTTPS URLs,
@@ -861,6 +1036,13 @@ MUST use strict TLS certificate validation, and MUST NOT expose a skip or
 ignore option for certificate errors. Webhook delivery posts the rendered
 artefact only after URL and TLS validation succeed, then reports the HTTP
 status in JSON for the successful TLS-validated HTTPS POST attempt.
+
+Delivery failures occur after rendering has produced a `RenderResult`, so they
+must use exit code 8 rather than the rendering failure code. If file delivery
+fails, the CLI reports the destination and filesystem error. If webhook
+delivery fails, the CLI preserves the rendered artefact locally before
+attempting the POST, then reports the TLS-validated HTTP status or transport
+error in stderr and JSON error output.
 
 The `feedback` command records agent and user friction locally:
 
@@ -879,17 +1061,26 @@ still applies, but only for successful TLS-validated HTTPS POST attempts.
 MUST state that configured feedback endpoints are HTTPS-only and receive only
 minimized, redacted payloads.
 
+Feedback failures use exit code 9. Failure to write the local feedback JSONL
+entry and failure to submit upstream feedback are both feedback-domain
+failures, not rendering or delivery failures. The JSON error body must identify
+whether the local write, upstream POST, or endpoint validation failed.
+
 ## 15. Failure modes
 
-| Failure                                    | Response                                                                                         |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| Markdown parser omits positions            | Fall back to the PyO3 range extractor or fail with a parser capability diagnostic.               |
-| Markdown input is malformed MDX            | Report parse failure before segmentation; plain Markdown should not fail for normal syntax.      |
-| No segmentation path satisfies hard limits | Run the fallback ladder, then fail with exit code 5 and the offending span.                      |
-| Optional semantic model is unavailable     | Continue with deterministic structural scoring and report a diagnostic when requested.           |
-| Renderer rejects nested voice spans        | Flatten to profile-compatible output or fail with an actionable renderer error.                  |
-| Webhook delivery fails                     | Preserve the local artefact when possible and report HTTP status on stderr or JSON error output. |
-| Profile is invalid                         | Reject before processing input and enumerate valid profile keys or enum values.                  |
+| Failure                                    | Response                                                                                             |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| Markdown parser omits positions            | Fall back to PyO3 or fail with a parser capability diagnostic and exit code 4.                       |
+| `mdast` version or probe is incompatible   | Fall back to PyO3; fail with exit code 4 only when no compatible parser remains.                     |
+| Markdown input is malformed MDX            | Report parse failure before segmentation; plain Markdown should not fail for normal syntax.          |
+| No segmentation path satisfies hard limits | Run the fallback ladder, then fail with exit code 5 and the offending span.                          |
+| Optional semantic model is unavailable     | Continue with deterministic structural scoring and report a diagnostic when requested.               |
+| Renderer rejects nested voice spans        | Flatten to profile-compatible output or fail with exit code 6 and an actionable renderer error.      |
+| File delivery fails                        | Preserve the `RenderResult` when possible and fail with exit code 8.                                 |
+| Webhook delivery fails                     | Preserve the local artefact, then report HTTP status or transport details and fail with exit code 8. |
+| Feedback persistence or submission fails   | Report the failed feedback stage and fail with exit code 9.                                          |
+| Operation exceeds configured timeout       | Stop before further side effects when possible and fail with exit code 10.                           |
+| Profile is invalid                         | Reject before processing input and enumerate valid profile keys or enum values with exit code 7.     |
 
 _Table 7: Expected failure modes and required responses._
 
@@ -952,8 +1143,8 @@ internal implementation steps. At minimum, scenarios exercise:
 - JSON output without Rich formatting;
 - human output with Rich formatting when attached to a terminal;
 - failure messages that enumerate valid enum values;
-- `--deliver=stdout`, `--deliver=file:<path>`, and
-  `--deliver=webhook:<url>`.
+- `--deliver stdout`, `--deliver file --deliver-to <path>`, and
+  `--deliver webhook --deliver-to <url>`.
 
 Hexagonal architecture adds one fitness function: `prosidy_darn.domain` and
 `prosidy_darn.application` must not import from `prosidy_darn.adapters` or

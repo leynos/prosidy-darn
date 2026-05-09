@@ -3,7 +3,7 @@
 This ExecPlan (execution plan) is a living document. Its mandatory living
 sections must be kept up to date as work proceeds.
 
-Status: DRAFT
+Status: COMPLETE
 
 ## Purpose / big picture
 
@@ -295,12 +295,19 @@ unrelated churn before committing.
 - [x] 2026-05-09: Drafted plan from
   `docs/prosidy-darn-logisphere-design-stage-review.md` and the current
   technical design.
-- [ ] Milestone 1 complete: renderer and JSONL contracts updated.
-- [ ] Milestone 2 complete: exit codes and delivery grammar updated.
-- [ ] Milestone 3 complete: source index and kind typing updated.
-- [ ] Milestone 4 complete: `mdast` compatibility detection updated.
-- [ ] Milestone 5 complete: roadmap and user-facing docs aligned.
-- [ ] Validation commands pass and evidence logs are recorded.
+- [x] 2026-05-09: Approved for implementation and moved to in-progress state.
+- [x] 2026-05-09: Milestone 1 complete. The technical design now specifies
+  `RenderResult` and a JSONL cue-sheet wire contract.
+- [x] 2026-05-09: Milestone 2 complete. The CLI contract now has delivery,
+  feedback, and timeout exit codes plus canonical `--deliver` / `--deliver-to`
+  grammar.
+- [x] 2026-05-09: Milestone 3 complete. The domain model now uses typed range
+  and spoken-span kinds and treats `SourceIndex` as a swappable protocol.
+- [x] 2026-05-09: Milestone 4 complete. The Markdown adapter strategy now
+  requires `mdast` version checks and a runtime compatibility probe.
+- [x] 2026-05-09: Milestone 5 complete. Roadmap tasks and user-facing CLI
+  examples now align with the revised contracts.
+- [x] 2026-05-09: Validation commands passed and evidence logs were recorded.
 
 ## Surprises & Discoveries
 
@@ -310,6 +317,14 @@ unrelated churn before committing.
 - 2026-05-09: The roadmap already has tasks for JSONL serialization, renderers,
   and delivery, so the follow-up can mostly add dependencies and success
   criteria instead of inventing new phases.
+- 2026-05-09: Implementation is documentation-only at this stage, matching the
+  plan constraint. No Python source files or dependency manifests need changes.
+- 2026-05-09: The user guide still used the older colon-packed delivery
+  examples, so the public-facing examples needed to move with the technical
+  design to avoid teaching a deprecated grammar before implementation exists.
+- 2026-05-09: `make fmt` rewrote `docs/scripting-standards.md`, which is not
+  part of this plan. The unrelated formatter churn was restored before the
+  remaining gates ran.
 
 ## Decision Log
 
@@ -325,10 +340,35 @@ unrelated churn before committing.
 - 2026-05-09: Keep implementation blocked until this ExecPlan is approved. The
   current request is to plan the review resolution, not to execute the design
   edits.
+- 2026-05-09: User approved implementation of this ExecPlan. Proceed with
+  design and roadmap edits while keeping implementation code out of scope.
+- 2026-05-09: Use only the split `--deliver <scheme>` plus `--deliver-to`
+  grammar as canonical in documentation. Colon-packed `file:<path>` and
+  `webhook:<url>` forms remain a future compatibility option only if
+  `agent-context` still advertises the split grammar.
+- 2026-05-09: Keep source-index memory validation in the roadmap rather than
+  inventing a benchmark now, because this change set is documentation-only and
+  no `SourceIndex` implementation exists yet.
 
 ## Outcomes & Retrospective
 
-No implementation work has started. The expected retrospective after execution
-is a short summary of which design contracts changed, which roadmap tasks
-moved, which concerns remain deferred, and whether the validation commands
-passed.
+The design-stage review concerns are resolved in documentation. The technical
+design now defines `RenderResult`, a JSONL cue-sheet contract, delivery and
+feedback exit codes, canonical delivery grammar, typed range and span kinds, a
+swappable `SourceIndex` protocol, memory-validation expectations, and `mdast`
+version/probe requirements. The roadmap now sequences those decisions before
+affected implementation tasks, and the user guide examples use the canonical
+delivery grammar.
+
+Validation passed with these logs:
+
+- `/tmp/fmt-prosidy-darn-resolve-logisphere-review-final.out`;
+- `/tmp/check-fmt-prosidy-darn-resolve-logisphere-review-final.out`;
+- `/tmp/markdownlint-prosidy-darn-resolve-logisphere-review-final.out`;
+- `/tmp/nixie-prosidy-darn-resolve-logisphere-review-final.out`;
+- `/tmp/diff-check-prosidy-darn-resolve-logisphere-review-final.out`.
+
+No Python implementation or dependency changes were made. Streaming renderers
+remain intentionally deferred to a future port; the v1 renderer contract now
+has enough return metadata for binary or multi-part renderers without claiming
+to support streaming.
