@@ -734,7 +734,7 @@ prosidy-darn
 default:
 
 ```bash
-prosidy-darn segment --input story.md --profile audiobook --json
+prosidy-darn segment --input story.md --profile audiobook_single_narrator --json
 ```
 
 `render` converts an existing cue sheet to a target format:
@@ -746,7 +746,7 @@ prosidy-darn render --input cues.jsonl --format ssml --output story.ssml --json
 `explain` emits the accepted boundaries and nearby rejected candidates:
 
 ```bash
-prosidy-darn explain --input story.md --profile audiobook --json --limit 20
+prosidy-darn explain --input story.md --profile audiobook_single_narrator --json --limit 20
 ```
 
 The `agent-context` command returns a versioned JSON schema for command
