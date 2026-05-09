@@ -822,6 +822,28 @@ punctuation.
 
 ## 14. Delivery and feedback
 
+### Security requirements for webhook delivery
+
+- **URL validation**: the implementation MUST reject any webhook URL whose
+  scheme is not `https`. Plain `http` URLs MUST NOT be accepted at parse time;
+  the CLI MUST exit with a non-zero status code and a human-readable error
+  message if a non-HTTPS URL is supplied.
+- **Certificate validation**: webhook TLS certificate validation MUST be enabled
+  and MUST NOT be suppressed by a runtime flag or configuration option. The
+  implementation MUST NOT ship a `verify=False` or equivalent bypass.
+- **Sensitive data in feedback payloads**: webhook feedback payloads MUST NOT
+  include raw source text beyond the minimum excerpt required to identify the
+  cue, such as a byte-offset range. Full document content MUST NOT be
+  transmitted. Payload fields that may carry user content MUST be limited to
+  the feedback message, command name, diagnostic code, cue identifier, and
+  source byte-offset range; those fields MUST NOT include full source
+  documents, full cue text, rendered speech payloads, or secret configuration
+  values.
+- **Timeout**: HTTP requests to webhook endpoints MUST have a finite timeout.
+  The default MUST be less than or equal to 30 seconds, and users SHOULD be
+  able to configure the timeout downward. The timeout MUST NOT be configurable
+  upward beyond 30 seconds.
+
 The CLI supports `--deliver` on commands that produce artefacts:
 
 - `stdout`,
