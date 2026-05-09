@@ -1,12 +1,10 @@
-# Prosidy Darn technical design
-
 ---
 status: Draft
 audience: Implementers, reviewers, and maintainers
 date: 2026-05-09
 ---
 
-<!-- markdownlint-disable-file MD003 MD022 -->
+# Prosidy Darn technical design
 
 ## 1. Design context
 
