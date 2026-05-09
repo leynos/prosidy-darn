@@ -374,11 +374,27 @@ Rust-backed adapter may provide a more compact implementation as long as it
 satisfies the same conversion, boundary-validation, and slicing methods.
 
 The v1 memory target is to process Markdown documents of at least 500 KB in the
-CLI without dict-per-byte memory growth. The implementation task must include a
-memory smoke test or benchmark that builds a `SourceIndex` for ASCII-dominant
-and multibyte-heavy inputs and records the observed allocation trend.
+CLI without dict-per-byte memory growth. Typical prose inputs at that size are
+expected to sit around 5,000-15,000 words, depending on Markdown density,
+dialogue, and inline markup. The implementation task must include a memory
+smoke test or benchmark that builds a `SourceIndex` for ASCII-dominant and
+multibyte-heavy inputs and records the observed allocation trend. It must also
+document the expected budget for `SourceIndex`, any `byte_to_char` dictionary
+or replacement map, and the DP table for large documents of at least 500 KB.
 
 ## 7. Segmentation algorithm
+
+### 7.0. Rejected alternatives
+
+A greedy sentence-boundary splitter with post-hoc merging is rejected for v1.
+Greedy methods optimize only the next local boundary, so they cannot preserve a
+later high-value structure by accepting an awkward earlier cut. Post-hoc
+merging also makes shaped punishments for span lengths and range overlaps hard
+to model consistently, because the unit cost is discovered after the split
+decision. The dynamic-programming lattice is preferred because it provides
+global optimization, supports shaped and punitive cost functions directly, and
+can integrate semantic scorers as another edge or boundary cost without
+replacing the segmenter.
 
 ### 7.1. Source range extraction
 

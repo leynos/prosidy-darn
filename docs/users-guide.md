@@ -170,7 +170,8 @@ Sample output:
 
 ```json
 {
-  "delivered_to": "file:./out.ssml",
+  "delivery_scheme": "file",
+  "deliver_to": "./out.ssml",
   "format": "ssml"
 }
 ```

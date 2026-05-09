@@ -54,7 +54,10 @@ from itertools import islice
 
 def top_active_emails(users):
     emails = (
-        user.email.lower() for user in users if user.active and user.email is not None
+        user.email.lower()
+        for user in users
+        # Keep active users with an address.
+        if user.active and user.email is not None
     )
     return list(islice(emails, 10))
 ```

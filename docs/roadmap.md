@@ -10,6 +10,25 @@ The roadmap treats the technical design as the source of truth. Architectural
 decision records (ADRs) should be added under `docs/` as the open decisions in
 the design are resolved.
 
+Assumed team: one primary engineer with part-time review capacity. The v1 scope
+is Phases 1-3; that scope is negotiable if capacity is constrained. The full
+six-phase roadmap is intentionally broader than v1 and should be triaged
+separately.
+
+Open design decisions from SS18 map to these resolution deadlines and tasks:
+
+- Markdown parser strategy: resolve before Phase 1 exit in task 1.1.1. Record
+  `docs/adr-001-markdown-parser-boundary.md`.
+- Tokenizer and semantic-scoring dependency policy: resolve before Phase 1 exit
+  in task 1.1.2. Record `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`.
+- Profile custom rule-expression policy: resolve before Phase 2 start in task
+  1.1.4. Record `docs/adr-003-profile-rule-expression-policy.md`.
+- Import-boundary checker: resolve before Phase 1 exit in task 1.1.3. Record
+  `docs/adr-004-import-boundary-fitness-check.md`.
+- First non-SSML vendor renderer: defer until Phase 5+ and resolve in task
+  6.2.1. Record `docs/adr-005-first-vendor-renderer.md` only when that task
+  starts.
+
 ## 1. Foundational contracts and build spine
 
 Idea: if Prosidy Darn settles its package boundary, hexagonal architecture,
@@ -53,6 +72,7 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - Requires 1.0.1.
   - Decide whether v1 depends directly on `mdast` first or ships a minimal PyO3
     `markdown-rs` range extractor immediately.
+  - Write `docs/adr-001-markdown-parser-boundary.md`.
   - See prosidy-darn-technical-design.md §§1 and 10.
   - Success: one accepted ADR defines the parser adapter order and fallback
     behaviour.
@@ -60,6 +80,7 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - Requires 1.0.1 and 1.1.1.
   - Decide which token counter is optional in v1 and how embedding adapters stay
     out of the core import path.
+  - Write `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`.
   - See prosidy-darn-technical-design.md §§7, 10, and 18.
   - Success: optional dependencies can be installed or omitted without changing
     the public segmentation API.
@@ -67,9 +88,18 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - Requires 1.0.1 and 1.1.1.
   - Select the CI fitness function that prevents `domain` and `application`
     modules from importing adapters, Cyclopts, or renderer infrastructure.
+  - Write `docs/adr-004-import-boundary-fitness-check.md`.
   - See prosidy-darn-technical-design.md §§4, 5, 9, and 16.
   - Success: the chosen check can fail a boundary violation in a minimal
     fixture branch.
+- [ ] 1.1.4. Record the profile rule-expression policy.
+  - Requires 1.0.1 and 1.1.2.
+  - Decide whether profile files allow arbitrary custom rule expressions or only
+    named rule weights before Phase 2 starts.
+  - Write `docs/adr-003-profile-rule-expression-policy.md`.
+  - See prosidy-darn-technical-design.md §§7, 8, and 18.
+  - Success: profile configuration can be implemented without adding a new
+    expression-language decision in the segmenter.
 
 ### 1.2. Establish the package skeleton and dependency spine
 
@@ -483,6 +513,7 @@ prosidy-darn-technical-design.md §§11, 12, and 18.
   - Requires phase 4.
   - Compare provider payload shape, mark support, voice-span support, and
     synthesis-window compatibility.
+  - Write `docs/adr-005-first-vendor-renderer.md`.
   - Success: one ADR names the first vendor target and the renderer capability
     constraints it introduces.
 - [ ] 6.2.2. Decide whether WebVTT-like timing export belongs in core.
