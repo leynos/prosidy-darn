@@ -1,10 +1,12 @@
+# Prosidy Darn technical design
+
+```yaml
 ---
 status: Draft
 audience: Implementers, reviewers, and maintainers
 date: 2026-05-09
 ---
-
-# Prosidy Darn technical design
+```
 
 ## 1. Design context
 
@@ -829,16 +831,21 @@ punctuation.
   the CLI MUST exit with a non-zero status code and a human-readable error
   message if a non-HTTPS URL is supplied.
 - **Certificate validation**: webhook TLS certificate validation MUST be enabled
-  and MUST NOT be suppressed by a runtime flag or configuration option. The
-  implementation MUST NOT ship a `verify=False` or equivalent bypass.
+  and MUST NOT be suppressed by a runtime flag, configuration option, or
+  environment variable. The implementation MUST NOT ship a `verify=False`,
+  `--skip-tls-verify`, `--ignore-certificate-errors`, or equivalent bypass.
 - **Sensitive data in feedback payloads**: webhook feedback payloads MUST NOT
-  include raw source text beyond the minimum excerpt required to identify the
+  include raw source text beyond the minimum context required to identify the
   cue, such as a byte-offset range. Full document content MUST NOT be
-  transmitted. Payload fields that may carry user content MUST be limited to
-  the feedback message, command name, diagnostic code, cue identifier, and
-  source byte-offset range; those fields MUST NOT include full source
-  documents, full cue text, rendered speech payloads, or secret configuration
-  values.
+  transmitted. Payload minimization and redaction MUST run before writing the
+  feedback entry to disk and before any upstream POST. The sanitizer MUST
+  redact personally identifiable information (PII), authentication tokens, API
+  keys, secrets, and credential-like values. The persisted and posted payload
+  MUST use an explicit allowlist limited to the feedback message, command name,
+  diagnostic code, cue identifier, source byte-offset range, tool version,
+  profile name, and non-sensitive exit status; those fields MUST NOT include
+  full source documents, full cue text, rendered speech payloads, environment
+  dumps, profile secret values, or webhook URLs containing credentials.
 - **Timeout**: HTTP requests to webhook endpoints MUST have a finite timeout.
   The default MUST be less than or equal to 30 seconds, and users SHOULD be
   able to configure the timeout downward. The timeout MUST NOT be configurable
@@ -851,8 +858,11 @@ The CLI supports `--deliver` on commands that produce artefacts:
 - `webhook:<url>`.
 
 File delivery writes to a temporary file in the destination directory and then
-atomically replaces the target. Webhook delivery posts the rendered artefact
-and reports HTTP status in JSON.
+atomically replaces the target. Webhook delivery MUST accept only HTTPS URLs,
+MUST use strict TLS certificate validation, and MUST NOT expose a skip or
+ignore option for certificate errors. Webhook delivery posts the rendered
+artefact only after URL and TLS validation succeed, then reports the HTTP
+status in JSON for the successful TLS-validated HTTPS POST attempt.
 
 The `feedback` command records agent and user friction locally:
 
@@ -861,10 +871,15 @@ prosidy-darn feedback "explain output omits the rejected quote boundary"
 ```
 
 Feedback entries are JSON Lines under
-`${XDG_STATE_HOME:-~/.local/state}/prosidy-darn/feedback.jsonl`. If
-`PROSIDY_DARN_FEEDBACK_ENDPOINT` is set, the CLI also posts the entry upstream
-and reports the HTTP status. `agent-context` reports whether an upstream
-feedback endpoint is configured.
+`${XDG_STATE_HOME:-~/.local/state}/prosidy-darn/feedback.jsonl`. The feedback
+adapter MUST minimize and redact each entry before persistence. If
+`PROSIDY_DARN_FEEDBACK_ENDPOINT` is set, the CLI MUST parse it as an HTTPS-only
+webhook endpoint, MUST reject non-HTTPS values before writing or posting, and
+MUST post only the already-sanitized entry upstream. HTTP status reporting
+still applies, but only for successful TLS-validated HTTPS POST attempts.
+`agent-context` reports whether an upstream feedback endpoint is configured and
+MUST state that configured feedback endpoints are HTTPS-only and receive only
+minimized, redacted payloads.
 
 ## 15. Failure modes
 

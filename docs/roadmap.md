@@ -20,6 +20,28 @@ interfaces after adapters exist.
 This phase establishes the contracts that would be expensive to change once the
 CLI, parser adapters, and renderers depend on them.
 
+Phase 1 acceptance checklist:
+
+- developer documentation checks pass;
+- initial ADRs exist under `docs/` for the v1 blocking decisions;
+- local formatting, Markdown linting, and diagram validation pass.
+
+### 1.0. Establish baseline developer documentation and ADR locations
+
+This step answers whether contributors have enough maintainer-facing guidance
+to implement Phase 1 consistently. Its outcome gates the ADR and package
+boundary work that follows. See prosidy-darn-technical-design.md §§4, 9, 16,
+and 18.
+
+- [ ] 1.0.1. Create baseline developer docs and initial ADR files.
+  - Add `docs/developers-guide.md` with the hexagonal package layout, local
+    quality gates, testing expectations, and documentation update rules.
+  - Place the initial ADR files under `docs/` so Phase 1 decisions have stable
+    review locations before implementation begins.
+  - See prosidy-darn-technical-design.md §§4, 9, 16, and 18.
+  - Success: developer documentation checks pass, and ADR paths are discoverable
+    from the roadmap and developers' guide.
+
 ### 1.1. Ratify the v1 decisions that block implementation
 
 This step answers which design choices are fixed for v1 and which remain
@@ -28,20 +50,21 @@ layout, and the first implementation slice. See
 prosidy-darn-technical-design.md §§8, 10, and 18.
 
 - [ ] 1.1.1. Record the Markdown parser boundary as an ADR.
+  - Requires 1.0.1.
   - Decide whether v1 depends directly on `mdast` first or ships a minimal PyO3
     `markdown-rs` range extractor immediately.
   - See prosidy-darn-technical-design.md §§1 and 10.
   - Success: one accepted ADR defines the parser adapter order and fallback
     behaviour.
 - [ ] 1.1.2. Record the token-limit and semantic-scoring dependency policy.
-  - Requires 1.1.1.
+  - Requires 1.0.1 and 1.1.1.
   - Decide which token counter is optional in v1 and how embedding adapters stay
     out of the core import path.
   - See prosidy-darn-technical-design.md §§7, 10, and 18.
   - Success: optional dependencies can be installed or omitted without changing
     the public segmentation API.
 - [ ] 1.1.3. Record the import-boundary enforcement decision.
-  - Requires 1.1.1.
+  - Requires 1.0.1 and 1.1.1.
   - Select the CI fitness function that prevents `domain` and `application`
     modules from importing adapters, Cyclopts, or renderer infrastructure.
   - See prosidy-darn-technical-design.md §§4, 5, 9, and 16.

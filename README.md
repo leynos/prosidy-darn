@@ -68,8 +68,8 @@ ______________________________________________________________________
 
 ## Learn more
 
-- [Users' Guide](docs/users-guide.md) — user-facing documentation as the
-  implementation grows
+- [Prosidy Darn users' guide](docs/users-guide.md) — installation, current
+  smoke test, and planned library and CLI usage
 - [Technical design](docs/prosidy-darn-technical-design.md) — architecture,
   algorithm, CLI, and verification design
 - [Roadmap](docs/roadmap.md) — planned delivery phases and task breakdown
