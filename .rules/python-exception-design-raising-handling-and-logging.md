@@ -14,6 +14,7 @@ class enables callers to catch all domain failures without vendor leakage.
 class PaymentsError(Exception):
     """All payment-layer errors."""
 
+
 class CardDeclinedError(PaymentsError):  # ✅ ends with Error (N818)
     def __init__(self, code: str, *, retry_after: int | None = None):
         super().__init__(f"Card declined ({code})")

@@ -30,7 +30,7 @@ The design is wagering on the following assumptions. The review examines each.
 | --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | B1  | The `mdast` Python package exposes stable, byte-accurate source positions sufficient for segmentation.                                                                           | Medium. The design acknowledges this may not hold and provides a PyO3 fallback, but leaves the decision open.                                                                         |
 | B2  | Python dynamic programming is fast enough for the bounded shortest-path solve over realistic document lengths.                                                                   | High for typical prose. Low confidence for adversarial inputs (very long single-paragraph documents, machine-generated Markdown with thousands of list items).                        |
-| B3  | A single punishment-cost model can serve audiobook narration, dramatised multivoice, and low-latency streaming through profile parameterisation alone.                           | Medium. The punishment table and profile values are initial guesses. The design acknowledges tuning is needed but does not describe how profile values will be validated empirically. |
+| B3  | A single punishment-cost model can serve audiobook narration, dramatized multivoice, and low-latency streaming through profile parameterization alone.                           | Medium. The punishment table and profile values are initial guesses. The design acknowledges tuning is needed but does not describe how profile values will be validated empirically. |
 | B4  | Cyclopts' tiered configuration model is expressive enough to own all CLI configuration without custom precedence logic.                                                          | High. The Cyclopts documentation supports this, and the design keeps library callers outside the Cyclopts path.                                                                       |
 | B5  | SSML 1.1 is a sufficient first renderer target despite processor-specific behaviour.                                                                                             | High for v1 scope. The design correctly treats SSML as a lossy delivery artefact and keeps the cue IR authoritative.                                                                  |
 | B6  | The team can build and maintain a hexagonal Python architecture with Rust parser bindings, four renderer targets, webhook delivery, XDG profile storage, and a full test matrix. | Unknown. The design document says nothing about team size or capacity. The roadmap is six phases deep with over 40 individual tasks.                                                  |
@@ -67,7 +67,7 @@ special-case exemption that weakens the rule.
 **P4. 🟢 `TTSUnit` as the stable contract is a good load-bearing choice.** The
 cue IR sits between segmentation and rendering, and both code paths speak it.
 Freezing it early is the right call. The roadmap correctly builds JSONL
-serialisation immediately after domain types.
+serialization immediately after domain types.
 
 **P5. 🔴 The `Renderer` protocol is under-specified for extensibility.** The
 protocol has a single `render(units, options) -> str` method that returns a
@@ -100,7 +100,7 @@ sentence splitter (using `pysbd` or similar) that respects paragraph
 boundaries, emits literal slices, and writes JSONL would solve the core "split
 prose into TTS-sized chunks" problem without dynamic programming, punishment
 tuning, profiles, synthesis windows, or hexagonal architecture. The design is
-building for the 100% case -- dramatised multivoice with semantic scoring --
+building for the 100% case -- dramatized multivoice with semantic scoring --
 from the start. The roadmap partially addresses this by phasing semantic
 scoring into Phase 5, but the architecture carries the weight of all phases
 from Phase 1.
@@ -113,7 +113,7 @@ down.
 **W3. 🟢 The `darn-it` prior art is a genuine structural advantage.** Adapting
 a proven chunking model to a new domain is lower-risk than inventing a new one.
 The design correctly identifies which properties transfer (literal slicing,
-global optimisation) and which do not (the objective function). This is a
+global optimization) and which do not (the objective function). This is a
 well-chosen bet.
 
 **W4. 🟡 Deferred decisions are accumulating.** SS18 lists five open decisions.
@@ -167,10 +167,10 @@ delivery failure is exit code 6 ("Rendering failed"), that conflates two
 different failure domains. If it is a new code, the taxonomy needs extending
 before the CLI ships.
 
-**T3. 🟡 JSONL serialisation contract is implied but not specified.** The
+**T3. 🟡 JSONL serialization contract is implied but not specified.** The
 design says the JSONL renderer outputs `TTSUnit` records and that JSONL
 round-trips through the library. But the document does not specify the JSON
-field names, the serialisation of `tuple` fields, the handling of `None` vs
+field names, the serialization of `tuple` fields, the handling of `None` vs
 absent keys, or the treatment of `PerformanceDirection` defaults. These are the
 details that break interoperability. The first JSONL snapshot test will define
 the contract by accident if it is not specified deliberately.
@@ -278,7 +278,7 @@ ______________________________________________________________________
 source position representation from byte offsets to line/column pairs. The
 adapter did not detect the change because it duck-typed the position fields.
 Segmentation produced units with wrong `source_start`/`source_end` values. A
-downstream TTS pipeline synthesised garbled audio from corrupted source slices.
+downstream TTS pipeline synthesized garbled audio from corrupted source slices.
 The error was not caught because the Hypothesis property tests only ran against
 the plain-text adapter in CI.
 
@@ -323,7 +323,7 @@ a contributor added a `context` field to the feedback payload that included the
 full `SegmentOptions` object for debugging. The options object contained the
 profile name, which was benign, but also the `PROSIDY_DARN_FEEDBACK_ENDPOINT`
 value, which contained an authentication token in the URL query string. The
-sanitiser allowlist was not updated to block the new field, because the
+sanitizer allowlist was not updated to block the new field, because the
 allowlist operated on the feedback entry, not on nested objects.
 
 **Blast radius:** Authentication tokens for the feedback endpoint were posted
@@ -331,10 +331,10 @@ back to the feedback endpoint itself (circular but not externally exploitable)
 and persisted in the local JSONL file (readable by any local process).
 
 **Signal missed:** The allowlist was a flat field list, not a recursive
-sanitiser. No test verified that arbitrary additions to the payload were
+sanitizer. No test verified that arbitrary additions to the payload were
 stripped.
 
-**Mitigation:** Implement the sanitiser as a builder that constructs the
+**Mitigation:** Implement the sanitizer as a builder that constructs the
 payload from allowed fields rather than stripping disallowed fields from an
 existing object. Use a "construct, don't filter" pattern. Add a test that
 attempts to smuggle a known-bad field and asserts it is absent.
@@ -371,9 +371,9 @@ same dialogue turn, then across paragraphs).
 
 **Assessment:** The greedy alternative is genuinely viable for single-narrator
 audiobook use cases where sentence boundaries are usually the right split
-points. It falls down for dramatised multivoice, where speaker-turn boundaries
+points. It falls down for dramatized multivoice, where speaker-turn boundaries
 and dialogue attribution matter more than sentence boundaries. The design's
-choice of DP is justified _if_ the dramatised use case is a first-class goal.
+choice of DP is justified _if_ the dramatized use case is a first-class goal.
 If the initial audience is single-narrator audiobook producers, the greedy
 approach would deliver value sooner and the DP solver could be introduced later
 as a "quality upgrade." The design should state which audience is primary.
@@ -410,7 +410,7 @@ However, three issues should be addressed before implementation begins:
 | D3  | 🟡       | 🐶     | Webhook failure should always preserve the local artefact unconditionally.               |
 | L2  | 🟡       | 🦕     | Three parser implementations add cognitive load; consider two for v1.                    |
 | L4  | 🟡       | 🦕     | Four-tool test strategy is comprehensive but maintenance-expensive.                      |
-| T3  | 🟡       | ☎️     | JSONL serialisation contract is implied, not specified.                                  |
+| T3  | 🟡       | ☎️     | JSONL serialization contract is implied, not specified.                                  |
 | T5  | 🟡       | ☎️     | `--deliver` scheme grammar mixes syntactic patterns.                                     |
 | P1  | 🟢       | 🐼     | Hexagonal decomposition is well-drawn.                                                   |
 | P4  | 🟢       | 🐼     | `TTSUnit` as stable contract is a good choice.                                           |
@@ -448,7 +448,7 @@ However, three issues should be addressed before implementation begins:
 2. Add a "rejected alternatives" section to the design (W1, W2). Even two
    paragraphs explaining why greedy splitting was rejected strengthens the
    document.
-3. Specify the JSONL serialisation contract explicitly (T3) before the first
+3. Specify the JSONL serialization contract explicitly (T3) before the first
    snapshot test locks it by accident.
 4. Decide `SourceRange.kind` and `SpokenSpan.kind` typing (P6) before domain
    types are frozen.
@@ -459,5 +459,5 @@ However, three issues should be addressed before implementation begins:
 ______________________________________________________________________
 
 _Review conducted by the Logisphere crew. Findings are recommendations, not
-mandates. The design authors know their domain better than we do; we know where
-things tend to break._
+mandates. The design authors know their domain better than reviewers; the
+Logisphere crew knows where things tend to break._

@@ -66,8 +66,8 @@ u-0001 0 14 heading
 u-0002 16 45 dialogue_with_attribution
 ```
 
-The exact boundaries depend on the final punishment profile and Markdown parser
-adapter, but the source-slice invariant is mandatory.
+The exact boundaries depend on the final segmentation profile and Markdown
+parser adapter, but the source-slice invariant is mandatory.
 
 ### Common inputs
 
@@ -267,5 +267,5 @@ relying on rewritten text.
 ### Why not edit SSML directly?
 
 SSML is a render target, not the source of truth. Prosidy Darn keeps a
-renderer-neutral cue representation so different engines can be supported
+renderer-neutral cue representation, so different engines can be supported
 without losing source provenance or direction metadata.
