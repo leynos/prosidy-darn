@@ -298,7 +298,7 @@ and 11.
   - Represent dialogue, attribution, and narrator spans without forcing the
     segmenter to split the source unit.
   - See prosidy-darn-technical-design.md §§6 and 11.
-  - Success: single-narrator and dramatised profiles can render the same unit
+  - Success: single-narrator and dramatized profiles can render the same unit
     through different span policies.
 
 ### 4.2. Render cue units to SSML and JSONL contracts

@@ -16,8 +16,8 @@ The design adapts the `darn-it` chunking model to speech direction. `darn-it`
 parses Markdown with Rust's `markdown` crate, turns source ranges into a
 punishment vector, and solves chunking as a bounded shortest-path problem. Its
 public package documents custom punishment rules, token mode, overlap, and
-dynamic-programming optimisation over literal source offsets.[^1] Prosidy Darn
-keeps the literal-slice and global-optimisation properties, but changes the
+dynamic-programming optimization over literal source offsets.[^1] Prosidy Darn
+keeps the literal-slice and global-optimization properties, but changes the
 objective from preserving Markdown chunks to preserving performance beats.
 
 The Rust `markdown` crate exposes
@@ -59,9 +59,9 @@ those sources are ordered accordingly.[^6]
 - Preserve enough Markdown and prose structure to avoid damaging headings,
   tables, lists, code blocks, paragraphs, sentences, dialogue turns, and quote
   attribution.
-- Optimise segmentation globally, not greedily, so an awkward local cut can be
+- Optimize segmentation globally, not greedily, so an awkward local cut can be
   chosen when it preserves a more valuable later structure.
-- Optimise units for speech direction using estimated duration, speaker
+- Optimize units for speech direction using estimated duration, speaker
   consistency, dialogue handling, semantic breaks, and renderer constraints.
 - Expose the same segmentation engine through a Python library and a CLI.
 - Provide deterministic default behaviour that works offline without a model or
@@ -405,7 +405,7 @@ Static values are not enough. The punishment engine must support shaped rules:
   heading keeps following context;
 - quote-attribution separation uses profile-specific punishment, because a
   single-narrator audiobook usually keeps the quote and tag together while a
-  dramatised renderer may use subspans;
+  dramatized renderer may use subspans;
 - semantic-break rewards scale with local cohesion drop, but never override
   hard structural illegality.
 
@@ -554,7 +554,7 @@ quote_attribution_separation = "high"
 dialogue_turn_reward = "high"
 paragraph_boundary_reward = "medium"
 
-[profile.dramatised_multivoice]
+[profile.dramatized_multivoice]
 ideal_seconds = [3.0, 10.0]
 hard_max_seconds = 20.0
 words_per_second = 2.9
@@ -765,7 +765,7 @@ discovery:
       }
     }
   },
-  "available_profiles": ["audiobook_single_narrator", "dramatised_multivoice"]
+  "available_profiles": ["audiobook_single_narrator", "dramatized_multivoice"]
 }
 ```
 
@@ -881,7 +881,7 @@ renderer formats, and input modes. The minimum coverage set is:
 
 - plain text and Markdown inputs;
 - ASCII and non-ASCII inputs;
-- default, audiobook, dramatised, and low-latency profiles;
+- default, audiobook, dramatized, and low-latency profiles;
 - JSONL and SSML renderers;
 - file and stdin input modes;
 - stdout, file, and webhook delivery schemes;

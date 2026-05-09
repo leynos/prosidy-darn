@@ -14,7 +14,7 @@ ______________________________________________________________________
 - **Literal source slices**: cue units keep exact source offsets, so downstream
   tools can trace every spoken span back to the original text.
 - **Performance-aware chunking**: the design adapts `darn-it` style punishment
-  optimisation for TTS direction, dialogue, duration, and renderer limits.
+  optimization for TTS direction, dialogue, duration, and renderer limits.
 - **Python library and CLI**: the same segmentation engine is intended to serve
   Python callers and an agent-native Cyclopts CLI.
 - **Renderer-neutral cue sheets**: JSONL cue units remain the source of truth,
