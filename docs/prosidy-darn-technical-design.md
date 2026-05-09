@@ -1,12 +1,12 @@
 # Prosidy Darn technical design
 
-```yaml
 ---
 status: Draft
 audience: Implementers, reviewers, and maintainers
 date: 2026-05-09
 ---
-```
+
+<!-- markdownlint-disable-file MD003 MD022 -->
 
 ## 1. Design context
 
