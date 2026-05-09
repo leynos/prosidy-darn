@@ -82,8 +82,8 @@ enables static analysis tools to detect typos and signature mismatches.
 import typing
 
 class Base:
-    def run(self) -> None:
-        ...
+    def run(self) -> None: ...
+
 
 class Child(Base):
     @typing.override
