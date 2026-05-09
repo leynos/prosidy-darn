@@ -204,13 +204,14 @@ Given `story.md`:
 "Don't open it," Mara said.
 ```
 
-Create cue units, inspect the boundary explanation, and render SSML:
+Create newline-delimited JSON cue units, inspect the boundary explanation, and
+render SSML:
 
 ```bash
 prosidy-darn segment \
   --input story.md \
   --profile audiobook_single_narrator \
-  --json > cues.json
+  --json > cues.jsonl
 
 prosidy-darn explain \
   --input story.md \
@@ -219,7 +220,7 @@ prosidy-darn explain \
   --limit 20
 
 prosidy-darn render \
-  --input cues.json \
+  --input cues.jsonl \
   --format ssml \
   --deliver file:./story.ssml \
   --json
@@ -227,7 +228,8 @@ prosidy-darn render \
 
 Expected result:
 
-- cue units preserve source offsets into `story.md`;
+- `cues.jsonl` contains newline-delimited cue records that preserve source
+  offsets into `story.md`;
 - the explanation shows why the dialogue and attribution stay together for the
   single-narrator profile;
 - `story.ssml` contains renderer-ready speech markup without replacing the cue
