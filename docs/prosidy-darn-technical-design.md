@@ -71,6 +71,11 @@ those sources are ordered accordingly.[^6]
 - Provide an agent-native CLI with non-interactive defaults, `--json`
   everywhere, bounded output, stable exit codes, `agent-context`, profiles,
   delivery sinks, and local feedback capture.
+- Use `pytest`, `pytest-bdd`, `syrupy`, and Hypothesis as the normative test
+  stack for unit coverage, behaviour scenarios, snapshot contracts, and
+  property-based verification.
+- Use Rich for human CLI output while keeping JSON, JSONL, `agent-context`, and
+  other machine-facing output clean ASCII unless source text requires Unicode.
 
 ### 2.2. Non-goals
 
@@ -82,6 +87,7 @@ those sources are ordered accordingly.[^6]
   implementation phase.
 - Prosidy Darn does not implement a full discourse parser in the minimum viable
   product (MVP).
+- Prosidy Darn does not use Rich for machine-readable output.
 
 ## 3. Terminology
 
@@ -802,6 +808,18 @@ interactive menus.
 The schema layer enforces banned aliases such as `info`, `ls`, `--format=json`,
 and `--skip-confirmations`.
 
+Rich owns human-facing terminal rendering only. The CLI may use Rich tables,
+panels, progress indicators, and colour when stdout is a terminal and `--json`
+is not set. Rich output must be disabled for non-terminal stdout, `--json`,
+`agent-context`, JSONL cue sheets, SSML, WebVTT-like output, and any command
+intended for agent consumption.
+
+Machine-facing output must remain clean ASCII unless it is carrying source
+text, spoken text, pronunciation data, or user-provided content that is already
+Unicode. Diagnostic keys, enum values, command names, and error categories stay
+ASCII so agents can parse them without terminal-style decoration or typographic
+punctuation.
+
 ## 14. Delivery and feedback
 
 The CLI supports `--deliver` on commands that produce artefacts:
@@ -873,6 +891,35 @@ The verification scope does not prove that inferred emotion, speaker, or
 dramatic intent is correct. The system must expose those in editable metadata
 and diagnostics instead of presenting inference as ground truth.
 
+The test stack is:
+
+| Tool         | Design role                                                                                                            |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `pytest`     | Own unit and integration execution for domain, application, and adapter tests.                                         |
+| `pytest-bdd` | Own behaviour scenarios for CLI workflows, renderer contracts, profile precedence, and delivery schemes.               |
+| `syrupy`     | Own stable snapshots for `agent-context`, explanation output, JSONL cue sheets, SSML fragments, and human Rich output. |
+| Hypothesis   | Own property tests for Unicode source slicing, coverage, ordering, boundary legality, and fallback-ladder behaviour.   |
+
+_Table 8: Normative verification tool roles._
+
+`syrupy` snapshots must avoid incidental churn. Synthetic Markdown fixtures,
+timestamps, profile names, and generated unit identifiers need deterministic
+values. Rich snapshot tests capture terminal output separately from JSON and
+JSONL output so human formatting cannot leak into agent-facing contracts.
+
+`pytest-bdd` scenarios cover externally observable behaviour rather than
+internal implementation steps. At minimum, scenarios exercise:
+
+- `segment` from stdin and file input;
+- `explain` with bounded output;
+- profile precedence across flags, `PROSIDY_DARN_` variables, project TOML, and
+  named profiles;
+- JSON output without Rich formatting;
+- human output with Rich formatting when attached to a terminal;
+- failure messages that enumerate valid enum values;
+- `--deliver=stdout`, `--deliver=file:<path>`, and
+  `--deliver=webhook:<url>`.
+
 Hexagonal architecture adds one fitness function: `prosidy_darn.domain` and
 `prosidy_darn.application` must not import from `prosidy_darn.adapters` or
 Cyclopts. The CI gate should include an import-boundary check before the first
@@ -893,7 +940,10 @@ non-trivial adapter lands.
   and `feedback` CLI commands.
 - Implement Cyclopts tiered configuration through `Env`, `Toml`, and named
   profile sources.
+- Implement Rich human output behind terminal and `--json` checks.
 - Implement JSONL output and explain diagnostics.
+- Add `pytest`, `pytest-bdd`, `syrupy`, and Hypothesis coverage for the domain
+  invariants, CLI behaviour, and output contracts.
 
 ### 17.2. First renderer release
 
