@@ -29,39 +29,29 @@ prioritized findings are:
 
 - P5: `Renderer.render(...) -> str` cannot support binary, multi-file, or
   streaming renderers. The review recommends a `RenderResult` type that can
-  carry `str | bytes` plus metadata before adapters exist. See
-  `docs/prosidy-darn-logisphere-design-stage-review.md:72`.
+  carry `str | bytes` plus metadata before adapters exist.[^1]
 - T2: the exit code taxonomy omits timeout, webhook delivery failure, and
-  feedback submission failure. See
-  `docs/prosidy-darn-logisphere-design-stage-review.md:162`.
+  feedback submission failure.[^2]
 - P2 and Z3: `SourceIndex.byte_to_char: dict[int, int]` is memory-expensive for
-  large documents and should be abstracted behind a swappable contract. See
-  `docs/prosidy-darn-logisphere-design-stage-review.md:50` and
-  `docs/prosidy-darn-logisphere-design-stage-review.md:143`.
+  large documents and should be abstracted behind a swappable contract.[^3][^4]
 - P6: `SourceRange.kind` and `SpokenSpan.kind` are strings while `TTSUnit.kind`
-  is a `UnitKind` enum, creating a stringly-typed domain seam. See
-  `docs/prosidy-darn-logisphere-design-stage-review.md:82`.
-- T3: the JSONL serialization contract is implied but not specified. See
-  `docs/prosidy-darn-logisphere-design-stage-review.md:170`.
+  is a `UnitKind` enum, creating a stringly-typed domain seam.[^5]
+- T3: the JSONL serialization contract is implied but not specified.[^6]
 - T5: `--deliver` mixes bare keywords and colon schemes, making future parsing
-  fragile. See `docs/prosidy-darn-logisphere-design-stage-review.md:182`.
-- D2: the `mdast` fallback chain has no version pinning or compatibility probe.
-  See `docs/prosidy-darn-logisphere-design-stage-review.md:198`.
+  fragile.[^7]
+- D2: the `mdast` fallback chain has no version pinning or compatibility
+  probe.[^8]
 
 The current design locations that will change are:
 
 - Domain model definitions for `SourceRange`, `SpokenSpan`, `TTSUnit`, and
-  `SourceIndex` in `docs/prosidy-darn-technical-design.md:252`.
-- Markdown parser fallback strategy in
-  `docs/prosidy-darn-technical-design.md:626`.
-- Renderer protocol in `docs/prosidy-darn-technical-design.md:648`.
-- CLI command and exit-code contract in
-  `docs/prosidy-darn-technical-design.md:733`.
-- Delivery and feedback behaviour in
-  `docs/prosidy-darn-technical-design.md:823`.
-- Failure mode table in `docs/prosidy-darn-technical-design.md:882`.
-- Roadmap tasks for JSONL serialization and renderer delivery in
-  `docs/roadmap.md:206` and `docs/roadmap.md:327`.
+  `SourceIndex`.[^9]
+- Markdown parser fallback strategy.[^10]
+- Renderer protocol.[^11]
+- CLI command and exit-code contract.[^12]
+- Delivery and feedback behaviour.[^13]
+- Failure mode table.[^14]
+- Roadmap tasks for JSONL serialization and renderer delivery.[^15][^16]
 
 ## Constraints
 
@@ -372,3 +362,20 @@ No Python implementation or dependency changes were made. Streaming renderers
 remain intentionally deferred to a future port; the v1 renderer contract now
 has enough return metadata for binary or multi-part renderers without claiming
 to support streaming.
+
+[^1]: `docs/prosidy-darn-logisphere-design-stage-review.md:72`.
+[^2]: `docs/prosidy-darn-logisphere-design-stage-review.md:162`.
+[^3]: `docs/prosidy-darn-logisphere-design-stage-review.md:50`.
+[^4]: `docs/prosidy-darn-logisphere-design-stage-review.md:143`.
+[^5]: `docs/prosidy-darn-logisphere-design-stage-review.md:82`.
+[^6]: `docs/prosidy-darn-logisphere-design-stage-review.md:170`.
+[^7]: `docs/prosidy-darn-logisphere-design-stage-review.md:182`.
+[^8]: `docs/prosidy-darn-logisphere-design-stage-review.md:198`.
+[^9]: `docs/prosidy-darn-technical-design.md:252`.
+[^10]: `docs/prosidy-darn-technical-design.md:626`.
+[^11]: `docs/prosidy-darn-technical-design.md:648`.
+[^12]: `docs/prosidy-darn-technical-design.md:733`.
+[^13]: `docs/prosidy-darn-technical-design.md:823`.
+[^14]: `docs/prosidy-darn-technical-design.md:882`.
+[^15]: `docs/roadmap.md:206`.
+[^16]: `docs/roadmap.md:327`.
