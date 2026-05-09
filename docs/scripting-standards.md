@@ -33,8 +33,8 @@ as a default.
   inline.
 - Each script starts with an `uv` script block so runtime and dependency
   expectations travel with the file. Prefer the shebang
-  `#!/usr/bin/env -S uv run python` followed by the metadata block shown in the
-  example below.
+  `#!/usr/bin/env -S uv run python`
+  followed by the metadata block shown in the example below.
 - External processes are invoked via [`plumbum`](https://plumbum.readthedocs.io)
   to provide structured command execution rather than ad‑hoc shell strings.
 - File‑system interactions use `pathlib.Path`. Higher‑level operations (for
@@ -100,13 +100,11 @@ def main(
     # Required parameters
     bin_name: Annotated[str, Parameter(required=True)],
     version: Annotated[str, Parameter(required=True)],
-
     # Optional scalars
     package_name: Optional[str] = None,
     target: Optional[str] = None,
     outdir: Optional[Path] = None,
     dry_run: bool = False,
-
     # Lists (whitespace/newline separated by default)
     formats: list[str] | None = None,
     man_paths: Annotated[
