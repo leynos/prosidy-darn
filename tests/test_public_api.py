@@ -74,3 +74,14 @@ def test_runtime_import_does_not_load_fallback_when_rust_loads(
         assert loaded_runtime.hello() == "hello from Rust"
 
     importlib.reload(runtime)
+
+
+def test_hello_rejects_rust_flag_without_function(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Fail explicitly if runtime state marks Rust available without a function."""
+    monkeypatch.setattr(runtime, "_HAS_RUST", True)
+    monkeypatch.setattr(runtime, "_rust_hello", None)
+
+    with pytest.raises(RuntimeError, match="no hello function is loaded"):
+        runtime.hello()
