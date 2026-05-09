@@ -29,6 +29,13 @@ Open design decisions from SS18 map to these resolution deadlines and tasks:
   6.2.1. Record `docs/adr-005-first-vendor-renderer.md` only when that task
   starts.
 
+Additional accepted ADRs constrain implementation scope:
+
+- Test-matrix phase scope is recorded in
+  `docs/adr-006-test-matrix-phase-scope.md`.
+- Observability scope is recorded in
+  `docs/adr-007-cli-observability-scope.md`.
+
 ## 1. Foundational contracts and build spine
 
 Idea: if Prosidy Darn settles its package boundary, hexagonal architecture,
@@ -70,8 +77,8 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
 
 - [ ] 1.1.1. Record the Markdown parser boundary as an ADR.
   - Requires 1.0.1.
-  - Decide whether v1 depends directly on `mdast` first or ships a minimal PyO3
-    `markdown-rs` range extractor immediately.
+  - Decide whether v1 ships one Markdown-aware parser plus plain text or ships
+    both `mdast` and a PyO3 `markdown-rs` range extractor immediately.
   - Write `docs/adr-001-markdown-parser-boundary.md`.
   - See prosidy-darn-technical-design.md §§1 and 10.
   - Success: one accepted ADR defines the parser adapter order and fallback
@@ -186,12 +193,14 @@ See prosidy-darn-technical-design.md §§6, 7.1, and 10.
     and reject misspelled built-in range kinds.
 - [ ] 2.1.3. Implement Markdown and plain-text structure parsers.
   - Requires 2.1.2 and 1.1.1.
-  - Add the selected Markdown parser adapter, `mdast` version and compatibility
-    probes, the PyO3 fallback adapter, and a plain-text fallback adapter.
+  - Add the selected Markdown parser adapter, its version and compatibility
+    probes, and a plain-text fallback adapter.
+  - Keep the PyO3 range extractor as a contingency only if ADR-001 selects it
+    before implementation.
   - See prosidy-darn-technical-design.md §10.
   - Success: parser adapters return source ranges without rendering Markdown
-    back to text, and incompatible `mdast` versions fail over with a parser
-    capability diagnostic.
+    back to text, and incompatible parser versions fail with a parser
+    capability diagnostic or use the ADR-approved contingency adapter.
 
 ### 2.2. Deliver the deterministic cue splitter
 
@@ -214,9 +223,11 @@ prosidy-darn-technical-design.md §§7.2-7.5.
   - Requires 2.2.1.
   - Include priority tiers, shaped paragraph and heading penalties, dialogue
     attribution penalties, and emergency boundaries.
+  - Create the approved regression corpus for single-narrator, dialogue-heavy,
+    Markdown-heavy, pathological long-paragraph, and Unicode-heavy inputs.
   - See prosidy-darn-technical-design.md §§7.2-7.3.
   - Success: `explain` data can identify the rule contributions for accepted
-    and rejected boundaries.
+    and rejected boundaries, and corpus snapshots catch punishment-value drift.
 - [ ] 2.2.3. Implement edge-cost dynamic programming.
   - Requires 2.2.2.
   - Combine boundary punishment with unit duration, directability, speaker

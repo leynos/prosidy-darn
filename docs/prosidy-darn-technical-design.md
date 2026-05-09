@@ -209,7 +209,7 @@ outside code:
 
 | Port              | Responsibility                                       | Outbound adapters                          |
 | ----------------- | ---------------------------------------------------- | ------------------------------------------ |
-| `StructureParser` | Return source ranges for Markdown or plain text.     | `mdast`, PyO3 `markdown-rs`, plain text.   |
+| `StructureParser` | Return source ranges for Markdown or plain text.     | `mdast` or PyO3 contingency, plain text.   |
 | `SemanticScorer`  | Return optional cohesion-drop scores at boundaries.  | Disabled scorer, embedding scorer.         |
 | `TokenCounter`    | Enforce optional token limits.                       | Disabled counter, tokenizer adapter.       |
 | `CueRenderer`     | Render units to a target artefact.                   | JSONL, SSML, WebVTT-like, vendor payloads. |
@@ -687,12 +687,16 @@ The package layout follows the ports-and-adapters boundary:
 | `prosidy_darn.application.explain`         | `ExplainSegmentation` use case orchestration.                      |
 | `prosidy_darn.ports`                       | Protocols for driven ports.                                        |
 | `prosidy_darn.adapters.inbound.cli`        | Cyclopts command definitions and agent-context generation.         |
-| `prosidy_darn.adapters.outbound.markdown`  | `mdast`, PyO3, and plain-text parser adapters.                     |
+| `prosidy_darn.adapters.outbound.markdown`  | Selected Markdown parser and plain-text parser adapters.           |
 | `prosidy_darn.adapters.outbound.renderers` | JSONL, SSML, WebVTT-like, and vendor renderers.                    |
 | `prosidy_darn.adapters.outbound.delivery`  | Stdout, file, webhook, and feedback adapters.                      |
 | `prosidy_darn.config`                      | Composition root and Cyclopts configuration wiring.                |
 
 _Table 5: Proposed ports-and-adapters package boundaries._
+
+`prosidy_darn.config` is infrastructure composition-root code. It may import
+adapters, Cyclopts, and concrete port implementations while `domain` and
+`application` modules may not.
 
 The core library must not import optional heavy dependencies at module import
 time. Optional semantic scoring, tokenization, and renderer integrations load
@@ -700,14 +704,17 @@ behind explicit options.
 
 ## 10. Markdown adapter strategy
 
-The default adapter order is:
+The v1 parser count is intentionally constrained to one Markdown-aware parser
+plus a plain-text fallback:
 
 1. use the `mdast` Python package only if version and compatibility probes pass;
-2. use a local PyO3 range extractor around `markdown::to_mdast` if `mdast`
-   omits positions, exposes only line and column data, or fails the
-   compatibility probe;
-3. use a plain-text fallback when Markdown parsing is unavailable and the input
+2. use a plain-text fallback when Markdown parsing is unavailable and the input
    does not require Markdown-aware protection.
+
+A local PyO3 range extractor around `markdown::to_mdast` is an accepted
+contingency, not a concurrent v1 adapter. It should replace `mdast` only if the
+Phase 1 parser ADR or compatibility spike proves that `mdast` cannot provide
+stable source ranges.
 
 The `mdast` adapter must declare a supported package-version range and must run
 a probe parse before it is selected for real input. The probe source includes a
@@ -722,13 +729,12 @@ byte and character offsets. The adapter is compatible only when returned ranges:
   and inline emphasis.
 
 If either the version check or probe parse fails, the adapter must emit a
-parser capability diagnostic and fall back to PyO3. Plain-text parsing is
-allowed only when Markdown-aware structure is not required; using it for
-Markdown input must produce a diagnostic that states structural protection has
-degraded.
+parser capability diagnostic. Plain-text parsing is allowed only when
+Markdown-aware structure is not required; using it for Markdown input must
+produce a diagnostic that states structural protection has degraded.
 
-The PyO3 fallback should return a compact range stream rather than a complete
-abstract syntax tree:
+If the PyO3 contingency is activated, it should return a compact range stream
+rather than a complete abstract syntax tree:
 
 ```json
 [
@@ -982,6 +988,14 @@ error: --deliver must be one of: stdout, file, webhook (got: "s3")
 error: --deliver-to is required when --deliver is file or webhook
 ```
 
+The CLI has two timeout scopes. HTTP delivery and feedback requests have the
+webhook timeout described in §14. Long-running commands also support a
+whole-operation timeout that covers parsing, segmentation, rendering, delivery,
+and feedback work. The default whole-operation timeout is unset for local
+library-style use, but the CLI MUST accept `--timeout-seconds <seconds>` and
+`PROSIDY_DARN_TIMEOUT_SECONDS`. When this timeout expires, the command stops
+before additional side effects where possible and exits with code 10.
+
 Cyclopts is the command specification source. The CLI adapter defines commands
 once with Cyclopts metadata, then derives:
 
@@ -1084,19 +1098,19 @@ whether the local write, upstream POST, or endpoint validation failed.
 
 ## 15. Failure modes
 
-| Failure                                    | Response                                                                                             |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| Markdown parser omits positions            | Fall back to PyO3 or fail with a parser capability diagnostic and exit code 4.                       |
-| `mdast` version or probe is incompatible   | Fall back to PyO3; fail with exit code 4 only when no compatible parser remains.                     |
-| Markdown input is malformed MDX            | Report parse failure before segmentation; plain Markdown should not fail for normal syntax.          |
-| No segmentation path satisfies hard limits | Run the fallback ladder, then fail with exit code 5 and the offending span.                          |
-| Optional semantic model is unavailable     | Continue with deterministic structural scoring and report a diagnostic when requested.               |
-| Renderer rejects nested voice spans        | Flatten to profile-compatible output or fail with exit code 6 and an actionable renderer error.      |
-| File delivery fails                        | Preserve the `RenderResult` when possible and fail with exit code 8.                                 |
-| Webhook delivery fails                     | Preserve the local artefact, then report HTTP status or transport details and fail with exit code 8. |
-| Feedback persistence or submission fails   | Report the failed feedback stage and fail with exit code 9.                                          |
-| Operation exceeds configured timeout       | Stop before further side effects when possible and fail with exit code 10.                           |
-| Profile is invalid                         | Reject before processing input and enumerate valid profile keys or enum values with exit code 7.     |
+| Failure                                    | Response                                                                                                     |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| Markdown parser omits positions            | Fail with a parser capability diagnostic and exit code 4 unless the PyO3 contingency has replaced `mdast`.   |
+| `mdast` version or probe is incompatible   | Fail with exit code 4 unless the PyO3 contingency has replaced `mdast`.                                      |
+| Markdown input is malformed MDX            | Report parse failure before segmentation; plain Markdown should not fail for normal syntax.                  |
+| No segmentation path satisfies hard limits | Run the fallback ladder, then fail with exit code 5 and the offending span.                                  |
+| Optional semantic model is unavailable     | Continue with deterministic structural scoring and report a diagnostic when requested.                       |
+| Renderer rejects nested voice spans        | Flatten to profile-compatible output or fail with exit code 6 and an actionable renderer error.              |
+| File delivery fails                        | Preserve the in-memory `RenderResult`, leave any existing target file unmodified, and fail with exit code 8. |
+| Webhook delivery fails                     | Preserve the local artefact, then report HTTP status or transport details and fail with exit code 8.         |
+| Feedback persistence or submission fails   | Report the failed feedback stage and fail with exit code 9.                                                  |
+| Operation exceeds configured timeout       | Stop before further side effects when possible and fail with exit code 10.                                   |
+| Profile is invalid                         | Reject before processing input and enumerate valid profile keys or enum values with exit code 7.             |
 
 _Table 7: Expected failure modes and required responses._
 
@@ -1148,6 +1162,13 @@ _Table 8: Normative verification tool roles._
 timestamps, profile names, and generated unit identifiers need deterministic
 values. Rich snapshot tests capture terminal output separately from JSON and
 JSONL output so human formatting cannot leak into agent-facing contracts.
+
+A small approved regression corpus protects punishment-profile tuning from
+drift. Before default punishment values change, maintainers must run snapshots
+for at least single-narrator prose, dialogue-heavy prose, Markdown-heavy prose,
+one pathological long paragraph, and Unicode-heavy input. Each fixture records
+the approved unit boundaries and explanation output so tuning changes preserve
+or deliberately update known-good segmentation behaviour.
 
 `pytest-bdd` scenarios cover externally observable behaviour rather than
 internal implementation steps. At minimum, scenarios exercise:
@@ -1204,13 +1225,15 @@ non-trivial adapter lands.
 
 ## 18. Open decisions
 
-- Whether the package should depend directly on `mdast` or vendor a minimal
-  PyO3 range extractor from the start.
 - Which tokenizer should provide optional token limits.
 - Whether profile files should allow arbitrary custom rule expressions or only
   named rule weights.
 - Which vendor renderer should be the first non-SSML target.
 - Which import-boundary checker should enforce hexagonal dependency rules.
+
+ADR-001 accepts `mdast` as the initial Markdown-aware parser when its version
+and compatibility probe pass, with PyO3 retained as a contingency rather than a
+concurrent v1 adapter.
 
 ## 19. References
 
