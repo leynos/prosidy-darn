@@ -44,3 +44,33 @@ def test_runtime_import_reraises_nested_module_errors(
 
     assert exc_info.value.name == "inner_missing"
     importlib.reload(runtime)
+
+
+def test_runtime_import_does_not_load_fallback_when_rust_loads(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Keep a broken Python fallback from breaking a working Rust runtime."""
+    original_import = builtins.__import__
+
+    class FakeRust:
+        @staticmethod
+        def hello() -> str:
+            return "hello from Rust"
+
+    def fake_import(name: str, *args: object, **kwargs: object) -> object:
+        if name == runtime.RUST_MODULE_NAME:
+            return FakeRust()
+        if name == "prosidy_darn.pure":
+            message = "broken fallback"
+            raise ModuleNotFoundError(message, name=name)
+
+        import_function = typ.cast("typ.Any", original_import)
+        return import_function(name, *args, **kwargs)
+
+    with monkeypatch.context() as context:
+        context.setattr(builtins, "__import__", fake_import)
+        loaded_runtime = importlib.reload(runtime)
+
+        assert loaded_runtime.hello() == "hello from Rust"
+
+    importlib.reload(runtime)
