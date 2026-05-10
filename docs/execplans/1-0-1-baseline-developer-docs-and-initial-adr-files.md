@@ -5,7 +5,7 @@ This ExecPlan (execution plan) is a living document. The sections
 `Decision Log`, and `Outcomes & Retrospective` must be kept up to date as work
 proceeds.
 
-Status: DRAFT
+Status: IN PROGRESS
 
 ## Purpose / big picture
 
@@ -375,8 +375,11 @@ ExecPlan work.
 - [x] 2026-05-10: Renamed the local planning branch to
   `1-0-1-baseline-developer-docs-and-initial-adr-files`.
 - [x] 2026-05-10: Drafted the pre-implementation ExecPlan.
-- [ ] Await explicit approval before implementing the plan.
-- [ ] Add failing documentation checks.
+- [x] 2026-05-10: Received explicit user approval to implement the plan.
+- [x] 2026-05-10: Added `tests/test_developer_docs.py` and confirmed the
+  focused test fails for the expected missing developer guide and ADR
+  placeholder files.
+- [ ] Run CodeRabbit review after the Milestone 2 test commit.
 - [ ] Create the developer guide and proposed ADR placeholders.
 - [ ] Validate all gates.
 - [ ] Mark roadmap item 1.0.1 done after implementation validation.
@@ -409,6 +412,9 @@ ExecPlan work.
 - 2026-05-10: Document Vidai Mock as a future inference-adapter behavioural
   testing requirement rather than adding it to this task. Rationale: task 1.0.1
   introduces no inference service boundary.
+- 2026-05-10: Begin implementation after explicit user approval. Rationale:
+  the approval gate has been satisfied, so the plan status moves from `DRAFT`
+  to `IN PROGRESS`.
 
 ## Outcomes & Retrospective
 
