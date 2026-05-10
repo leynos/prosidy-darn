@@ -386,8 +386,15 @@ ExecPlan work.
   placeholders for ADR-002, ADR-003, and ADR-004.
 - [x] 2026-05-10: Re-ran `uv run pytest tests/test_developer_docs.py -v`;
   all 5 documentation contract tests passed.
-- [ ] Run CodeRabbit review after the developer guide and ADR placeholder
-  commit.
+- [x] 2026-05-10: Ran `coderabbit review --agent` after the developer guide
+  and ADR placeholder commit. The service again failed before producing review
+  findings because the account is out of usage credits, so there were no
+  concerns to clear.
+- [x] 2026-05-10: Reviewed roadmap, users' guide, and technical design
+  discoverability. The roadmap already names ADR-001 through ADR-004, the
+  users' guide needs no change because no user-facing behaviour changed, and
+  the technical design already covers the conventions summarized in the
+  developer guide.
 - [ ] Validate all gates.
 - [ ] Mark roadmap item 1.0.1 done after implementation validation.
 - [ ] Commit, push, and open the draft PR.
@@ -428,6 +435,9 @@ ExecPlan work.
   billing credits. Rationale: the requested review command was run, the failure
   happened before any review findings were produced, and therefore there were
   no concerns to clear before the next milestone.
+- 2026-05-10: Continue after the second CodeRabbit invocation failed for the
+  same usage-credit limit. Rationale: no CodeRabbit review findings were
+  returned, so no concerns can be cleared in this environment.
 
 ## Outcomes & Retrospective
 
