@@ -13,8 +13,8 @@ settles a design decision, update the technical design or the relevant
 Architectural Decision Record (ADR) in the same change.
 
 User-facing behaviour belongs in [docs/users-guide.md](users-guide.md).
-Maintainer-only conventions belong in this guide or in a component
-architecture document once that component exists.
+Maintainer-only conventions belong in this guide or in a component architecture
+document once that component exists.
 
 ## Hexagonal package layout
 
@@ -78,9 +78,9 @@ changes, also run `make markdownlint` and `make nixie`.
 
 ## Testing expectations by phase
 
-ADR-006 scopes the test matrix by phase. Phase 1 uses `pytest` for public import
-tests, developer documentation checks, and ADR link validation. Later phases add
-the remaining tools when their product surfaces exist:
+ADR-006 scopes the test matrix by phase. Phase 1 uses `pytest` for public
+import tests, developer documentation checks, and ADR link validation. Later
+phases add the remaining tools when their product surfaces exist:
 
 - `pytest-bdd` owns behavioural scenarios for command-line interface (CLI)
   workflows, renderer contracts, profile precedence, and delivery schemes.
@@ -100,7 +100,8 @@ Update documentation in the same change that introduces or changes a contract:
 
 - Update [docs/users-guide.md](users-guide.md) for user-visible library,
   command-line, configuration, or output behaviour.
-- Update [docs/prosidy-darn-technical-design.md](prosidy-darn-technical-design.md)
+- Update
+  [docs/prosidy-darn-technical-design.md](prosidy-darn-technical-design.md)
   when architecture, public contracts, or design rationale changes.
 - Add or update an ADR when a decision constrains future implementation.
 - Add component architecture documentation when internal interfaces or

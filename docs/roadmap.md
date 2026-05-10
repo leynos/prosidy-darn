@@ -59,7 +59,7 @@ to implement Phase 1 consistently. Its outcome gates the ADR and package
 boundary work that follows. See prosidy-darn-technical-design.md §§4, 9, 16,
 and 18.
 
-- [ ] 1.0.1. Create baseline developer docs and initial ADR files.
+- [x] 1.0.1. Create baseline developer docs and initial ADR files.
   - Add `docs/developers-guide.md` with the hexagonal package layout, local
     quality gates, testing expectations, and documentation update rules.
   - Place the initial ADR files under `docs/` so Phase 1 decisions have stable

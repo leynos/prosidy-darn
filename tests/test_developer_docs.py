@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import pathlib
 
-
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOCS_DIR = REPO_ROOT / "docs"
 DEVELOPERS_GUIDE = DOCS_DIR / "developers-guide.md"

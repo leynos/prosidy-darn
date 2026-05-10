@@ -5,7 +5,7 @@ This ExecPlan (execution plan) is a living document. The sections
 `Decision Log`, and `Outcomes & Retrospective` must be kept up to date as work
 proceeds.
 
-Status: IN PROGRESS
+Status: COMPLETE
 
 ## Purpose / big picture
 
@@ -395,9 +395,14 @@ ExecPlan work.
   users' guide needs no change because no user-facing behaviour changed, and
   the technical design already covers the conventions summarized in the
   developer guide.
-- [ ] Validate all gates.
-- [ ] Mark roadmap item 1.0.1 done after implementation validation.
-- [ ] Commit, push, and open the draft PR.
+- [x] 2026-05-10: Ran final gates. `make check-fmt`, `make markdownlint`,
+  `make nixie`, `make lint`, `make typecheck`, and `make test` passed.
+- [x] 2026-05-10: Observed `make fmt` still fails because `mdformat-all`
+  rewrites existing design-stage review tables into a form that
+  `markdownlint --fix` reports as MD060. The final checking gates pass after
+  restoring unrelated formatter churn.
+- [x] 2026-05-10: Marked roadmap item 1.0.1 done.
+- [ ] Commit, push, and update the draft PR.
 
 ## Surprises & Discoveries
 
@@ -412,6 +417,10 @@ ExecPlan work.
   `make nixie`, in addition to the user's requested Python gates.
 - `coderabbit review --agent` is installed, but the service currently cannot
   return reviews because the account is out of usage credits.
+- `make fmt` is not currently idempotent for the whole repository because it
+  rewrites existing wide tables in
+  `docs/prosidy-darn-logisphere-design-stage-review.md` into a form that
+  `markdownlint --fix` still rejects with MD060 table-column-style errors.
 
 ## Decision Log
 
@@ -442,5 +451,14 @@ ExecPlan work.
 ## Outcomes & Retrospective
 
 The draft plan has been created but not approved or implemented. Implementation
-outcomes, validation transcripts, and follow-up lessons must be recorded here
-after approval and execution.
+is complete. The branch now adds:
+
+- `docs/developers-guide.md`;
+- proposed ADR locations for ADR-002, ADR-003, and ADR-004;
+- `tests/test_developer_docs.py` for developer-guide and ADR discoverability;
+- roadmap completion for item 1.0.1.
+
+Validation passed for `make check-fmt`, `make markdownlint`, `make nixie`,
+`make lint`, `make typecheck`, and `make test`. The test suite reports 9 tests
+passing. `make fmt` was attempted and remains blocked by pre-existing
+repository formatter churn described in `Surprises & Discoveries`.
