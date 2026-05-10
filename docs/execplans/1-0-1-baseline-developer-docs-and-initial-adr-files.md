@@ -402,6 +402,9 @@ ExecPlan work.
   `markdownlint --fix` reports as MD060. The final checking gates pass after
   restoring unrelated formatter churn.
 - [x] 2026-05-10: Marked roadmap item 1.0.1 done.
+- [x] 2026-05-10: Ran a final `coderabbit review --agent` attempt after
+  close-out. It failed before producing review findings because the account is
+  still out of usage credits.
 - [ ] Commit, push, and update the draft PR.
 
 ## Surprises & Discoveries
@@ -462,3 +465,6 @@ Validation passed for `make check-fmt`, `make markdownlint`, `make nixie`,
 `make lint`, `make typecheck`, and `make test`. The test suite reports 9 tests
 passing. `make fmt` was attempted and remains blocked by pre-existing
 repository formatter churn described in `Surprises & Discoveries`.
+CodeRabbit was invoked after the major milestones and at close-out, but the
+service returned no review findings because the account is out of usage
+credits.
