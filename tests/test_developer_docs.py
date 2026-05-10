@@ -62,7 +62,9 @@ def test_initial_adrs_are_discoverable_from_developers_guide() -> None:
 def test_initial_adrs_are_discoverable_from_roadmap() -> None:
     """Keep the roadmap and developer guide aligned on blocking ADR paths."""
     roadmap = read_document(ROADMAP)
-    missing_links = [adr_path for adr_path in INITIAL_ADR_PATHS if adr_path not in roadmap]
+    missing_links = [
+        adr_path for adr_path in INITIAL_ADR_PATHS if adr_path not in roadmap
+    ]
 
     assert missing_links == []
 

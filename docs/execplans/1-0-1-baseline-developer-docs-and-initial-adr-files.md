@@ -379,8 +379,15 @@ ExecPlan work.
 - [x] 2026-05-10: Added `tests/test_developer_docs.py` and confirmed the
   focused test fails for the expected missing developer guide and ADR
   placeholder files.
-- [ ] Run CodeRabbit review after the Milestone 2 test commit.
-- [ ] Create the developer guide and proposed ADR placeholders.
+- [x] 2026-05-10: Ran `coderabbit review --agent` after the Milestone 2 test
+  commit. The service failed before producing review findings because the
+  account is out of usage credits, so there were no concerns to clear.
+- [x] 2026-05-10: Created `docs/developers-guide.md` and proposed ADR
+  placeholders for ADR-002, ADR-003, and ADR-004.
+- [x] 2026-05-10: Re-ran `uv run pytest tests/test_developer_docs.py -v`;
+  all 5 documentation contract tests passed.
+- [ ] Run CodeRabbit review after the developer guide and ADR placeholder
+  commit.
 - [ ] Validate all gates.
 - [ ] Mark roadmap item 1.0.1 done after implementation validation.
 - [ ] Commit, push, and open the draft PR.
@@ -396,6 +403,8 @@ ExecPlan work.
   exercise in this task.
 - The Makefile has separate Markdown gates, `make markdownlint` and
   `make nixie`, in addition to the user's requested Python gates.
+- `coderabbit review --agent` is installed, but the service currently cannot
+  return reviews because the account is out of usage credits.
 
 ## Decision Log
 
@@ -415,6 +424,10 @@ ExecPlan work.
 - 2026-05-10: Begin implementation after explicit user approval. Rationale:
   the approval gate has been satisfied, so the plan status moves from `DRAFT`
   to `IN PROGRESS`.
+- 2026-05-10: Continue after the Milestone 2 CodeRabbit invocation failed for
+  billing credits. Rationale: the requested review command was run, the failure
+  happened before any review findings were produced, and therefore there were
+  no concerns to clear before the next milestone.
 
 ## Outcomes & Retrospective
 
