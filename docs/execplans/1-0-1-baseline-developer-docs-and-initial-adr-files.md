@@ -16,8 +16,8 @@ open `docs/developers-guide.md` and see the hexagonal package layout, quality
 gates, testing expectations, documentation update rules, and links to the ADR
 locations that block Phase 1 work.
 
-This plan is pre-implementation. It must be approved before the developer guide
-or ADR placeholder files are created.
+This plan was approved and implemented. The developer guide and ADR placeholder
+files now exist, and the roadmap entry has been marked complete.
 
 The observable result is documentation, not runtime behaviour. Success is
 visible when:
@@ -405,7 +405,9 @@ ExecPlan work.
 - [x] 2026-05-10: Ran a final `coderabbit review --agent` attempt after
   close-out. It failed before producing review findings because the account is
   still out of usage credits.
-- [ ] Commit, push, and update the draft PR.
+- [x] 2026-05-10: Committed the implementation, pushed the branch, and updated
+  the draft PR description with the implementation summary and validation
+  evidence.
 
 ## Surprises & Discoveries
 
@@ -453,8 +455,7 @@ ExecPlan work.
 
 ## Outcomes & Retrospective
 
-The draft plan has been created but not approved or implemented. Implementation
-is complete. The branch now adds:
+Implementation is complete. The branch now adds:
 
 - `docs/developers-guide.md`;
 - proposed ADR locations for ADR-002, ADR-003, and ADR-004;

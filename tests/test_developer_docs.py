@@ -33,7 +33,7 @@ def read_document(path: pathlib.Path) -> str:
 
 def test_developers_guide_exists() -> None:
     """Provide a stable maintainer-facing guide for Phase 1 contributors."""
-    assert DEVELOPERS_GUIDE.is_file()
+    assert DEVELOPERS_GUIDE.is_file(), f"missing developer guide: {DEVELOPERS_GUIDE}"
 
 
 def test_initial_adr_locations_exist() -> None:
@@ -44,7 +44,7 @@ def test_initial_adr_locations_exist() -> None:
         if not (REPO_ROOT / adr_path).is_file()
     ]
 
-    assert missing_paths == []
+    assert missing_paths == [], f"missing ADR files: {missing_paths}"
 
 
 def test_initial_adrs_are_discoverable_from_developers_guide() -> None:
@@ -55,7 +55,9 @@ def test_initial_adrs_are_discoverable_from_developers_guide() -> None:
         adr_path for adr_path in INITIAL_ADR_PATHS if adr_path not in developers_guide
     ]
 
-    assert missing_links == []
+    assert missing_links == [], (
+        f"missing ADR links in {DEVELOPERS_GUIDE}: {missing_links}"
+    )
 
 
 def test_initial_adrs_are_discoverable_from_roadmap() -> None:
@@ -65,7 +67,7 @@ def test_initial_adrs_are_discoverable_from_roadmap() -> None:
         adr_path for adr_path in INITIAL_ADR_PATHS if adr_path not in roadmap
     ]
 
-    assert missing_links == []
+    assert missing_links == [], f"missing ADR links in {ROADMAP}: {missing_links}"
 
 
 def test_phase_one_quality_gates_are_documented() -> None:
@@ -75,4 +77,4 @@ def test_phase_one_quality_gates_are_documented() -> None:
         gate for gate in PHASE_ONE_QUALITY_GATES if gate not in developers_guide
     ]
 
-    assert missing_gates == []
+    assert missing_gates == [], f"missing documented quality gates: {missing_gates}"
