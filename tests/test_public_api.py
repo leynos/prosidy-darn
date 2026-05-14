@@ -15,7 +15,7 @@ import prosidy_darn._runtime as runtime
 class TestPublicApi:
     """Tests for the public package API."""
 
-    def test_hello_uses_python_fallback(  # noqa: PLR6301
+    def test_hello_uses_python_fallback(
         self,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
@@ -24,7 +24,7 @@ class TestPublicApi:
 
         assert prosidy_darn.hello() == "hello from Python"
 
-    def test_runtime_import_reraises_nested_module_errors(  # noqa: PLR6301
+    def test_runtime_import_reraises_nested_module_errors(
         self,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
@@ -51,7 +51,7 @@ class TestPublicApi:
         assert exc_info.value.name == "inner_missing"
         importlib.reload(runtime)
 
-    def test_runtime_import_does_not_load_fallback_when_rust_loads(  # noqa: PLR6301
+    def test_runtime_import_does_not_load_fallback_when_rust_loads(
         self,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
