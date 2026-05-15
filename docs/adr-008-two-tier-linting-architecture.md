@@ -74,15 +74,20 @@ repository reference.
 The Makefile keeps the Pylint invocation configurable through:
 
 - `PYLINT_PYTHON`;
+- `PYLINT_PACKAGE_TARGETS`;
+- `PYLINT_TEST_TARGETS`;
+- `PYLINT_EXTRA_TARGETS`;
 - `PYLINT_TARGETS`;
 - `PYLINT_PYPY_SHIM_REF`;
 - `PYLINT_PYPY_SHIM`;
 - `PYLINT`.
 
-The default targets are `prosidy_darn` and `tests`, which match this
-repository's package and test layout. The Pylint configuration in
-`pyproject.toml` disables all messages by default and enables only the selected
-diagnostics imported from `episodic`.
+The default package and test targets are `prosidy_darn` and `tests`, which
+match this repository's current layout. Future Python tooling or script paths
+must be added through `PYLINT_EXTRA_TARGETS` or another explicit target group
+so the PyPy-backed Pylint tier expands with the repository. The Pylint
+configuration in `pyproject.toml` disables all messages by default and enables
+only the selected diagnostics imported from `episodic`.
 
 ## Goals and non-goals
 

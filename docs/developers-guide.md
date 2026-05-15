@@ -132,16 +132,23 @@ The lint target is controlled by these Makefile variables:
 
 - `PYLINT_PYTHON`: the interpreter used by `uv tool run` for Pylint. The
   default is `pypy`.
-- `PYLINT_TARGETS`: the paths passed to Pylint. The default is
-  `prosidy_darn tests`.
+- `PYLINT_PACKAGE_TARGETS`: package paths passed to Pylint. The default is
+  `prosidy_darn`.
+- `PYLINT_TEST_TARGETS`: test paths passed to Pylint. The default is `tests`.
+- `PYLINT_EXTRA_TARGETS`: additional Python tooling or script paths that
+  should enter the PyPy-backed Pylint tier as the repository grows.
+- `PYLINT_TARGETS`: the complete path list passed to Pylint. By default, this
+  combines package, test, and extra targets.
 - `PYLINT_PYPY_SHIM_REF`: the pinned commit of the
   `leynos/pylint-pypy-shim` repository.
 - `PYLINT_PYPY_SHIM`: the `git+https` package URL assembled from the pinned
   shim reference.
 - `PYLINT`: the complete `uv tool run` command that invokes `pylint-pypy`.
 
-Override these variables only for local diagnosis. Committed changes should
-keep the defaults aligned with the shared lint policy.
+Override `PYLINT_TARGETS` only for local diagnosis. Committed changes should
+extend `PYLINT_PACKAGE_TARGETS`, `PYLINT_TEST_TARGETS`, or
+`PYLINT_EXTRA_TARGETS` so new Python paths do not silently fall outside the
+second lint tier.
 
 ## Episodic lint policy
 
@@ -152,8 +159,9 @@ tier.
 
 The imported policy has these local adaptations:
 
-- `PYLINT_TARGETS` points at `prosidy_darn` and `tests`, matching this
-  repository's package and test layout.
+- `PYLINT_PACKAGE_TARGETS` and `PYLINT_TEST_TARGETS` point at `prosidy_darn`
+  and `tests`, matching this repository's package and test layout.
+- `PYLINT_EXTRA_TARGETS` is reserved for future Python tooling or script paths.
 - Pylint remains allow-listed rather than enabling the full Pylint catalogue.
 - Ruff's Python target is set to Python 3.14.
 - Test files ignore selected argument-count and self-use checks that are noisy

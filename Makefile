@@ -5,7 +5,12 @@ TOOLS = $(MDFORMAT_ALL) ruff ty $(MDLINT) uv
 VENV_TOOLS = pytest
 UV_ENV = UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools
 PYLINT_PYTHON ?= pypy
-PYLINT_TARGETS ?= prosidy_darn tests
+PYLINT_PACKAGE_TARGETS ?= prosidy_darn
+PYLINT_TEST_TARGETS ?= tests
+# Add future Python tooling or script paths here so the PyPy-backed Pylint tier
+# expands with the repository instead of silently checking only package code.
+PYLINT_EXTRA_TARGETS ?=
+PYLINT_TARGETS ?= $(PYLINT_PACKAGE_TARGETS) $(PYLINT_TEST_TARGETS) $(PYLINT_EXTRA_TARGETS)
 PYLINT_PYPY_SHIM_REF ?= 726d09f968b4d729ee4b29c71fc732e744854f3b
 PYLINT_PYPY_SHIM = git+https://github.com/leynos/pylint-pypy-shim.git@$(PYLINT_PYPY_SHIM_REF)
 PYLINT = $(UV_ENV) uv tool run --python $(PYLINT_PYTHON) --from '$(PYLINT_PYPY_SHIM)' pylint-pypy
