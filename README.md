@@ -70,6 +70,8 @@ ______________________________________________________________________
 
 - [Prosidy Darn users' guide](docs/users-guide.md) — installation, current
   smoke test, and planned library and CLI usage
+- [Developers' guide](docs/developers-guide.md) — local quality gates,
+  linting policy, and repository workflow notes
 - [Technical design](docs/prosidy-darn-technical-design.md) — architecture,
   algorithm, CLI, and verification design
 - [Roadmap](docs/roadmap.md) — planned delivery phases and task breakdown

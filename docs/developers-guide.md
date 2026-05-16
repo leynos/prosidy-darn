@@ -5,6 +5,22 @@ for product and architecture decisions remains
 [docs/prosidy-darn-technical-design.md](prosidy-darn-technical-design.md), and
 the delivery order remains [docs/roadmap.md](roadmap.md).
 
+It is also the developer-facing companion to the users' guide and records how
+repository quality gates are expected to run before changes are committed.
+
+## Local environment
+
+Build the development environment with:
+
+```bash
+make build
+```
+
+The Makefile uses `uv` for virtual environment creation, dependency
+installation, and tool execution. The repository targets Python 3.14, and the
+quality gates assume the shared `uv` and Cargo caches supplied by the agent
+host.
+
 ## Development overview
 
 Phase 1 establishes contracts before feature work depends on them. Keep changes
@@ -61,20 +77,128 @@ that use case to the outbound adapters it needs.
 Cyclopts, and concrete port implementations because its job is wiring. Domain
 and application modules must stay free of those infrastructure dependencies.
 
-## Local quality gates
+## Quality gates
 
-Use Makefile targets rather than invoking tools directly:
+Run the full default gate with:
 
-- `make check-fmt`: check Python and Markdown-adjacent formatting.
-- `make typecheck`: run the project type checker.
-- `make lint`: run Python lint checks.
-- `make test`: run `pytest` tests.
+```bash
+make
+```
+
+For code changes, run the relevant gates before committing:
+
+- `make check-fmt`: verify Python and Markdown-adjacent formatting.
+- `make lint`: run the two-tier Python lint gate.
+- `make typecheck`: run `ty check`.
+- `make test`: run the pytest suite.
+
+For Markdown-only changes, run:
+
 - `make markdownlint`: lint Markdown files.
 - `make nixie`: validate Mermaid diagrams.
+- `git diff --check`: catch trailing whitespace and conflict markers.
 
-Run all relevant gates before committing. For code changes, run
-`make check-fmt`, `make typecheck`, `make lint`, and `make test`. For Markdown
-changes, also run `make markdownlint` and `make nixie`.
+## Two-tier linting
+
+`make lint` uses two tiers:
+
+1. Ruff runs first with the repository's broad lint profile.
+2. Pylint runs second through the PyPy-backed
+   [`pylint-pypy-shim`](https://github.com/leynos/pylint-pypy-shim) wrapper.
+
+Run the lint gate with:
+
+```bash
+make lint
+```
+
+Ruff is the fast, comprehensive lint tier. It covers syntax hygiene, import
+rules, security checks, complexity limits, docstring checks, naming,
+performance warnings, pytest idioms, and Ruff-specific rules.
+
+Pylint is the focused second tier. It is intentionally allow-listed in
+`pyproject.toml`, so it catches selected diagnostics that complement Ruff
+without duplicating Ruff's broader responsibility. The Pylint tier currently
+focuses on logging interpolation, structural pattern matching hazards,
+control-flow simplification, resource handling, deprecated standard-library
+usage, mutable-iteration hazards, and selected design limits.
+
+The lint architecture is recorded in
+[ADR 008: Two-tier linting architecture](adr-008-two-tier-linting-architecture.md).
+
+## Makefile lint variables
+
+The lint target is controlled by these Makefile variables:
+
+- `PYLINT_PYTHON`: the interpreter used by `uv tool run` for Pylint. The
+  default is `pypy`.
+- `PYLINT_PACKAGE_TARGETS`: package paths passed to Pylint. The default is
+  `prosidy_darn`.
+- `PYLINT_TEST_TARGETS`: test paths passed to Pylint. The default is `tests`.
+- `PYLINT_EXTRA_TARGETS`: additional Python tooling or script paths that
+  should enter the PyPy-backed Pylint tier as the repository grows.
+- `PYLINT_TARGETS`: the complete path list passed to Pylint. By default, this
+  combines package, test, and extra targets.
+- `PYLINT_PYPY_SHIM_REF`: the pinned commit of the
+  `leynos/pylint-pypy-shim` repository.
+- `PYLINT_PYPY_SHIM`: the `git+https` package URL assembled from the pinned
+  shim reference.
+- `PYLINT`: the complete `uv tool run` command that invokes `pylint-pypy`.
+
+Override `PYLINT_TARGETS` only for local diagnosis. Committed changes should
+extend `PYLINT_PACKAGE_TARGETS`, `PYLINT_TEST_TARGETS`, or
+`PYLINT_EXTRA_TARGETS` so new Python paths do not silently fall outside the
+second lint tier.
+
+## Episodic lint policy
+
+Prosidy Darn imports its lint policy from
+[`leynos/episodic`](https://github.com/leynos/episodic). That policy keeps Ruff
+as the primary lint gate and uses a pinned PyPy-backed Pylint shim as a second
+tier.
+
+The imported policy has these local adaptations:
+
+- `PYLINT_PACKAGE_TARGETS` and `PYLINT_TEST_TARGETS` point at `prosidy_darn`
+  and `tests`, matching this repository's package and test layout.
+- `PYLINT_EXTRA_TARGETS` is reserved for future Python tooling or script paths.
+- Pylint remains allow-listed rather than enabling the full Pylint catalogue.
+- Ruff's Python target is set to Python 3.14.
+- Test files ignore selected argument-count and self-use checks that are noisy
+  for pytest-style test methods.
+
+When `episodic` changes its lint policy, update Prosidy Darn deliberately:
+
+1. Compare the `Makefile` lint target and Pylint shim pin.
+2. Compare `[tool.ruff]`, `[tool.ruff.lint]`, and nested Ruff lint sections.
+3. Compare `[tool.pylint.*]` sections and message allow-lists.
+4. Run the full local quality gates before committing.
+
+## `pyproject.toml` lint configuration
+
+The lint configuration lives in these `pyproject.toml` sections:
+
+- `[tool.ruff]`: global Ruff settings, including line length, preview mode, and
+  Python target version.
+- `[tool.ruff.lint]`: selected Ruff rule families and project-level ignores.
+- `[tool.ruff.lint.per-file-ignores]`: test-specific rule exceptions.
+- `[tool.ruff.lint.flake8-import-conventions]`: banned `from` import sources.
+- `[tool.ruff.lint.flake8-import-conventions.aliases]`: required import
+  aliases for common libraries and standard-library modules.
+- `[tool.ruff.lint.flake8-tidy-imports.banned-api]`: deprecated `typing.*`
+  names that should be replaced with modern built-in, `collections.abc`,
+  `contextlib`, `collections`, or `re` alternatives.
+- `[tool.ruff.lint.pydocstyle]`: NumPy-style docstring convention.
+- `[tool.ruff.lint.mccabe]`: cyclomatic-complexity threshold.
+- `[tool.ruff.lint.pylint]`: Ruff's Pylint-compatible design thresholds.
+- `[tool.pylint.main]`: recursive target expansion and maximum module length.
+- `[tool.pylint.design]`: Pylint design thresholds for arguments, locals,
+  statements, and positional arguments.
+- `[tool.pylint."messages control"]`: the focused Pylint allow-list.
+
+Keep comments in the lint sections close to the rule or threshold they explain.
+This makes future imports from `episodic` easier to review and keeps policy
+changes auditable.
 
 ## Testing expectations by phase
 
@@ -120,3 +244,4 @@ Accepted scope constraints already exist:
 
 - [docs/adr-006-test-matrix-phase-scope.md](adr-006-test-matrix-phase-scope.md)
 - [docs/adr-007-cli-observability-scope.md](adr-007-cli-observability-scope.md)
+- [docs/adr-008-two-tier-linting-architecture.md](adr-008-two-tier-linting-architecture.md)

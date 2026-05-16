@@ -32,6 +32,17 @@ Expected output:
 hello from Python
 ```
 
+Run the local lint gate with:
+
+```bash
+make lint
+```
+
+The lint gate runs Ruff first, then runs a focused Pylint pass through the
+[`pylint-pypy-shim`](https://github.com/leynos/pylint-pypy-shim) wrapper under
+PyPy. The Pylint tier is intentionally allow-listed so it complements Ruff
+without replacing Ruff's broader rule set.
+
 ## Library usage
 
 The planned public library API centres on `segment_markdown` and
