@@ -4,7 +4,7 @@ This ExecPlan (execution plan) is a living document. The sections `Constraints`,
  `Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`, `Decision Log`,
 and `Outcomes & Retrospective` must be kept up to date as work proceeds.
 
-Status: IN PROGRESS
+Status: COMPLETE
 
 ## Purpose / big picture
 
@@ -208,7 +208,12 @@ medium. Likelihood: medium. Mitigation: Add or extend
   `make lint`, and `make test`.
 - [x] (2026-05-20T11:37:04+02:00) Ran `coderabbit review --agent`;
   CodeRabbit completed with zero findings.
-- [ ] Commit, push and update the draft pull request.
+- [x] (2026-05-20T11:37:04+02:00) Committed the implementation as
+  `ca2f8ef` and pushed it to
+  `origin/1-1-1-markdown-parser-boundary-adr`.
+- [x] (2026-05-20T11:37:04+02:00) Updated draft pull request
+  `https://github.com/leynos/prosidy-darn/pull/11` with the implemented
+  scope, validation evidence, ExecPlan reference and Lody session reference.
 
 ## Surprises & discoveries
 
@@ -273,6 +278,10 @@ reporting for Markdown plain-text fallback and closes roadmap item 1.1.1. The
 roadmap item is now marked done. Local validation passed through
 `make check-fmt`, `make markdownlint`, `make nixie`, `make typecheck`,
 `make lint` and `make test`. CodeRabbit reported zero findings.
+
+Final outcome: commit `ca2f8ef` implements the documentation closure and draft
+pull request 11 now describes the implemented scope and validation evidence.
+This task intentionally introduced no parser code or new dependency.
 
 ## Context and orientation
 
