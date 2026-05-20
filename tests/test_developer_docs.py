@@ -7,6 +7,7 @@ import pathlib
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOCS_DIR = REPO_ROOT / "docs"
 DEVELOPERS_GUIDE = DOCS_DIR / "developers-guide.md"
+MARKDOWN_PARSER_ADR = DOCS_DIR / "adr-001-markdown-parser-boundary.md"
 ROADMAP = DOCS_DIR / "roadmap.md"
 
 INITIAL_ADR_PATHS = (
@@ -78,3 +79,46 @@ def test_phase_one_quality_gates_are_documented() -> None:
     ]
 
     assert missing_gates == [], f"missing documented quality gates: {missing_gates}"
+
+
+def test_markdown_parser_boundary_adr_is_accepted() -> None:
+    """Ensure roadmap item 1.1.1 has a settled parser-boundary decision."""
+    markdown_parser_adr = read_document(MARKDOWN_PARSER_ADR)
+
+    assert "## Status" in markdown_parser_adr
+    assert "Accepted on" in markdown_parser_adr
+
+
+def test_markdown_parser_boundary_adr_defines_v1_adapter_order() -> None:
+    """Keep the selected Markdown parser order explicit before adapter work."""
+    markdown_parser_adr = read_document(MARKDOWN_PARSER_ADR)
+    required_phrases = (
+        "V1 ships one Markdown-aware parser adapter plus a\nplain-text fallback",
+        (
+            "The initial Markdown-aware adapter is `mdast` when its\n"
+            "version and compatibility probe pass"
+        ),
+        (
+            "PyO3 `markdown-rs` range\n"
+            "extractor is a contingency, not a concurrent v1 adapter"
+        ),
+        "must report degradation when used for Markdown input",
+    )
+
+    missing_phrases = [
+        phrase for phrase in required_phrases if phrase not in markdown_parser_adr
+    ]
+
+    assert missing_phrases == [], (
+        f"missing parser-boundary commitments in {MARKDOWN_PARSER_ADR}: "
+        f"{missing_phrases}"
+    )
+
+
+def test_markdown_parser_boundary_roadmap_item_is_closed() -> None:
+    """Mark roadmap item 1.1.1 done only once ADR-001 is accepted."""
+    roadmap = read_document(ROADMAP)
+    markdown_parser_adr = read_document(MARKDOWN_PARSER_ADR)
+
+    assert "Accepted on" in markdown_parser_adr
+    assert "- [x] 1.1.1. Record the Markdown parser boundary as an ADR." in roadmap

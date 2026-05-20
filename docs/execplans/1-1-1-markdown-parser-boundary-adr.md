@@ -1,11 +1,10 @@
 # Ratify the Markdown parser boundary Architecture Decision Record (ADR)
 
-This ExecPlan (execution plan) is a living document. The sections
-`Constraints`, `Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`,
-`Decision Log`, and `Outcomes & Retrospective` must be kept up to date as work
-proceeds.
+This ExecPlan (execution plan) is a living document. The sections `Constraints`,
+ `Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`, `Decision Log`,
+and `Outcomes & Retrospective` must be kept up to date as work proceeds.
 
-Status: DRAFT
+Status: IN PROGRESS
 
 ## Purpose / big picture
 
@@ -188,12 +187,28 @@ medium. Likelihood: medium. Mitigation: Add or extend
 - [x] (2026-05-18T22:32:17Z) Used Firecrawl to check current `mdast`,
   `markdown-rs`, and PyPI `mdast` prior art.
 - [x] (2026-05-18T22:32:17Z) Drafted this pre-implementation ExecPlan.
-- [ ] Await explicit user approval before implementing the plan.
-- [ ] After approval, add failing documentation-contract tests.
-- [ ] After approval, align ADR, design, developer/user docs and roadmap as
-  needed.
-- [ ] After approval, run validation gates, CodeRabbit review, commit, push and
-  open or update the draft pull request.
+- [x] (2026-05-20T11:37:04+02:00) Received explicit user approval to
+  implement the plan.
+- [x] (2026-05-20T11:37:04+02:00) Added documentation-contract tests for
+  ADR-001 acceptance, parser adapter order, fallback behaviour and roadmap
+  closure.
+- [x] (2026-05-20T11:37:04+02:00) Ran the focused documentation test and
+  observed the expected failure: ADR-001 passed the new contract checks, while
+  roadmap item 1.1.1 remained unchecked.
+- [x] (2026-05-20T11:37:04+02:00) Marked roadmap item 1.1.1 done after
+  validation evidence showed ADR-001 already satisfies the parser-boundary
+  contract.
+- [x] (2026-05-20T11:37:04+02:00) Reran the focused documentation test and
+  confirmed all eight documentation-contract tests passed.
+- [x] (2026-05-20T11:37:04+02:00) Ran `make fmt`; it surfaced unrelated
+  pre-existing Markdown line-length findings and rewrote unrelated docs, so
+  the unrelated formatter churn was restored.
+- [x] (2026-05-20T11:37:04+02:00) Ran the final local gates successfully:
+  `make check-fmt`, `make markdownlint`, `make nixie`, `make typecheck`,
+  `make lint`, and `make test`.
+- [x] (2026-05-20T11:37:04+02:00) Ran `coderabbit review --agent`;
+  CodeRabbit completed with zero findings.
+- [ ] Commit, push and update the draft pull request.
 
 ## Surprises & discoveries
 
@@ -214,10 +229,23 @@ medium. Likelihood: medium. Mitigation: Add or extend
 - Observation: Firecrawl found that PyPI `mdast` 0.2.1 was released on
   2025-03-28 and provides Python bindings to `markdown-rs`, while the
   `markdown-rs` repository describes byte-accounted parsing with positional
-  information. Evidence: Firecrawl scraped `https://pypi.org/project/mdast/`
-  and `https://github.com/wooorm/markdown-rs`. Impact: The existing ADR's
+  information. Evidence: Firecrawl scraped `https://pypi.org/project/mdast/` and
+   `https://github.com/wooorm/markdown-rs`. Impact: The existing ADR's
   version/probe gate remains important; the package exists, but source-range
   correctness must still be proven locally.
+- Observation: The new focused documentation-contract test did not require an
+  ADR edit. Evidence: `tests/test_developer_docs.py` passed the ADR acceptance,
+  adapter order, probe-gate, PyO3 contingency and degraded-fallback assertions
+  before any ADR changes; only roadmap closure failed. Impact: Implementation
+  can avoid ADR churn and close the roadmap item after validation evidence is
+  present.
+- Observation: `make fmt` can fail after rewriting unrelated Markdown files
+  because it invokes `markdownlint --fix` across the whole repository and then
+  reports existing line-length issues in docs outside this task's scope.
+  Evidence: the formatter reported MD013 findings in the technical design,
+  scripting standards and design-stage review docs. Impact: Restore unrelated
+  churn and rely on `make check-fmt` plus the scoped diff to verify this
+  change.
 
 ## Decision log
 
@@ -238,10 +266,13 @@ medium. Likelihood: medium. Mitigation: Add or extend
 
 ## Outcomes & retrospective
 
-This section is intentionally empty while the plan is in draft. During
-implementation, record whether ADR-001 needed clarification, which tests were
-added, which gates passed, what CodeRabbit reported, and whether roadmap item
-1.1.1 was marked done.
+ADR-001 did not need clarification. The implementation added
+documentation-contract tests that assert ADR-001 is accepted, records the v1
+parser adapter order, keeps PyO3 as a contingency, requires degradation
+reporting for Markdown plain-text fallback and closes roadmap item 1.1.1. The
+roadmap item is now marked done. Local validation passed through
+`make check-fmt`, `make markdownlint`, `make nixie`, `make typecheck`,
+`make lint` and `make test`. CodeRabbit reported zero findings.
 
 ## Context and orientation
 
@@ -341,10 +372,10 @@ dependency additions or broader architecture changes, record the concern in
 `Decision Log` and escalate instead of expanding scope silently.
 
 Milestone 7 commits and opens the draft pull request. Use the `commit-message`
-skill's file-based commit workflow. Push `1-1-1-markdown-parser-boundary-adr`
-to `origin/1-1-1-markdown-parser-boundary-adr` and set upstream tracking.
-Create a draft pull request whose title includes `(1.1.1)`, whose summary links
-this ExecPlan, and whose `## References` section includes the Lody session URL
+skill's file-based commit workflow. Push `1-1-1-markdown-parser-boundary-adr` to
+ `origin/1-1-1-markdown-parser-boundary-adr` and set upstream tracking. Create
+a draft pull request whose title includes `(1.1.1)`, whose summary links this
+ExecPlan, and whose `## References` section includes the Lody session URL
 derived from `echo ${LODY_SESSION_ID}`.
 
 ## Concrete steps
