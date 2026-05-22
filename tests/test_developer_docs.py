@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pathlib
+import re
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOCS_DIR = REPO_ROOT / "docs"
@@ -30,6 +31,11 @@ PHASE_ONE_QUALITY_GATES = (
 def read_document(path: pathlib.Path) -> str:
     """Read a Markdown document using the repository's documentation encoding."""
     return path.read_text(encoding="utf-8")
+
+
+def normalise_whitespace(text: str) -> str:
+    """Collapse Markdown wrapping so contract checks ignore line reflow."""
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def test_developers_guide_exists() -> None:
@@ -91,16 +97,16 @@ def test_markdown_parser_boundary_adr_is_accepted() -> None:
 
 def test_markdown_parser_boundary_adr_defines_v1_adapter_order() -> None:
     """Keep the selected Markdown parser order explicit before adapter work."""
-    markdown_parser_adr = read_document(MARKDOWN_PARSER_ADR)
+    markdown_parser_adr = normalise_whitespace(read_document(MARKDOWN_PARSER_ADR))
     required_phrases = (
-        "V1 ships one Markdown-aware parser adapter plus a\nplain-text fallback",
+        "V1 ships one Markdown-aware parser adapter plus a plain-text fallback",
         (
-            "The initial Markdown-aware adapter is `mdast` when its\n"
-            "version and compatibility probe pass"
+            "The initial Markdown-aware adapter is `mdast` when its version and "
+            "compatibility probe pass"
         ),
         (
-            "PyO3 `markdown-rs` range\n"
-            "extractor is a contingency, not a concurrent v1 adapter"
+            "PyO3 `markdown-rs` range extractor is a contingency, not a "
+            "concurrent v1 adapter"
         ),
         "must report degradation when used for Markdown input",
     )
