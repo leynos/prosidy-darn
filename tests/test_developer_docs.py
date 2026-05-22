@@ -112,7 +112,9 @@ def test_markdown_parser_boundary_adr_defines_v1_adapter_order() -> None:
     )
 
     missing_phrases = [
-        phrase for phrase in required_phrases if phrase not in markdown_parser_adr
+        phrase
+        for phrase in required_phrases
+        if normalise_whitespace(phrase) not in markdown_parser_adr
     ]
 
     assert missing_phrases == [], (

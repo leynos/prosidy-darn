@@ -383,7 +383,7 @@ dependency additions or broader architecture changes, record the concern in
 Milestone 7 commits and opens the draft pull request. Use the `commit-message`
 skill's file-based commit workflow. Push `1-1-1-markdown-parser-boundary-adr` to
  `origin/1-1-1-markdown-parser-boundary-adr` and set upstream tracking. Create
-a draft pull request whose title includes `(1.1.1)`, whose summary links this
+a draft pull request whose title includes `(1.1.1)`, whose summary links to this
 ExecPlan, and whose `## References` section includes the Lody session URL
 derived from `echo ${LODY_SESSION_ID}`.
 
