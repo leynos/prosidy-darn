@@ -75,7 +75,7 @@ swappable behind ports. Its outcome informs dependency selection, package
 layout, and the first implementation slice. See
 prosidy-darn-technical-design.md §§8, 10, and 18.
 
-- [ ] 1.1.1. Record the Markdown parser boundary as an ADR.
+- [x] 1.1.1. Record the Markdown parser boundary as an ADR.
   - Requires 1.0.1.
   - Decide whether v1 ships one Markdown-aware parser plus plain text or ships
     both `mdast` and a PyO3 `markdown-rs` range extractor immediately.
