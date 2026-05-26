@@ -274,29 +274,32 @@ accepted policy.
   `darn-it`, PEP 621, PEP 735, and lazy-import idioms for optional Python
   dependencies.
 - [x] (2026-05-23T00:00:00Z) Drafted this pre-implementation ExecPlan.
-- [ ] Receive explicit user approval to implement the plan.
-- [ ] Rename the branch to
-  `1-1-2-record-token-limit-and-semantic-scoring-dependency-policy` and set
-  upstream tracking after the plan is approved.
-- [ ] Add documentation-contract tests in `tests/test_developer_docs.py` for
-  ADR-002 acceptance, optional-dependency policy, default-disabled adapters,
-  diagnostic requirement, PEP 621 extras mechanism, and roadmap closure.
-- [ ] Run the focused documentation test and observe the expected failure
-  before changing the ADR.
-- [ ] Edit `docs/adr-002-tokenizer-and-semantic-scoring-policy.md` from
-  "Proposed" to "Accepted" with the chosen policy and supporting sections.
-- [ ] Cross-check `docs/developers-guide.md`,
-  `docs/prosidy-darn-technical-design.md`, and `docs/users-guide.md` for
-  conflicting wording; update only where required.
-- [ ] Mark roadmap item 1.1.2 done in `docs/roadmap.md` after ADR-002 is
-  accepted and the contract tests pass.
+- [x] (2026-05-26) Received explicit user approval to implement the plan.
+- [x] (2026-05-26) Branch
+  `1-1-2-record-token-limit-and-semantic-scoring-dependency-policy` already
+  tracks the matching remote.
+- [x] (2026-05-26) Added documentation-contract tests in
+  `tests/test_developer_docs.py` for ADR-002 acceptance, optional-dependency
+  policy, default-disabled adapters, diagnostic requirement, PEP 621 extras
+  mechanism, and roadmap closure.
+- [x] (2026-05-26) Ran the focused documentation test and confirmed the
+  three new tests failed for the expected reasons before changing the ADR.
+- [x] (2026-05-26) Edited
+  `docs/adr-002-tokenizer-and-semantic-scoring-policy.md` from "Proposed" to
+  "Accepted on 2026-05-26" with options A-D, decision outcome bulleting the
+  policy commitments, goals and non-goals, migration plan, risks, and
+  architectural rationale.
+- [x] (2026-05-26) Cross-checked surrounding docs and updated only
+  `docs/prosidy-darn-technical-design.md` §18 to remove the closed
+  tokenizer open decision and record ADR-002's outcome alongside ADR-001's.
+- [x] (2026-05-26) Marked roadmap item 1.1.2 done in `docs/roadmap.md` once
+  ADR-002 was accepted and the contract tests passed.
 - [ ] Run the final local gates sequentially: `make check-fmt`,
   `make markdownlint`, `make nixie`, `make typecheck`, `make lint`,
   `make test`.
 - [ ] Run `coderabbit review --agent` and resolve in-scope concerns.
 - [ ] Commit the change using a file-based commit message.
-- [ ] Push the branch and create a draft pull request whose title contains
-  `(1.1.2)` and whose body references this ExecPlan and the Lody session.
+- [ ] Push the branch to the existing upstream.
 
 ## Surprises & discoveries
 

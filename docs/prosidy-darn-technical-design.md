@@ -1225,7 +1225,6 @@ non-trivial adapter lands.
 
 ## 18. Open decisions
 
-- Which tokenizer should provide optional token limits.
 - Whether profile files should allow arbitrary custom rule expressions or only
   named rule weights.
 - Which vendor renderer should be the first non-SSML target.
@@ -1234,6 +1233,13 @@ non-trivial adapter lands.
 ADR-001 accepts `mdast` as the initial Markdown-aware parser when its version
 and compatibility probe pass, with PyO3 retained as a contingency rather than a
 concurrent v1 adapter.
+
+ADR-002 accepts `tiktoken` as the first v1 `TokenCounter` candidate behind
+the port, keeps `tokenizers`, `transformers` `AutoTokenizer`, and
+`sentence-transformers` as eligible future adapters behind the same ports,
+declares optional dependencies via PEP 621 `[project.optional-dependencies]`,
+and requires default-disabled adapters that raise an explicit `ImportError`
+naming the extra to install when their optional dependency is missing.
 
 ## 19. References
 

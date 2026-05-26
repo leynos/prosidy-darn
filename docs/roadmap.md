@@ -83,7 +83,7 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - See prosidy-darn-technical-design.md §§1 and 10.
   - Success: one accepted ADR defines the parser adapter order and fallback
     behaviour.
-- [ ] 1.1.2. Record the token-limit and semantic-scoring dependency policy.
+- [x] 1.1.2. Record the token-limit and semantic-scoring dependency policy.
   - Requires 1.0.1 and 1.1.1.
   - Decide which token counter is optional in v1 and how embedding adapters stay
     out of the core import path.

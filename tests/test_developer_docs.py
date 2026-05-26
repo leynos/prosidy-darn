@@ -9,6 +9,7 @@ REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOCS_DIR = REPO_ROOT / "docs"
 DEVELOPERS_GUIDE = DOCS_DIR / "developers-guide.md"
 MARKDOWN_PARSER_ADR = DOCS_DIR / "adr-001-markdown-parser-boundary.md"
+TOKENIZER_POLICY_ADR = DOCS_DIR / "adr-002-tokenizer-and-semantic-scoring-policy.md"
 ROADMAP = DOCS_DIR / "roadmap.md"
 
 INITIAL_ADR_PATHS = (
@@ -130,3 +131,68 @@ def test_markdown_parser_boundary_roadmap_item_is_closed() -> None:
 
     assert "Accepted on" in markdown_parser_adr
     assert "- [x] 1.1.1. Record the Markdown parser boundary as an ADR." in roadmap
+
+
+def test_tokenizer_policy_adr_is_accepted() -> None:
+    """Ensure roadmap item 1.1.2 has a settled tokenizer-and-scoring decision."""
+    tokenizer_policy_adr = read_document(TOKENIZER_POLICY_ADR)
+
+    assert "## Status" in tokenizer_policy_adr
+    assert "Accepted on" in tokenizer_policy_adr
+
+
+def test_tokenizer_policy_adr_defines_v1_adapter_policy() -> None:
+    """Lock the accepted ADR-002 policy before downstream adapter work."""
+    tokenizer_policy_adr = normalise_whitespace(read_document(TOKENIZER_POLICY_ADR))
+    required_phrases = (
+        "`tiktoken` is the first v1 `TokenCounter` candidate behind the port",
+        (
+            "`tokenizers`, `transformers` `AutoTokenizer`, and "
+            "`sentence-transformers` remain eligible future adapters behind "
+            "the same ports and are not adopted in v1"
+        ),
+        (
+            "optional dependencies are declared via PEP 621 "
+            "`[project.optional-dependencies]`"
+        ),
+        "pip install prosidy-darn[<extra>]",
+        (
+            "default `TokenCounter` and `SemanticScorer` adapters are disabled "
+            "and return a neutral or empty result"
+        ),
+        (
+            "optional adapters use lazy imports inside the adapter "
+            "implementation and raise an `ImportError` naming the extra to "
+            "install when the dependency is missing"
+        ),
+        (
+            "domain and application modules must not import any optional "
+            "tokenizer or embedding package at module import time"
+        ),
+        (
+            "the public segmentation API does not change with extras "
+            "installed or omitted"
+        ),
+    )
+
+    missing_phrases = [
+        phrase
+        for phrase in required_phrases
+        if normalise_whitespace(phrase) not in tokenizer_policy_adr
+    ]
+
+    assert missing_phrases == [], (
+        f"missing policy commitments in {TOKENIZER_POLICY_ADR}: {missing_phrases}"
+    )
+
+
+def test_tokenizer_policy_roadmap_item_is_closed() -> None:
+    """Mark roadmap item 1.1.2 done only once ADR-002 is accepted."""
+    roadmap = read_document(ROADMAP)
+    tokenizer_policy_adr = read_document(TOKENIZER_POLICY_ADR)
+
+    assert "Accepted on" in tokenizer_policy_adr
+    assert (
+        "- [x] 1.1.2. Record the token-limit and semantic-scoring dependency "
+        "policy." in roadmap
+    )
