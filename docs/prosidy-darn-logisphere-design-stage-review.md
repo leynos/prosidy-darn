@@ -298,7 +298,7 @@ invariant, not just a test-time property.
 
 **What happened:** A user reported that the `audiobook_single_narrator` profile
 split a short dialogue exchange into five tiny units. A contributor adjusted the
- `dialogue_turn_reward` upward to fix the report. This caused a different
+`dialogue_turn_reward` upward to fix the report. This caused a different
 document to produce a single 25-second unit that exceeded the TTS engine's
 practical limit. Another adjustment was made. After three rounds of tuning, the
 punishment values had drifted from their design rationale and no one could

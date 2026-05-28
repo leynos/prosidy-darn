@@ -1,7 +1,7 @@
 # Ratify the Markdown parser boundary Architecture Decision Record (ADR)
 
 This ExecPlan (execution plan) is a living document. The sections `Constraints`,
- `Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`, `Decision Log`,
+`Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`, `Decision Log`,
 and `Outcomes & Retrospective` must be kept up to date as work proceeds.
 
 Status: COMPLETE
@@ -201,19 +201,18 @@ medium. Likelihood: medium. Mitigation: Add or extend
 - [x] (2026-05-20T11:37:04+02:00) Reran the focused documentation test and
   confirmed all eight documentation-contract tests passed.
 - [x] (2026-05-20T11:37:04+02:00) Ran `make fmt`; it surfaced unrelated
-  pre-existing Markdown line-length findings and rewrote unrelated docs, so
-  the unrelated formatter churn was restored.
+  pre-existing Markdown line-length findings and rewrote unrelated docs, so the
+  unrelated formatter churn was restored.
 - [x] (2026-05-20T11:37:04+02:00) Ran the final local gates successfully:
   `make check-fmt`, `make markdownlint`, `make nixie`, `make typecheck`,
   `make lint`, and `make test`.
 - [x] (2026-05-20T11:37:04+02:00) Ran `coderabbit review --agent`;
   CodeRabbit completed with zero findings.
 - [x] (2026-05-20T11:37:04+02:00) Committed the implementation as
-  `ca2f8ef` and pushed it to
-  `origin/1-1-1-markdown-parser-boundary-adr`.
+  `ca2f8ef` and pushed it to `origin/1-1-1-markdown-parser-boundary-adr`.
 - [x] (2026-05-20T11:37:04+02:00) Updated draft pull request
-  `https://github.com/leynos/prosidy-darn/pull/11` with the implemented
-  scope, validation evidence, ExecPlan reference and Lody session reference.
+  `https://github.com/leynos/prosidy-darn/pull/11` with the implemented scope,
+  validation evidence, ExecPlan reference and Lody session reference.
 
 ## Surprises & discoveries
 
@@ -235,7 +234,7 @@ medium. Likelihood: medium. Mitigation: Add or extend
   2025-03-28 and provides Python bindings to `markdown-rs`, while the
   `markdown-rs` repository describes byte-accounted parsing with positional
   information. Evidence: Firecrawl scraped `https://pypi.org/project/mdast/` and
-   `https://github.com/wooorm/markdown-rs`. Impact: The existing ADR's
+  `https://github.com/wooorm/markdown-rs`. Impact: The existing ADR's
   version/probe gate remains important; the package exists, but source-range
   correctness must still be proven locally.
 - Observation: The new focused documentation-contract test did not require an
@@ -249,8 +248,7 @@ medium. Likelihood: medium. Mitigation: Add or extend
   reports existing line-length issues in docs outside this task's scope.
   Evidence: the formatter reported MD013 findings in the technical design,
   scripting standards and design-stage review docs. Impact: Restore unrelated
-  churn and rely on `make check-fmt` plus the scoped diff to verify this
-  change.
+  churn and rely on `make check-fmt` plus the scoped diff to verify this change.
 
 ## Decision log
 
@@ -382,9 +380,9 @@ dependency additions or broader architecture changes, record the concern in
 
 Milestone 7 commits and opens the draft pull request. Use the `commit-message`
 skill's file-based commit workflow. Push `1-1-1-markdown-parser-boundary-adr` to
- `origin/1-1-1-markdown-parser-boundary-adr` and set upstream tracking. Create
-a draft pull request whose title includes `(1.1.1)`, whose summary links to this
-ExecPlan, and whose `## References` section includes the Lody session URL
+`origin/1-1-1-markdown-parser-boundary-adr` and set upstream tracking. Create
+a draft pull request whose title includes `(1.1.1)`, whose summary links to
+this ExecPlan, and whose `## References` section includes the Lody session URL
 derived from `echo ${LODY_SESSION_ID}`.
 
 ## Concrete steps

@@ -32,8 +32,8 @@ stable enough shape.
 Speech Synthesis Markup Language (SSML) is the first renderer target, not the
 source of truth. W3C SSML defines document structure, pronunciation, prosody,
 voice, pause, and marker elements, and its synthesis process explicitly allows
-processors to infer structure and normalization when markup does not provide
-it. [^4] SSML also notes that processor behaviour can vary by synthesis engine.
+processors to infer structure and normalization when markup does not provide it.
+[^4] SSML also notes that processor behaviour can vary by synthesis engine.
 Prosidy Darn therefore keeps an engine-neutral cue intermediate representation
 (IR) and compiles it to SSML or vendor-specific payloads.
 
@@ -368,7 +368,7 @@ silently enter the domain model.
 
 `SourceIndex` is a domain protocol rather than one fixed dataclass. The default
 Python implementation must avoid a dict entry for every byte in large documents.
- `DenseSourceIndex` stores one byte offset per character and a sparse mapping
+`DenseSourceIndex` stores one byte offset per character and a sparse mapping
 only for multibyte byte positions that cannot be derived directly. A
 Rust-backed adapter may provide a more compact implementation as long as it
 satisfies the same conversion, boundary-validation, and slicing methods.
@@ -1234,8 +1234,8 @@ ADR-001 accepts `mdast` as the initial Markdown-aware parser when its version
 and compatibility probe pass, with PyO3 retained as a contingency rather than a
 concurrent v1 adapter.
 
-ADR-002 accepts `tiktoken` as the first v1 `TokenCounter` candidate behind
-the port, keeps `tokenizers`, `transformers` `AutoTokenizer`, and
+ADR-002 accepts `tiktoken` as the first v1 `TokenCounter` candidate behind the
+port, keeps `tokenizers`, `transformers` `AutoTokenizer`, and
 `sentence-transformers` as eligible future adapters behind the same ports,
 declares optional dependencies via PEP 621 `[project.optional-dependencies]`,
 and requires default-disabled adapters that raise an explicit `ImportError`

@@ -17,14 +17,14 @@ changing the optional-dependency policy becomes expensive — every later runtim
 or development dependency choice in task 1.2.2 and Phase 5 semantic scoring
 inherits the policy chosen here.
 
-The repository already contains a stub `docs/adr-002-tokenizer-and-semantic-
-scoring-policy.md` whose status is "Proposed" and whose decision outcome is
-"Pending". This plan therefore treats 1.1.2 as a decision-finalisation and
-closure task. After this plan is approved and implemented, a maintainer can
-observe success by reading the accepted ADR-002, seeing roadmap item 1.1.2
-marked done, running the documentation and Python quality gates without
-failures, and confirming that no optional tokenizer, embedding, or model
-package has been added to `pyproject.toml` yet.
+The repository already contains a stub
+`docs/adr-002-tokenizer-and-semantic- scoring-policy.md` whose status is
+"Proposed" and whose decision outcome is "Pending". This plan therefore treats
+1.1.2 as a decision-finalisation and closure task. After this plan is approved
+and implemented, a maintainer can observe success by reading the accepted
+ADR-002, seeing roadmap item 1.1.2 marked done, running the documentation and
+Python quality gates without failures, and confirming that no optional
+tokenizer, embedding, or model package has been added to `pyproject.toml` yet.
 
 The implementation carried out from this plan must not build a `TokenCounter`
 adapter, a `SemanticScorer` adapter, or any package skeleton. It records,
@@ -58,8 +58,8 @@ drivers, options table, decision outcome, goals and non-goals, migration plan,
 risks, and architectural rationale.
 
 `docs/adr-006-test-matrix-phase-scope.md` scopes Phase 1 tests to
-import-boundary checks, public import tests, developer-doc checks, and ADR
-link validation. It deliberately defers `pytest-bdd`, `syrupy`, Hypothesis,
+import-boundary checks, public import tests, developer-doc checks, and ADR link
+validation. It deliberately defers `pytest-bdd`, `syrupy`, Hypothesis,
 CrossHair, and Verus until the product surfaces they validate exist. Semantic
 scoring regression cases are scoped to Phase 5+ in that same ADR.
 
@@ -70,11 +70,11 @@ that CLI failures already use.
 
 `docs/developers-guide.md` lists ADR-002 as a blocking Phase 1 decision and
 requires architecture and product decision changes to update the relevant
-design or ADR document in the same change. It defines Phase 1 quality gates
-and points contributors at the roadmap as the work sequence.
+design or ADR document in the same change. It defines Phase 1 quality gates and
+points contributors at the roadmap as the work sequence.
 
-`docs/documentation-style-guide.md` defines ADR naming and content
-conventions. ADRs live under `docs/`, use names such as
+`docs/documentation-style-guide.md` defines ADR naming and content conventions.
+ADRs live under `docs/`, use names such as
 `adr-002-tokenizer-and-semantic-scoring-policy.md`, and must include Status,
 Date, Context and problem statement, Decision drivers, Options considered,
 Decision outcome, Goals and non-goals, and Architectural rationale.
@@ -102,16 +102,15 @@ External prior art gathered with Firecrawl supports the decision direction:
   `sentence-transformers/all-MiniLM-L6-v2` model is the conventional small
   local embedding adapter; the library wheel is light (~589 kB) but the
   recommended runtime stack pulls PyTorch ≥1.11, adding a multi-hundred-MB
-  footprint. It must live behind an extra and behind the `SemanticScorer`
-  port.
+  footprint. It must live behind an extra and behind the `SemanticScorer` port.
 - PEP 621 `[project.optional-dependencies]` is the right surface for
   user-facing runtime extras like `tokenizer` and `semantic`. PEP 735
   `[dependency-groups]` is the right surface for development-only groups; it
-  does not install the package or its runtime dependencies and is therefore
-  not appropriate for optional adapter dependencies.
+  does not install the package or its runtime dependencies and is therefore not
+  appropriate for optional adapter dependencies.
 - `darn-it` 1.2.0 on PyPI ships `requires_dist: None` and bundles its
-  tokenizer inside the Rust wheel, demonstrating that downstream consumers
-  need not inherit a Python tokenizer dependency from chunking back-ends.
+  tokenizer inside the Rust wheel, demonstrating that downstream consumers need
+  not inherit a Python tokenizer dependency from chunking back-ends.
 - Lazy-import patterns for optional dependencies in Python libraries
   consistently recommend importing inside the adapter only and raising a
   hint-bearing `ImportError` when missing. PEP 810 (explicit lazy imports) is
@@ -150,14 +149,13 @@ module import time.
 
 Do not add runtime or development dependencies for this roadmap item. Task
 1.2.2 owns the v1 dependency spine for Cyclopts and Rich, and Phase 5 owns the
-embedding-backed semantic scorer. If satisfying 1.1.2 appears to require
-adding any tokenizer, embedding, model, or HTTP client dependency, stop and
-escalate.
+embedding-backed semantic scorer. If satisfying 1.1.2 appears to require adding
+any tokenizer, embedding, model, or HTTP client dependency, stop and escalate.
 
 Keep the public segmentation API unchanged. The policy must specify that
-omitting optional extras must not change the public Python API or CLI
-surface; only the diagnostic-bearing failure mode for missing optional
-dependencies may differ.
+omitting optional extras must not change the public Python API or CLI surface;
+only the diagnostic-bearing failure mode for missing optional dependencies may
+differ.
 
 Use PEP 621 `[project.optional-dependencies]` as the documented mechanism for
 optional adapter extras. Do not document PEP 735 `[dependency-groups]` for
@@ -167,17 +165,16 @@ Default optional adapters must be disabled. Missing optional dependencies must
 produce explicit, actionable diagnostics that name the extra to install, not
 silent fall-through.
 
-Use British English with Oxford spelling. Follow the documentation style
-guide: wrap Markdown paragraphs and bullets at 80 columns, wrap code blocks at
-120 columns, use dash bullets, give every fenced code block a language, and
-caption every table.
+Use British English with Oxford spelling. Follow the documentation style guide:
+wrap Markdown paragraphs and bullets at 80 columns, wrap code blocks at 120
+columns, use dash bullets, give every fenced code block a language, and caption
+every table.
 
-The plan must be approved before implementation begins. Silence is not
-approval.
+The plan must be approved before implementation begins. Silence is not approval.
 
-Do not mark roadmap item 1.1.2 done until the approved implementation has
-added validation evidence, passed the required gates, cleared CodeRabbit
-concerns, been committed, and been pushed.
+Do not mark roadmap item 1.1.2 done until the approved implementation has added
+validation evidence, passed the required gates, cleared CodeRabbit concerns,
+been committed, and been pushed.
 
 ## Tolerances
 
@@ -192,8 +189,8 @@ changes outside these paths:
 - `tests/test_developer_docs.py`
 
 Stop and ask for direction if more than 240 net lines of documentation or more
-than 80 net lines of test code are needed. This item closes an ADR decision;
-it should not become an adapter implementation slice.
+than 80 net lines of test code are needed. This item closes an ADR decision; it
+should not become an adapter implementation slice.
 
 Stop and ask for direction if any of these scope expansions become necessary:
 
@@ -203,8 +200,8 @@ Stop and ask for direction if any of these scope expansions become necessary:
   documenting the future shape in ADR-002;
 - adopting a tokenizer other than `tiktoken` as the first v1 candidate.
 
-Stop and ask for direction if any quality gate still fails after three
-focused fix attempts.
+Stop and ask for direction if any quality gate still fails after three focused
+fix attempts.
 
 Stop and ask for direction if `make fmt` rewrites unrelated Markdown or source
 files. Restore unrelated formatting churn before continuing, unless the user
@@ -236,9 +233,9 @@ Severity: high. Likelihood: medium. Mitigation: Ensure ADR-002 requires an
 explicit, actionable diagnostic naming the missing extra, and that the
 documentation-contract test asserts the diagnostic requirement.
 
-Risk: Picking `tiktoken` as the first candidate could be rejected because it
-is OpenAI-specific. Severity: medium. Likelihood: low. Mitigation: ADR-002
-must frame `tiktoken` as the first v1 candidate, not the only or permanent
+Risk: Picking `tiktoken` as the first candidate could be rejected because it is
+OpenAI-specific. Severity: medium. Likelihood: low. Mitigation: ADR-002 must
+frame `tiktoken` as the first v1 candidate, not the only or permanent
 candidate, and must keep `tokenizers` and `transformers` named as future
 alternatives behind the same port.
 
@@ -270,9 +267,8 @@ accepted policy.
   documentation-contract test patterns, ADR-006 scope, and dependent roadmap
   items.
 - [x] (2026-05-23T00:00:00Z) Used Firecrawl-class research to survey
-  `tiktoken`, `transformers`, `tokenizers`, `sentence-transformers`,
-  `darn-it`, PEP 621, PEP 735, and lazy-import idioms for optional Python
-  dependencies.
+  `tiktoken`, `transformers`, `tokenizers`, `sentence-transformers`, `darn-it`,
+  PEP 621, PEP 735, and lazy-import idioms for optional Python dependencies.
 - [x] (2026-05-23T00:00:00Z) Drafted this pre-implementation ExecPlan.
 - [x] (2026-05-26) Received explicit user approval to implement the plan.
 - [x] (2026-05-26) Branch
@@ -290,84 +286,101 @@ accepted policy.
   policy commitments, goals and non-goals, migration plan, risks, and
   architectural rationale.
 - [x] (2026-05-26) Cross-checked surrounding docs and updated only
-  `docs/prosidy-darn-technical-design.md` §18 to remove the closed
-  tokenizer open decision and record ADR-002's outcome alongside ADR-001's.
+  `docs/prosidy-darn-technical-design.md` §18 to remove the closed tokenizer
+  open decision and record ADR-002's outcome alongside ADR-001's.
 - [x] (2026-05-26) Marked roadmap item 1.1.2 done in `docs/roadmap.md` once
   ADR-002 was accepted and the contract tests passed.
-- [ ] Run the final local gates sequentially: `make check-fmt`,
-  `make markdownlint`, `make nixie`, `make typecheck`, `make lint`,
-  `make test`.
-- [ ] Run `coderabbit review --agent` and resolve in-scope concerns.
-- [ ] Commit the change using a file-based commit message.
-- [ ] Push the branch to the existing upstream.
+- [x] (2026-05-28) Ran the final local gates sequentially:
+  `make check-fmt` (33 files already formatted), `make markdownlint` (29 files,
+  0 errors), `make nixie` (all diagrams validated), `make typecheck` (all
+  checks passed), `make lint` (ruff + pylint-pypy: 10.00/10), `make test` (15
+  passed).
+- [x] (2026-05-28) Ran `coderabbit review --agent` — 0 findings, no concerns.
+- [x] (2026-05-26) Committed the change using a file-based commit message
+  (`f9eaa82`).
+- [x] (2026-05-26) Pushed the branch to the existing upstream and opened
+  draft PR #12.
 
 ## Surprises & discoveries
 
 - Observation: ADR-002 already exists but is marked Proposed with a pending
   outcome. Evidence: `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`
-  lines 3-9 carry status "Proposed" and decision outcome "Pending. Roadmap
-  task 1.1.2 must decide ...". Impact: Implementation should fill the ADR's
-  decision outcome and supporting sections rather than create a new file from
-  scratch.
+  lines 3-9 carry status "Proposed" and decision outcome "Pending. Roadmap task
+  1.1.2 must decide …". Impact: Implementation should fill the ADR's decision
+  outcome and supporting sections rather than create a new file from scratch.
 - Observation: The Python package layout is still scaffold-level. Evidence:
   `prosidy_darn/__init__.py`, `prosidy_darn/_runtime.py`, and
-  `prosidy_darn/pure.py` are the only modules under `prosidy_darn/`; no
-  domain, application, ports, or adapter packages exist yet. Impact: ADR-002
-  must reason about the future port location without implying that the port
-  already exists.
+  `prosidy_darn/pure.py` are the only modules under `prosidy_darn/`; no domain,
+  application, ports, or adapter packages exist yet. Impact: ADR-002 must
+  reason about the future port location without implying that the port already
+  exists.
 - Observation: `pyproject.toml` currently declares no runtime dependencies
   and no `[project.optional-dependencies]` section. Evidence: line 8 reads
-  `dependencies = []` and there is no `[project.optional-dependencies]`
-  table. Impact: ADR-002 documents the future extras shape but the
-  implementation must not add the table or any extra in this task.
+  `dependencies = []` and there is no `[project.optional-dependencies]` table.
+  Impact: ADR-002 documents the future extras shape but the implementation must
+  not add the table or any extra in this task.
 - Observation: `transformers` `AutoTokenizer` cannot be installed without the
   full `transformers` library. Evidence: Hugging Face issue
-  `huggingface/transformers#31043` and the project metadata for
-  `transformers` 5.x. Impact: ADR-002 must rule it out as the first v1
-  candidate while keeping it eligible as a future adapter behind the same
-  port.
+  `huggingface/transformers#31043` and the project metadata for `transformers`
+  5.x. Impact: ADR-002 must rule it out as the first v1 candidate while keeping
+  it eligible as a future adapter behind the same port.
 
 ## Decision log
 
 - Decision: Treat 1.1.2 as a documentation finalisation and closure task.
   Rationale: ADR-002 already exists in Proposed status, the roadmap checkbox
   remains open, and the missing work is policy specification, contract tests,
-  and task closure rather than adapter implementation. Date/Author:
-  2026-05-23 / Claude (planning).
+  and task closure rather than adapter implementation. Date/Author: 2026-05-23
+  / Claude (planning).
 - Decision: Name `tiktoken` as the first v1 `TokenCounter` candidate behind
-  the port. Rationale: It is a small native MIT-licensed wheel, supports
-  Python 3.9+, ships the `cl100k_base` and `o200k_base` encodings, and is the
+  the port. Rationale: It is a small native MIT-licensed wheel, supports Python
+  3.9+, ships the `cl100k_base` and `o200k_base` encodings, and is the
   conventional first choice for small Python CLIs. `transformers`
-  `AutoTokenizer` cannot install standalone (HF issue #31043), and
-  `tokenizers` adds runtime model-file distribution surface. Date/Author:
-  2026-05-23 / Claude (planning).
+  `AutoTokenizer` cannot install standalone (HF issue #31043), and `tokenizers`
+  adds runtime model-file distribution surface. Date/Author: 2026-05-23 /
+  Claude (planning).
 - Decision: Use PEP 621 `[project.optional-dependencies]` to document the
   future extras shape. Rationale: PEP 621 is the standardised mechanism for
-  user-facing published extras; PEP 735 `[dependency-groups]` does not
-  install the package or its runtime dependencies and is therefore unsuited
-  to optional adapter dependencies. Date/Author: 2026-05-23 / Claude
-  (planning).
+  user-facing published extras; PEP 735 `[dependency-groups]` does not install
+  the package or its runtime dependencies and is therefore unsuited to optional
+  adapter dependencies. Date/Author: 2026-05-23 / Claude (planning).
 - Decision: Do not add `tiktoken`, `tokenizers`, `transformers`,
-  `sentence-transformers`, `torch`, or any HTTP client in this task.
-  Rationale: The roadmap separates v1 decision ratification from dependency
-  and adapter implementation work; tasks 1.2.2 and 5.1.2 own those additions.
-  Date/Author: 2026-05-23 / Claude (planning).
+  `sentence-transformers`, `torch`, or any HTTP client in this task. Rationale:
+  The roadmap separates v1 decision ratification from dependency and adapter
+  implementation work; tasks 1.2.2 and 5.1.2 own those additions. Date/Author:
+  2026-05-23 / Claude (planning).
 - Decision: Use `pytest` documentation-contract tests, not `pytest-bdd`,
-  `syrupy`, Hypothesis, CrossHair, or Verus, for this item. Rationale:
-  ADR-006 scopes Phase 1 tests to documentation and link contracts until
-  adapter behaviour, output snapshots, input invariants, or proof-worthy
-  logic exist. Date/Author: 2026-05-23 / Claude (planning).
+  `syrupy`, Hypothesis, CrossHair, or Verus, for this item. Rationale: ADR-006
+  scopes Phase 1 tests to documentation and link contracts until adapter
+  behaviour, output snapshots, input invariants, or proof-worthy logic exist.
+  Date/Author: 2026-05-23 / Claude (planning).
 
 ## Outcomes & retrospective
 
-To be filled in after implementation. The expected outcome is an accepted
-ADR-002 that names `tiktoken` as the first v1 `TokenCounter` candidate,
-documents PEP 621 optional extras as the dependency mechanism, requires
-default-disabled adapters with explicit diagnostics on missing extras, and
-keeps the public segmentation API stable under optional-extra omission.
-Roadmap item 1.1.2 is marked done. Local gates and CodeRabbit report no
-unresolved concerns. No tokenizer or embedding dependency is added in this
-task.
+Implementation completed on 2026-05-28. All expected outcomes achieved:
+
+- ADR-002 is accepted on 2026-05-26, naming `tiktoken` as the first v1
+  `TokenCounter` candidate behind the port.
+- PEP 621 `[project.optional-dependencies]` is the documented mechanism for
+  future optional adapter extras (`tokenizer` and `semantic`).
+- Default-disabled adapters are required to return neutral results and raise
+  an explicit `ImportError` when their optional extra is missing.
+- The public segmentation API must remain stable when extras are omitted.
+- Roadmap item 1.1.2 is marked done in `docs/roadmap.md`.
+- Three documentation-contract tests in `tests/test_developer_docs.py`
+  (`test_tokenizer_policy_adr_is_accepted`,
+  `test_tokenizer_policy_adr_defines_v1_adapter_policy`,
+  `test_tokenizer_policy_roadmap_item_is_closed`) lock the accepted policy.
+- All local gates pass: `make check-fmt`, `make markdownlint`, `make nixie`,
+  `make typecheck`, `make lint`, `make test` (15/15 passed).
+- CodeRabbit review reports 0 findings.
+- Draft PR #12 is open at
+  <https://github.com/leynos/prosidy-darn/pull/12>.
+- No tokenizer, embedding, model, or HTTP client dependency was added in this
+  task, preserving scope separation from tasks 1.2.2 and 5.1.2.
+
+No surprises during final validation. The earlier implementation work
+(2026-05-26) held up cleanly against the full gate sequence two days later.
 
 ## Context and orientation
 
@@ -415,8 +428,8 @@ Important terms:
   published as part of the package metadata and form part of the package's
   public installation interface.
 - "Default disabled adapter" means an adapter that returns a neutral or empty
-  result when called and does not import the optional dependency at module
-  load time. It satisfies the port without imposing the dependency.
+  result when called and does not import the optional dependency at module load
+  time. It satisfies the port without imposing the dependency.
 - "Lazy import" means importing the optional dependency inside the adapter
   method or function body, not at module top level. A missing dependency is
   surfaced as an explicit `ImportError` whose message names the extra to
@@ -424,30 +437,29 @@ Important terms:
 
 ## Plan of work
 
-Milestone 1 prepares the branch and confirms the baseline. Confirm the
-current branch is
-`1-1-2-record-token-limit-and-semantic-scoring-dependency-policy`. If it is
-not, rename it before editing using `git branch -m`. Inspect the worktree.
-Read the roadmap, ADR-001, ADR-002 stub, ADR-006, the technical design, the
-developer guide, the users' guide, the documentation style guide, the
-existing documentation-contract tests, the Makefile, and `pyproject.toml`.
+Milestone 1 prepares the branch and confirms the baseline. Confirm the current
+branch is `1-1-2-record-token-limit-and-semantic-scoring-dependency-policy`. If
+it is not, rename it before editing using `git branch -m`. Inspect the
+worktree. Read the roadmap, ADR-001, ADR-002 stub, ADR-006, the technical
+design, the developer guide, the users' guide, the documentation style guide,
+the existing documentation-contract tests, the Makefile, and `pyproject.toml`.
 
 Milestone 2 adds failing documentation-contract tests first. Extend
-`tests/test_developer_docs.py` with tests that prove roadmap item 1.1.2
-cannot be closed unless ADR-002 is accepted and states the chosen policy.
-The tests should check for these observable facts:
+`tests/test_developer_docs.py` with tests that prove roadmap item 1.1.2 cannot
+be closed unless ADR-002 is accepted and states the chosen policy. The tests
+should check for these observable facts:
 
 - ADR-002 exists and is accepted (status section contains "## Status" and
   "Accepted on ").
 - ADR-002 names `tiktoken` as the first v1 `TokenCounter` candidate behind
   the port.
 - ADR-002 states that `transformers` `AutoTokenizer`, `tokenizers`, and
-  `sentence-transformers` remain eligible future adapters behind the same
-  port but are not adopted in v1.
+  `sentence-transformers` remain eligible future adapters behind the same port
+  but are not adopted in v1.
 - ADR-002 states that optional dependencies are declared via PEP 621
   `[project.optional-dependencies]` and installed via
-  `pip install prosidy-darn[<extra>]` (no dependency entries are added in
-  this task).
+  `pip install prosidy-darn[<extra>]` (no dependency entries are added in this
+  task).
 - ADR-002 states that the default `TokenCounter` and `SemanticScorer`
   adapters are disabled by default and that missing optional dependencies
   produce an explicit diagnostic naming the extra to install.
@@ -457,23 +469,22 @@ The tests should check for these observable facts:
 - The roadmap item for 1.1.2 is marked done only when ADR-002 is accepted.
 
 Run the focused test after adding it and confirm it fails for the expected
-reason before changing the ADR. If a subset already passes because the ADR
-stub satisfies it, document that in `Surprises & Discoveries` and continue.
+reason before changing the ADR. If a subset already passes because the ADR stub
+satisfies it, document that in `Surprises & Discoveries` and continue.
 
 Milestone 3 finalises ADR-002. Replace the "Pending" decision outcome with
-"Accepted on `YYYY-MM-DD`" plus the chosen policy. Add the sections required
-by the documentation style guide and absent from the stub: options
-considered, decision outcome, goals and non-goals, migration plan, known
-risks and limitations, and architectural rationale. The ADR must follow the
-shape of ADR-001 and must clearly state:
+"Accepted on `YYYY-MM-DD`" plus the chosen policy. Add the sections required by
+the documentation style guide and absent from the stub: options considered,
+decision outcome, goals and non-goals, migration plan, known risks and
+limitations, and architectural rationale. The ADR must follow the shape of
+ADR-001 and must clearly state:
 
 - `tiktoken` is the first v1 `TokenCounter` candidate behind the port;
 - `tokenizers`, `transformers`, and `sentence-transformers` are future
   adapters behind the same ports and are not adopted in v1;
 - optional dependencies are declared via PEP 621
-  `[project.optional-dependencies]`, with extra names suggested as
-  `tokenizer` (e.g. `tiktoken`) and `semantic` (e.g.
-  `sentence-transformers`);
+  `[project.optional-dependencies]`, with extra names suggested as `tokenizer`
+  (e.g. `tiktoken`) and `semantic` (e.g. `sentence-transformers`);
 - default `TokenCounter` and `SemanticScorer` adapters are disabled and
   return a neutral or empty result;
 - optional adapters use lazy imports inside the adapter implementation and
@@ -492,31 +503,30 @@ Milestone 4 aligns surrounding documentation. Check
 `docs/developers-guide.md` for any conflicting wording about tokenization or
 semantic scoring. Update them only if the existing wording contradicts the
 accepted policy; avoid duplicating the full ADR text in other documents.
-`docs/users-guide.md` should change only if a user-visible behaviour
-statement must be corrected.
+`docs/users-guide.md` should change only if a user-visible behaviour statement
+must be corrected.
 
 Milestone 5 updates task tracking. Mark item 1.1.2 in `docs/roadmap.md` done
 only after the ADR and tests agree. Do not mark later dependency or adapter
 tasks done.
 
 Milestone 6 validates the change. Run formatting checks, Markdown linting,
-Mermaid validation, type checking, linting, and tests sequentially with
-`tee` logs under `/tmp`. If a command fails, inspect the full log and make
-focused fixes. Do not run quality gates in parallel.
+Mermaid validation, type checking, linting, and tests sequentially with `tee`
+logs under `/tmp`. If a command fails, inspect the full log and make focused
+fixes. Do not run quality gates in parallel.
 
 Milestone 7 runs CodeRabbit review. Run `coderabbit review --agent` after the
 documentation and test milestones have passed local gates. Address every
 actionable concern within the scope of this plan. If CodeRabbit asks for
-adapter code, dependency additions, or broader architecture changes, record
-the concern in `Decision Log` and escalate instead of expanding scope.
+adapter code, dependency additions, or broader architecture changes, record the
+concern in `Decision Log` and escalate instead of expanding scope.
 
-Milestone 8 commits and opens the draft pull request. Use the
-`commit-message` skill's file-based commit workflow. Push
+Milestone 8 commits and opens the draft pull request. Use the `commit-message`
+skill's file-based commit workflow. Push
 `1-1-2-record-token-limit-and-semantic-scoring-dependency-policy` to its
 upstream and set tracking. Create a draft pull request whose title includes
 `(1.1.2)`, whose summary links to this ExecPlan, and whose `## References`
-section includes the Lody session URL derived from
-`echo ${LODY_SESSION_ID}`.
+section includes the Lody session URL derived from `echo ${LODY_SESSION_ID}`.
 
 ## Concrete steps
 
@@ -636,16 +646,15 @@ https://lody.ai/leynos/sessions/${LODY_SESSION_ID}
 The approved implementation is accepted when all of these are true:
 
 - `tests/test_developer_docs.py` verifies that ADR-002 is accepted and
-  defines the first v1 `TokenCounter` candidate, the future-adapter set,
-  the PEP 621 optional-dependency mechanism, the default-disabled adapter
-  policy, the missing-extra diagnostic requirement, and the import-path
-  constraint.
+  defines the first v1 `TokenCounter` candidate, the future-adapter set, the
+  PEP 621 optional-dependency mechanism, the default-disabled adapter policy,
+  the missing-extra diagnostic requirement, and the import-path constraint.
 - `docs/roadmap.md` marks item 1.1.2 done only after ADR-002 is accepted
   and the contract tests pass.
 - `docs/adr-002-tokenizer-and-semantic-scoring-policy.md` is accepted and
   carries Status, Date, Context and problem statement, Decision drivers,
-  Options considered, Decision outcome, Goals and non-goals, Migration
-  plan, Known risks and limitations, and Architectural rationale sections.
+  Options considered, Decision outcome, Goals and non-goals, Migration plan,
+  Known risks and limitations, and Architectural rationale sections.
 - The technical design and developer guide do not contradict ADR-002.
 - No adapter implementation, optional dependency, port protocol, CLI
   behaviour, or user-facing API is added by this task.
@@ -659,26 +668,26 @@ The approved implementation is accepted when all of these are true:
 No `pytest-bdd` behavioural scenario is required for this item because the
 approved implementation does not add user interaction behaviour. No `syrupy`
 snapshot is required because no output format is introduced or changed. No
-Hypothesis or CrossHair property test is required because no adapter
-invariant over arbitrary inputs is implemented in this task. No Verus proof
-is required because this task introduces no Rust extension and no new
-contractual business logic.
+Hypothesis or CrossHair property test is required because no adapter invariant
+over arbitrary inputs is implemented in this task. No Verus proof is required
+because this task introduces no Rust extension and no new contractual business
+logic.
 
 ## Idempotence and recovery
 
 All read and validation commands are safe to rerun. Re-running tests and
-quality gates should not change the worktree, except for caches ignored by
-the repository.
+quality gates should not change the worktree, except for caches ignored by the
+repository.
 
-If `make fmt` changes unrelated files, inspect `git diff` immediately.
-Restore unrelated formatting churn unless the user approves keeping it.
+If `make fmt` changes unrelated files, inspect `git diff` immediately. Restore
+unrelated formatting churn unless the user approves keeping it.
 
 If a validation command fails, inspect its `/tmp` log, make the smallest
 related fix, and rerun only the failed gate before rerunning the full gate
 sequence.
 
-If the branch push fails because the remote branch already exists, inspect
-the remote state with:
+If the branch push fails because the remote branch already exists, inspect the
+remote state with:
 
 ```bash
 git fetch origin
@@ -688,8 +697,8 @@ git branch -vv
 
 Do not force-push unless explicitly approved.
 
-If the draft pull request already exists, update its title and body rather
-than opening a duplicate.
+If the draft pull request already exists, update its title and body rather than
+opening a duplicate.
 
 ## Artifacts and notes
 
@@ -699,9 +708,9 @@ Firecrawl-class research evidence gathered during planning:
   `tiktoken` is a small native MIT-licensed BPE tokeniser, Python 3.9+, with
   `cl100k_base` and `o200k_base` encodings bundled.
 - `https://pypi.org/project/transformers/` and
-  `https://github.com/huggingface/transformers/issues/31043`:
-  `transformers` 5.x targets Python 3.10+ and cannot ship `AutoTokenizer`
-  without the full library.
+  `https://github.com/huggingface/transformers/issues/31043`: `transformers`
+  5.x targets Python 3.10+ and cannot ship `AutoTokenizer` without the full
+  library.
 - `https://pypi.org/project/tokenizers/`: Rust-backed BPE via PyO3, Python
   3.10+, requires runtime vocab/merges files.
 - `https://pypi.org/project/sentence-transformers/` and
@@ -711,9 +720,9 @@ Firecrawl-class research evidence gathered during planning:
 - `https://pypi.org/project/darn-it/`: `darn-it` 1.2.0 ships
   `requires_dist: None`; the tokeniser is bundled inside the Rust wheel.
 - `https://peps.python.org/pep-0621/` and `https://peps.python.org/pep-0735/`:
-  PEP 621 is the standard mechanism for `[project.optional-dependencies]`;
-  PEP 735 `[dependency-groups]` is for development-only sets and does not
-  install the package or its runtime dependencies.
+  PEP 621 is the standard mechanism for `[project.optional-dependencies]`; PEP
+  735 `[dependency-groups]` is for development-only sets and does not install
+  the package or its runtime dependencies.
 - `https://discuss.python.org/t/optional-imports-for-optional-dependencies/104760`
   and `https://peps.python.org/pep-0810/`: the conventional pattern is
   function-scoped lazy imports with hint-bearing `ImportError`; explicit lazy
@@ -724,11 +733,10 @@ Wyvern planning evidence:
 - ADR-002 already exists in Proposed status, so roadmap closure should
   finalise the existing ADR rather than create one from scratch.
 - The repository has not yet introduced the final hexagonal package layout,
-  the `TokenCounter` and `SemanticScorer` ports, or any tokenizer or
-  embedding dependency.
+  the `TokenCounter` and `SemanticScorer` ports, or any tokenizer or embedding
+  dependency.
 - The Makefile exposes `check-fmt`, `markdownlint`, `nixie`, `typecheck`,
-  `lint`, and `test` gates that must be run sequentially per repository
-  policy.
+  `lint`, and `test` gates that must be run sequentially per repository policy.
 
 ## Interfaces and dependencies
 
@@ -744,9 +752,9 @@ class SemanticScorer(typ.Protocol):
     def score_boundary(self, left: str, right: str) -> float: ...
 ```
 
-The exact names and signatures are illustrative only. Later implementation
-must keep both ports inside `prosidy_darn.ports` (domain-adjacent contract
-layer) and place concrete adapter implementations under
+The exact names and signatures are illustrative only. Later implementation must
+keep both ports inside `prosidy_darn.ports` (domain-adjacent contract layer)
+and place concrete adapter implementations under
 `prosidy_darn.adapters.outbound.tokenizer` and
 `prosidy_darn.adapters.outbound.semantic`.
 
@@ -754,11 +762,10 @@ The final accepted policy that later work must honour is:
 
 - v1 names `tiktoken` as the first `TokenCounter` candidate adapter;
 - `tokenizers`, `transformers` `AutoTokenizer`, and `sentence-transformers`
-  remain eligible future adapters behind the same ports and are not adopted
-  in v1;
+  remain eligible future adapters behind the same ports and are not adopted in
+  v1;
 - optional dependencies are declared via PEP 621
-  `[project.optional-dependencies]` once task 1.2.2 lands the package
-  skeleton;
+  `[project.optional-dependencies]` once task 1.2.2 lands the package skeleton;
 - default `TokenCounter` and `SemanticScorer` adapters are disabled and
   return a neutral or empty result;
 - optional adapters use lazy imports inside the adapter implementation and
@@ -774,5 +781,5 @@ The final accepted policy that later work must honour is:
 Initial draft created on 2026-05-23. It captures repository findings, Wyvern
 planning feedback, Firecrawl-class prior-art checks, approval gating,
 implementation milestones, validation commands, and pull-request requirements
-for roadmap item 1.1.2. Implementation must not start until the user
-explicitly approves the plan.
+for roadmap item 1.1.2. Implementation must not start until the user explicitly
+approves the plan.
