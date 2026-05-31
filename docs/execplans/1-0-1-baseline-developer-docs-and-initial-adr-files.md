@@ -1,9 +1,8 @@
 # Create baseline developer docs and ADR locations
 
-This ExecPlan (execution plan) is a living document. The sections
-`Constraints`, `Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`,
-`Decision Log`, and `Outcomes & Retrospective` must be kept up to date as work
-proceeds.
+This ExecPlan (execution plan) is a living document. The sections `Constraints`,
+`Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`, `Decision Log`,
+and `Outcomes & Retrospective` must be kept up to date as work proceeds.
 
 Status: Closed
 
@@ -443,8 +442,8 @@ ExecPlan work.
   testing requirement rather than adding it to this task. Rationale: task 1.0.1
   introduces no inference service boundary.
 - 2026-05-10: Begin implementation after explicit user approval. Rationale:
-  the approval gate has been satisfied, so the plan status moves from `DRAFT`
-  to `IN PROGRESS`.
+  the approval gate has been satisfied, so the plan status moves from `DRAFT` to
+  `IN PROGRESS`.
 - 2026-05-10: Continue after the Milestone 2 CodeRabbit invocation failed for
   billing credits. Rationale: the requested review command was run, the failure
   happened before any review findings were produced, and therefore there were
@@ -465,7 +464,6 @@ Implementation is complete. The branch now adds:
 Validation passed for `make check-fmt`, `make markdownlint`, `make nixie`,
 `make lint`, `make typecheck`, and `make test`. The test suite reports 9 tests
 passing. `make fmt` was attempted and remains blocked by pre-existing
-repository formatter churn described in `Surprises & Discoveries`.
-CodeRabbit was invoked after the major milestones and at close-out, but the
-service returned no review findings because the account is out of usage
-credits.
+repository formatter churn described in `Surprises & Discoveries`. CodeRabbit
+was invoked after the major milestones and at close-out, but the service
+returned no review findings because the account is out of usage credits.
