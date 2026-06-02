@@ -32,8 +32,8 @@ stable enough shape.
 Speech Synthesis Markup Language (SSML) is the first renderer target, not the
 source of truth. W3C SSML defines document structure, pronunciation, prosody,
 voice, pause, and marker elements, and its synthesis process explicitly allows
-processors to infer structure and normalization when markup does not provide
-it. [^4] SSML also notes that processor behaviour can vary by synthesis engine.
+processors to infer structure and normalization when markup does not provide it.
+[^4] SSML also notes that processor behaviour can vary by synthesis engine.
 Prosidy Darn therefore keeps an engine-neutral cue intermediate representation
 (IR) and compiles it to SSML or vendor-specific payloads.
 
@@ -368,7 +368,7 @@ silently enter the domain model.
 
 `SourceIndex` is a domain protocol rather than one fixed dataclass. The default
 Python implementation must avoid a dict entry for every byte in large documents.
- `DenseSourceIndex` stores one byte offset per character and a sparse mapping
+`DenseSourceIndex` stores one byte offset per character and a sparse mapping
 only for multibyte byte positions that cannot be derived directly. A
 Rust-backed adapter may provide a more compact implementation as long as it
 satisfies the same conversion, boundary-validation, and slicing methods.
