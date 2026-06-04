@@ -91,7 +91,8 @@ the expected metadata, package entries, and extension layout.
   rust/Cargo.toml`.
 - [x] 2026-06-05: Run `make build-release` and confirm it builds the source
   distribution and native CPython 3.14 wheel.
-- [ ] Commit the gated changes.
+- [x] 2026-06-05: Commit the gated implementation changes as
+  `6aa2663 Add maturin PyO3 validation`.
 - [ ] Create a draft pull request.
 
 ## Surprises & Discoveries
