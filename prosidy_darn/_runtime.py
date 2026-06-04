@@ -17,18 +17,19 @@ re-raised.
 
 from __future__ import annotations
 
+import importlib
 import typing as typ
 
 if typ.TYPE_CHECKING:
     import collections.abc as cabc
 
 PACKAGE_NAME = "prosidy_darn"
-RUST_MODULE_NAME = f"_{PACKAGE_NAME}_rs"
+RUST_MODULE_NAME = f"{PACKAGE_NAME}._{PACKAGE_NAME}_rs"
 _rust_hello: cabc.Callable[[], str] | None = None
 _python_hello: cabc.Callable[[], str] | None = None
 
 try:  # pragma: no cover - Rust optional
-    rust = __import__(RUST_MODULE_NAME)
+    rust = importlib.import_module(RUST_MODULE_NAME)
     _rust_hello = typ.cast("cabc.Callable[[], str]", rust.hello)
     _HAS_RUST = True
 except ModuleNotFoundError as exc:  # pragma: no cover - Python fallback

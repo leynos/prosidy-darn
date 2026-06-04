@@ -1,9 +1,8 @@
 # Update maturin and PyO3 Validation
 
-This ExecPlan (execution plan) is a living document. The sections
-`Constraints`, `Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`,
-`Decision Log`, and `Outcomes & Retrospective` must be kept up to date as work
-proceeds.
+This ExecPlan (execution plan) is a living document. The sections `Constraints`,
+`Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`, `Decision Log`,
+and `Outcomes & Retrospective` must be kept up to date as work proceeds.
 
 Status: IN PROGRESS
 
@@ -57,23 +56,18 @@ the expected metadata, package entries, and extension layout.
 ## Risks
 
 - Risk: maturin may not support the exact interpreter used by local gates.
-  Severity: medium.
-  Likelihood: medium.
-  Mitigation: keep the wheel-build test skippable when the toolchain or
-  supported Python version is unavailable, while still testing pin parsing.
+  Severity: medium. Likelihood: medium. Mitigation: keep the wheel-build test
+  skippable when the toolchain or supported Python version is unavailable,
+  while still testing pin parsing.
 
 - Risk: switching the build backend from hatchling to maturin changes pure
-  wheel behaviour.
-  Severity: medium.
-  Likelihood: low.
-  Mitigation: build a minimal extension that uses the existing runtime fallback
-  and assert wheel metadata in tests.
+  wheel behaviour. Severity: medium. Likelihood: low. Mitigation: build a
+  minimal extension that uses the existing runtime fallback and assert wheel
+  metadata in tests.
 
 - Risk: CI wheel workflows may still assume pure Python packaging.
-  Severity: medium.
-  Likelihood: medium.
-  Mitigation: update the wheel action and release notes where native wheel
-  behaviour changes.
+  Severity: medium. Likelihood: medium. Mitigation: update the wheel action and
+  release notes where native wheel behaviour changes.
 
 ## Progress
 
@@ -84,10 +78,19 @@ the expected metadata, package entries, and extension layout.
   reusable maturin helper and wheel snapshot tests.
 - [x] 2026-06-05: Confirm the current branch is
   `test/maturin-pyo3-test-upgrade`, not the main branch.
-- [ ] Add the minimal Rust/PyO3 crate and maturin package configuration.
-- [ ] Add Prosidy Darn-specific maturin compatibility and build tests.
-- [ ] Update documentation for native wheel build responsibilities.
-- [ ] Run `make check-fmt`, `make lint`, `make typecheck`, and `make test`.
+- [x] 2026-06-05: Add the minimal Rust/PyO3 crate and maturin package
+  configuration.
+- [x] 2026-06-05: Add Prosidy Darn-specific maturin compatibility and build
+  tests.
+- [x] 2026-06-05: Update documentation for native wheel build
+  responsibilities.
+- [x] 2026-06-05: Run `make check-fmt`, `make lint`, `make typecheck`, and
+  `make test`.
+- [x] 2026-06-05: Run `make markdownlint`, `make nixie`, `cargo fmt
+  --manifest-path rust/Cargo.toml --check`, and `cargo check --manifest-path
+  rust/Cargo.toml`.
+- [x] 2026-06-05: Run `make build-release` and confirm it builds the source
+  distribution and native CPython 3.14 wheel.
 - [ ] Commit the gated changes.
 - [ ] Create a draft pull request.
 
@@ -100,12 +103,13 @@ the expected metadata, package entries, and extension layout.
 - The cuprum reference pins maturin in local dev dependencies, the wheel
   workflow, and the reusable wheel action; this repository currently has no
   maturin pin.
+- Maturin emits a CycloneDX SBOM entry in the native wheel, so the wheel
+  summary helper normalizes that entry just like it normalizes platform tags.
 
 ## Decision Log
 
 - Decision: use `prosidy_darn._prosidy_darn_rs` as the PyO3 extension module
-  name.
-  Rationale: `prosidy_darn._runtime.RUST_MODULE_NAME` already resolves to
+  name. Rationale: `prosidy_darn._runtime.RUST_MODULE_NAME` already resolves to
   `_prosidy_darn_rs`, and maturin can place that extension under the Python
   package through `module-name = "prosidy_darn._prosidy_darn_rs"`.
 
@@ -115,9 +119,14 @@ the expected metadata, package entries, and extension layout.
   package-specific paths and without unrelated stream backend assumptions.
 
 - Decision: keep wheel-build tests skippable when the Rust toolchain, maturin,
-  or a supported Python version is unavailable.
-  Rationale: pin synchronization should always be checked, but local
-  environments may reasonably lack native build support.
+  or a supported Python version is unavailable. Rationale: pin synchronization
+  should always be checked, but local environments may reasonably lack native
+  build support.
+
+- Decision: remove the release workflow's pure-wheel job and use the native
+  wheel matrix for releases. Rationale: the package is now a mixed Python/Rust
+  project, so the previous pure-wheel release path no longer described the
+  artefacts being published.
 
 ## Implementation Plan
 
@@ -131,10 +140,10 @@ contains the pinned maturin version, and `[tool.maturin]` points at the Rust
 crate. Keep the Python package source in the existing repository root layout.
 
 Third, update the build wheel action and release workflow so CI uses the same
-pinned maturin version. Add tests under `tests/helpers/` and `tests/` that
-read the synchronized pins, compare the installed maturin version when
-available, build a native wheel when possible, and normalize wheel metadata
-for stable comparison.
+pinned maturin version. Add tests under `tests/helpers/` and `tests/` that read
+the synchronized pins, compare the installed maturin version when available,
+build a native wheel when possible, and normalize wheel metadata for stable
+comparison.
 
 Fourth, update repository documentation so maintainers know that native wheel
 builds exist and where the compatibility tests live.
@@ -144,6 +153,26 @@ commit the gated changes, and create a draft pull request.
 
 ## Outcomes & Retrospective
 
-Implementation is still in progress. This section will record the final gate
-results, commits, pull request URL, and any lessons learned once the task is
-complete.
+The implementation adds a minimal PyO3 extension crate at
+`rust/prosidy-darn-rs`, switches package builds to maturin `1.13.3`, pins PyO3
+`0.28.3`, and adds tests that check maturin pin synchronization, PyO3
+manifest/lockfile alignment, and native wheel metadata. The runtime still uses
+the pure-Python fallback when the extension is absent.
+
+Validation passed on 2026-06-05:
+
+```plaintext
+make check-fmt
+make lint
+make typecheck
+make test
+make markdownlint
+make nixie
+cargo fmt --manifest-path rust/Cargo.toml --check
+cargo check --manifest-path rust/Cargo.toml
+make build-release
+```
+
+One practical lesson is that maturin's generated SBOM entry belongs in the
+wheel summary contract. Normalizing it keeps the test stable while still
+detecting meaningful wheel layout changes.

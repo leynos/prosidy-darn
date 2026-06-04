@@ -29,7 +29,7 @@ PY
 Expected output:
 
 ```plaintext
-hello from Python
+hello from Rust
 ```
 
 Run the local lint gate with:
@@ -253,11 +253,13 @@ Expected result:
 
 ## Troubleshooting and FAQ
 
-### Why does the current package only print `hello from Python`?
+### Why does the current package print `hello from Rust`?
 
-The repository is still at the documentation and scaffold stage. The technical
-design and roadmap define the intended v1 behaviour before implementation
-begins.
+The package includes a small optional Rust extension built with maturin and
+PyO3. The current function is still only a smoke test; the extension exists so
+maintainers can validate native wheel builds before later parser and runtime
+work depends on them. If the extension is absent, the package falls back to the
+pure-Python smoke-test implementation.
 
 ### Which profile should examples use?
 

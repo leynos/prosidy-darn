@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    env:
+      MATURIN_VERSION: "1.13.3"
     strategy:
       fail-fast: false
       matrix:
@@ -39,3 +41,4 @@ jobs:
           python-version: ${{ inputs['python-version'] }}
           cibw-arch: ${{ matrix.cibw_arch }}
           artifact-name: wheels-${{ matrix.os }}-${{ matrix.arch }}
+          maturin-version: ${{ env.MATURIN_VERSION }}

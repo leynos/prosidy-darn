@@ -45,7 +45,7 @@ PY
 Expected output:
 
 ```plaintext
-hello from Python
+hello from Rust
 ```
 
 ______________________________________________________________________

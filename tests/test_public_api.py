@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import builtins
 import importlib
-import typing as typ
 
 import pytest
 
@@ -29,9 +27,9 @@ class TestPublicApi:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         """Preserve import errors raised from inside the optional Rust module."""
-        original_import = builtins.__import__
+        original_import_module = importlib.import_module
 
-        def fake_import(name: str, *args: object, **kwargs: object) -> object:
+        def fake_import_module(name: str, package: str | None = None) -> object:
             if name == runtime.RUST_MODULE_NAME:
                 message = "No module named 'inner_missing'"
                 raise ModuleNotFoundError(
@@ -39,11 +37,10 @@ class TestPublicApi:
                     name="inner_missing",
                 )
 
-            import_function = typ.cast("typ.Any", original_import)
-            return import_function(name, *args, **kwargs)
+            return original_import_module(name, package)
 
         with monkeypatch.context() as context:
-            context.setattr(builtins, "__import__", fake_import)
+            context.setattr(importlib, "import_module", fake_import_module)
 
             with pytest.raises(ModuleNotFoundError, match="inner_missing") as exc_info:
                 importlib.reload(runtime)
@@ -56,25 +53,24 @@ class TestPublicApi:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         """Keep a broken Python fallback from breaking a working Rust runtime."""
-        original_import = builtins.__import__
+        original_import_module = importlib.import_module
 
         class FakeRust:
             @staticmethod
             def hello() -> str:
                 return "hello from Rust"
 
-        def fake_import(name: str, *args: object, **kwargs: object) -> object:
+        def fake_import_module(name: str, package: str | None = None) -> object:
             if name == runtime.RUST_MODULE_NAME:
                 return FakeRust()
             if name == "prosidy_darn.pure":
                 message = "broken fallback"
                 raise ModuleNotFoundError(message, name=name)
 
-            import_function = typ.cast("typ.Any", original_import)
-            return import_function(name, *args, **kwargs)
+            return original_import_module(name, package)
 
         with monkeypatch.context() as context:
-            context.setattr(builtins, "__import__", fake_import)
+            context.setattr(importlib, "import_module", fake_import_module)
             loaded_runtime = importlib.reload(runtime)
 
             assert loaded_runtime.hello() == "hello from Rust"

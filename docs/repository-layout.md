@@ -12,6 +12,7 @@ an orientation aid for contributors; it is not a complete file manifest.
 ├── docs/                    # User, maintainer, design, and planning documents
 │   └── execplans/           # Task-specific execution plans
 ├── prosidy_darn/            # Runtime package source code
+├── rust/                    # Optional PyO3 extension workspace
 ├── tests/                   # Unit, behavioural, and integration tests
 ├── AGENTS.md                # Repository instructions for coding agents
 ├── Makefile                 # Canonical build, lint, test, and documentation gates
@@ -31,6 +32,7 @@ _Figure 1: Simplified repository tree for contributor orientation._
 | `docs/`           | Contains long-lived documentation, including guides, design material, architectural decision records, and roadmap documents. Use `docs/contents.md` as the index. |
 | `docs/execplans/` | Stores task-specific execution plans. These are living implementation records, not general reference documents.                                                   |
 | `prosidy_darn/`   | Contains the application package. Keep production code grouped by feature and maintain clear module boundaries.                                                   |
+| `rust/`           | Contains the optional PyO3 extension workspace used by maturin native wheel builds. Keep Rust crates small and aligned with Python runtime boundaries.            |
 | `tests/`          | Contains the test suite. Place unit, behavioural, and integration coverage close to the behaviour it validates.                                                   |
 | `AGENTS.md`       | Defines repository-local instructions for automated coding agents. Keep this synchronized with the current agent template when template policy changes.           |
 | `Makefile`        | Provides the canonical command surface for build, lint, format, typecheck, test, and documentation validation. Prefer these targets over direct tool invocation.  |

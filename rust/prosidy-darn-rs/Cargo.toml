@@ -1,0 +1,18 @@
+[package]
+name = "prosidy-darn-rs"
+description = "Optional Rust extension for Prosidy Darn"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+repository.workspace = true
+version.workspace = true
+
+[lib]
+name = "_prosidy_darn_rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.28.3", features = ["extension-module"] }
+
+[lints]
+workspace = true

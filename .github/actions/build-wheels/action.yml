@@ -10,6 +10,10 @@ inputs:
   artifact-name:
     description: Name of the uploaded artifact
     required: true
+  maturin-version:
+    description: Maturin version to install for native builds
+    required: false
+    default: "1.13.3"
 runs:
   using: composite
   steps:
@@ -25,10 +29,14 @@ runs:
     - name: Build wheels
       shell: bash
       run: |
-        uvx --with 'cibuildwheel>=2.16.0,<4.0.0' cibuildwheel --output-dir wheelhouse
+        uvx \
+          --with "maturin==${MATURIN_VERSION}" \
+          --with 'cibuildwheel>=2.16.0,<4.0.0' \
+          cibuildwheel --output-dir wheelhouse
       env:
         CIBW_ARCHS: ${{ inputs.cibw-arch }}
         CIBW_SKIP: 'pp*'
+        MATURIN_VERSION: ${{ inputs.maturin-version }}
     - name: Upload wheel artifact
       uses: actions/upload-artifact@v4
       with:
