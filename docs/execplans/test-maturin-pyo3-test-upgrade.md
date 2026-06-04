@@ -4,7 +4,7 @@ This ExecPlan (execution plan) is a living document. The sections `Constraints`,
 `Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`, `Decision Log`,
 and `Outcomes & Retrospective` must be kept up to date as work proceeds.
 
-Status: IN PROGRESS
+Status: COMPLETE
 
 ## Purpose / big picture
 
@@ -93,7 +93,8 @@ the expected metadata, package entries, and extension layout.
   distribution and native CPython 3.14 wheel.
 - [x] 2026-06-05: Commit the gated implementation changes as
   `6aa2663 Add maturin PyO3 validation`.
-- [ ] Create a draft pull request.
+- [x] 2026-06-05: Create draft pull request
+  [#14](https://github.com/leynos/prosidy-darn/pull/14).
 
 ## Surprises & Discoveries
 
@@ -159,6 +160,8 @@ The implementation adds a minimal PyO3 extension crate at
 `0.28.3`, and adds tests that check maturin pin synchronization, PyO3
 manifest/lockfile alignment, and native wheel metadata. The runtime still uses
 the pure-Python fallback when the extension is absent.
+
+Draft pull request: [#14](https://github.com/leynos/prosidy-darn/pull/14).
 
 Validation passed on 2026-06-05:
 
