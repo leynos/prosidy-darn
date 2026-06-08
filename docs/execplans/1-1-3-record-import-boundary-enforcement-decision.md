@@ -104,8 +104,8 @@ pinned, off-PyPI, git-referenced internal tool (`leynos/pylint-pypy-shim`)
 through `uv tool run`, and for keeping such a tool out of the project virtual
 environment. ADR-004 composes with ADR-008: the import-boundary check is a
 distinct third gate, separate from the two lint tiers, and must not be folded
-into `make lint` because the Pylint tier runs under PyPy 3.11, which cannot run
-hecate.
+into `make lint` because the Pylint tier runs under PyPy (per ADR-008), whose
+managed interpreter lags the project's Python 3.14 target and cannot run hecate.
 
 `docs/developers-guide.md` documents the hexagonal package layout, the two-tier
 lint architecture, the Makefile lint variables (including
@@ -159,7 +159,8 @@ decision. They are recorded so the implementer need not re-research them.
   `46f8c8798e7a80a3a1ab5a13c2a000a4423ffc12`; the implementer must re-resolve and
   pin a full 40-character commit SHA at implementation time.
 - `import-linter` 2.11 (by David Seddon) is a Production/Stable, BSD-2-licensed
-  PyPI package supporting CPython 3.10 to 3.14. Its `forbidden` contract with
+  PyPI package supporting current CPython, including the project's Python 3.14
+  target. Its `forbidden` contract with
   `include_external_packages = True` expresses the exact requirement
   (`source_modules = [prosidy_darn.domain, prosidy_darn.application]`;
   `forbidden_modules` listing adapters plus `cyclopts`, `rich`, and the parser
@@ -168,8 +169,9 @@ decision. They are recorded so the implementer need not re-research them.
   graph (Rust core) and catches indirect chains. Its CLI is `lint-imports`; it
   exits non-zero on a broken contract; it has no documented machine-readable
   output format. It is the named fallback for ADR-004.
-- `tach` (gauge-sh, Rust-backed, ~2.7k stars, PyPI, CPython 3.10-3.14) enforces
-  first-party module boundaries via `tach.toml` and can check external
+- `tach` (gauge-sh, Rust-backed, ~2.7k stars, PyPI, supports the project's
+  Python 3.14 target) enforces first-party module boundaries via `tach.toml` and
+  can check external
   dependencies, but its model is module-graph-centric rather than the
   hexagonal-group model hecate uses. It is a secondary alternative.
 - `PyTestArch` and the hand-rolled "walk the package with `ast` and assert"
@@ -228,11 +230,14 @@ scans real source. The demonstration runs only against the self-contained
 fixture through the new pytest test. Wiring the gate against the real
 `prosidy_darn` tree is roadmap task 1.2.3.
 
-Do not run hecate in-process. hecate requires Python >=3.14 and imports
-Cyclopts; CI currently runs Python 3.13 and the Pylint tier runs PyPy 3.11. The
-demonstration test must shell out to hecate as a subprocess through
+Do not run hecate in-process. hecate is not a project dependency; it is an
+isolated CLI tool whose own Cyclopts dependency must stay out of the project
+virtual environment and test process. The demonstration test must shell out to
+hecate as a subprocess through
 `uv tool run --python 3.14 --from 'git+https://github.com/leynos/hecate.git@<sha>'
-hecate ...` and must never execute `import hecate`.
+hecate ...` and must never execute `import hecate`. Invoking
+`uv tool run --python 3.14` also pins the tool to the project's Python 3.14
+target regardless of the interpreter that runs `pytest`.
 
 Pin hecate by a full 40-character commit SHA, never a branch or tag, so the pin
 is immutable and reproducible, mirroring `PYLINT_PYPY_SHIM_REF`.
@@ -281,6 +286,8 @@ changes outside these paths:
 - `tests/test_developer_docs.py`
 - `tests/test_import_boundary_fitness.py` (new)
 - `tests/fixtures/import_boundary/**` (new fixture trees and config)
+- `.github/workflows/ci.yml` and `.github/workflows/release.yml` (correct the
+  erroneous `python-version: '3.13'` pins to `3.14`)
 
 Stop and ask for direction if more than 400 net lines of documentation, or more
 than 200 net lines of test, fixture, and Makefile code combined, are needed.
@@ -327,11 +334,14 @@ install an unrelated package. Severity: medium. Likelihood: medium. Mitigation:
 warn prominently in the ADR, the Makefile comment, and the developers' guide that
 hecate is git-ref-only and must never be referenced by bare name.
 
-Risk: Interpreter mismatch. hecate needs Python >=3.14 and uses Cyclopts; CI runs
-3.13 and the Pylint tier runs PyPy 3.11. An in-process import would fail.
-Severity: high. Likelihood: high if ignored. Mitigation: run hecate only as a
-subprocess via `uv tool run --python 3.14`; the fixture test shells out and never
-imports hecate; re-validate when CI's `setup-python` is bumped to 3.14.
+Risk: Erroneous CI Python pin. The project targets Python >=3.14, but
+`.github/workflows/ci.yml` and `.github/workflows/release.yml` pin `3.13`, which
+is a defect: CI does not exercise the supported interpreter. Severity: medium.
+Likelihood: high (already present). Mitigation: correct both workflows to `3.14`
+as part of this task. Independently, hecate runs only as an isolated
+`uv tool run --python 3.14` subprocess (never imported), so it is unaffected by
+the interpreter that runs `pytest`, and the Pylint tier's managed PyPy (ADR-008)
+remains a deliberate, separate exception.
 
 Risk: False green (silent no-op). A mistyped prefix, an omitted external package,
 a barrel re-export, or an unknown-key-ignored config could make the dirty fixture
@@ -413,6 +423,8 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
   limitations, fallback) and capture the one-shot demonstration evidence.
 - [ ] Align `docs/prosidy-darn-technical-design.md` section 18, the developers'
   guide, and `docs/contents.md`.
+- [ ] Correct `.github/workflows/ci.yml` and `.github/workflows/release.yml`
+  Python pins from `3.13` to `3.14`.
 - [ ] Mark roadmap item 1.1.3 done.
 - [ ] Run the local gates sequentially and capture logs under `/tmp`.
 - [ ] Run `coderabbit review --agent` and clear in-scope concerns.
@@ -428,11 +440,17 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
   Evidence: `https://pypi.org/pypi/hecate/json` returns David MacIver's ncurses
   CLI tester. Impact: hecate must be referenced only by pinned git URL; bare-name
   installs are a foot-gun the ADR must warn against.
-- Observation: hecate requires Python >=3.14 and imports Cyclopts, while CI runs
-  Python 3.13 and the Pylint tier runs PyPy 3.11. Evidence: hecate's
-  `pyproject.toml` and `.github/workflows/ci.yml` line 21 (`python-version:
-  '3.13'`). Impact: hecate must run out-of-process via `uv tool run --python
-  3.14` and must not be folded into `make lint`.
+- Observation: the project targets Python >=3.14, but
+  `.github/workflows/ci.yml` (line 21) and `.github/workflows/release.yml` (line
+  27) erroneously pin `python-version: '3.13'`. Evidence: `pyproject.toml`
+  `requires-python = ">=3.14"` versus the two workflow pins. Impact: both
+  workflows must be corrected to `3.14` so CI exercises the supported
+  interpreter; this is folded into the task. (The `pyproject.toml` comment about
+  managed PyPy is the deliberate ADR-008 Pylint-tier exception, not an error.)
+- Observation: hecate requires Python >=3.14 and imports Cyclopts. Evidence:
+  hecate's `pyproject.toml`. Impact: hecate must run out-of-process as an
+  isolated `uv tool run --python 3.14` subprocess and must not be folded into
+  `make lint` (whose Pylint tier runs under PyPy per ADR-008).
 - Observation: the technical design treats `prosidy_darn.ports` as a distinct
   package (section 9) that domain and application import, even though section 4
   says ports "belong to the domain or application layer". Evidence: design
@@ -469,10 +487,13 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
   (contradicting the boundary) and would do task 1.2.2's dependency work; the
   established `pylint-pypy-shim` pattern keeps such tools isolated. Date/Author:
   2026-06-09 / Claude (planning).
-- Decision: Run hecate only as a subprocess on Python 3.14. Rationale: hecate
-  needs >=3.14 and imports Cyclopts; CI runs 3.13 and the Pylint tier runs PyPy
-  3.11, so an in-process import would fail. Date/Author: 2026-06-09 / Claude
-  (planning).
+- Decision: Run hecate only as an isolated `uv tool run --python 3.14`
+  subprocess, and correct the two CI workflows that erroneously pin Python 3.13
+  to 3.14. Rationale: the project targets Python >=3.14, so the 3.13 CI pins are
+  defects; hecate is not a project dependency and imports Cyclopts, so it must
+  run isolated to keep Cyclopts out of the project environment. The Pylint tier's
+  managed PyPy (ADR-008) is a separate, deliberate exception. Date/Author:
+  2026-06-09 / Claude (planning).
 - Decision: Model five groups (`domain`, `ports`, `application`, `adapters`,
   `config`) with explicit `allowed` lists, and place external prefixes in the
   `allowed` lists of `config` and the relevant adapter groups, absent from
@@ -661,6 +682,13 @@ that must not be folded into `make lint`. Add the 1.1.3 execplan entry to
 `docs/contents.md`. Touch `docs/users-guide.md` only if a user-visible statement
 needs correcting.
 
+Milestone 6a corrects the erroneous CI Python pins. The project targets Python
+>=3.14, but `.github/workflows/ci.yml` (line 21) and
+`.github/workflows/release.yml` (line 27) pin `python-version: '3.13'`. Change
+both to `'3.14'` so CI and release workflows exercise the supported interpreter.
+This is an unambiguous correctness fix surfaced during review; keep it to the two
+one-line pin changes and do not otherwise alter the workflows.
+
 Milestone 7 updates task tracking. Mark item 1.1.3 in `docs/roadmap.md` done only
 after ADR-004 is accepted, the fixture demonstration passes, and the contract
 tests pass. Do not mark 1.2.1, 1.2.2, or 1.2.3 done.
@@ -812,6 +840,9 @@ The approved implementation is accepted when all of these are true:
 - No real `prosidy_darn` domain, application, ports, adapters, or config package
   is created; no `pyproject.toml` dependency is added; no gate over real
   source is wired.
+- `.github/workflows/ci.yml` and `.github/workflows/release.yml` pin
+  `python-version: '3.14'`, with no remaining reference to an earlier interpreter
+  outside the deliberate ADR-008 PyPy Pylint tier.
 - `make check-fmt`, `make markdownlint`, `make nixie`, `make typecheck`,
   `make lint`, and `make test` all pass.
 - `coderabbit review --agent` reports no unresolved in-scope concerns.
@@ -930,9 +961,9 @@ Firecrawl research evidence:
 - `https://pypi.org/pypi/hecate/json`: the PyPI `hecate` name belongs to an
   unrelated ncurses CLI tester.
 - `https://import-linter.readthedocs.io/` and
-  `https://pypi.org/project/import-linter/`: import-linter 2.11, BSD-2, CPython
-  3.10-3.14, `forbidden` and `layers` contracts, `include_external_packages`,
-  `lint-imports`.
+  `https://pypi.org/project/import-linter/`: import-linter 2.11, BSD-2, supports
+  the project's Python 3.14 target, `forbidden` and `layers` contracts,
+  `include_external_packages`, `lint-imports`.
 - `https://docs.gauge.sh/` and `https://github.com/gauge-sh/tach`: tach module
   and external-dependency enforcement via `tach.toml`.
 - `https://docs.astral.sh/ruff/rules/#flake8-tidy-imports-tid`: TID251
@@ -971,3 +1002,12 @@ review, the approval gate, the test-first milestones (documentation-contract
 tests and a subprocess fixture demonstration), the validation commands, and the
 pull-request requirements for roadmap item 1.1.3. Implementation must not start
 until the user explicitly approves the plan.
+
+Revised on 2026-06-09 after review feedback that the project targets Python
+>=3.14 and any reference to an earlier interpreter is an error. Reframed the
+out-of-process hecate rationale around tool isolation and the ADR-008 PyPy tier
+rather than the CI interpreter version; recorded that
+`.github/workflows/ci.yml` and `.github/workflows/release.yml` erroneously pin
+Python 3.13; and folded correcting both pins to 3.14 into the task scope,
+progress, tolerances, validation, and Milestone 6a. This does not change the
+import-boundary decision or the demonstration design.
