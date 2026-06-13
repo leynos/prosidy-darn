@@ -40,6 +40,10 @@ runs:
           cibuildwheel --output-dir wheelhouse
       env:
         CIBW_ARCHS: ${{ inputs.cibw-arch }}
+        CIBW_BEFORE_ALL_LINUX: >-
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs |
+          sh -s -- -y --profile minimal
+        CIBW_ENVIRONMENT_LINUX: 'PATH="$HOME/.cargo/bin:$PATH"'
         CIBW_SKIP: 'pp*'
         MATURIN_VERSION: ${{ inputs.maturin-version }}
     - name: Upload wheel artifact
