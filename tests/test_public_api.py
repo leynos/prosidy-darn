@@ -10,6 +10,7 @@ import pytest
 
 import prosidy_darn
 import prosidy_darn._runtime as runtime
+from prosidy_darn import pure
 
 if typ.TYPE_CHECKING:
     import collections.abc as cabc
@@ -24,6 +25,8 @@ class TestPublicApi:
     ) -> None:
         """Return the Python greeting when the Rust extension is unavailable."""
         monkeypatch.setattr(runtime, "_HAS_RUST", False)
+        monkeypatch.setattr(runtime, "_python_hello", pure.hello)
+        monkeypatch.setattr(runtime, "_rust_hello", None)
 
         assert prosidy_darn.hello() == "hello from Python"
 

@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import importlib
 import importlib.metadata as im
 import shutil
+import subprocess  # noqa: S404 - tests install a locally built wheel.
 import sys
 import typing as typ
 
@@ -87,3 +89,47 @@ def test_maturin_wheel_build_summary(tmp_path: pth.Path) -> None:
             "prosidy_darn/pure.py",
         ],
     }
+
+
+@pytest.mark.timeout(300)
+def test_rust_extension_hello_returns_expected_greeting(tmp_path: pth.Path) -> None:
+    """Import the built Rust extension and execute its public function."""
+    root = repo_root()
+    expected = read_expected_maturin_version(root)
+    if not toolchain_available():
+        pytest.skip("Rust toolchain unavailable.")
+    if sys.version_info >= (3, 15):
+        pytest.skip(f"maturin {expected} does not support this Python version.")
+
+    wheel_path = build_native_wheel_artifact(root, tmp_path / "wheelhouse")
+    site_dir = tmp_path / "site"
+    subprocess.run(  # noqa: S603 - command list uses trusted paths and local wheel.
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--target",
+            str(site_dir),
+            str(wheel_path),
+        ],
+        check=True,
+    )
+
+    original_path = list(sys.path)
+    previous_package = sys.modules.pop("prosidy_darn", None)
+    previous_extension = sys.modules.pop("prosidy_darn._prosidy_darn_rs", None)
+    try:
+        sys.path.insert(0, str(site_dir))
+        # End-to-end: exercises the real extension, not a mock.
+        module = importlib.import_module("prosidy_darn._prosidy_darn_rs")
+
+        assert module.hello() == "hello from Rust"
+    finally:
+        sys.path[:] = original_path
+        sys.modules.pop("prosidy_darn", None)
+        sys.modules.pop("prosidy_darn._prosidy_darn_rs", None)
+        if previous_package is not None:
+            sys.modules["prosidy_darn"] = previous_package
+        if previous_extension is not None:
+            sys.modules["prosidy_darn._prosidy_darn_rs"] = previous_extension
