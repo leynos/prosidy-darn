@@ -91,7 +91,7 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - See prosidy-darn-technical-design.md §§7, 10, and 18.
   - Success: optional dependencies can be installed or omitted without changing
     the public segmentation API.
-- [ ] 1.1.3. Record the import-boundary enforcement decision.
+- [x] 1.1.3. Record the import-boundary enforcement decision.
   - Requires 1.0.1 and 1.1.1.
   - Select the CI fitness function that prevents `domain` and `application`
     modules from importing adapters, Cyclopts, or renderer infrastructure.

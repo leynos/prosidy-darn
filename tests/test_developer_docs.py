@@ -10,6 +10,7 @@ DOCS_DIR = REPO_ROOT / "docs"
 DEVELOPERS_GUIDE = DOCS_DIR / "developers-guide.md"
 MARKDOWN_PARSER_ADR = DOCS_DIR / "adr-001-markdown-parser-boundary.md"
 TOKENIZER_POLICY_ADR = DOCS_DIR / "adr-002-tokenizer-and-semantic-scoring-policy.md"
+IMPORT_BOUNDARY_ADR = DOCS_DIR / "adr-004-import-boundary-fitness-check.md"
 ROADMAP = DOCS_DIR / "roadmap.md"
 
 INITIAL_ADR_PATHS = (
@@ -196,3 +197,61 @@ def test_tokenizer_policy_roadmap_item_is_closed() -> None:
         "- [x] 1.1.2. Record the token-limit and semantic-scoring dependency "
         "policy." in roadmap
     )
+
+
+def test_import_boundary_adr_is_accepted() -> None:
+    """Ensure roadmap item 1.1.3 has a settled import-boundary decision."""
+    import_boundary_adr = read_document(IMPORT_BOUNDARY_ADR)
+
+    assert "## Status" in import_boundary_adr
+    assert "Accepted on" in import_boundary_adr
+
+
+def test_import_boundary_adr_defines_hecate_decision() -> None:
+    """Lock the accepted ADR-004 hecate decision before adapter work."""
+    import_boundary_adr = normalise_whitespace(read_document(IMPORT_BOUNDARY_ADR))
+    required_phrases = (
+        "hecate is the v1 import-boundary fitness function",
+        (
+            "hecate is pinned by a full 40-character commit SHA and run "
+            "out-of-process through `uv tool run`"
+        ),
+        ("import-linter is the vetted fallback behind a stable `check-imports` seam"),
+        (
+            "hecate is never added to `pyproject.toml` and is never referenced "
+            "by bare name, because the PyPI `hecate` is an unrelated project"
+        ),
+        (
+            "The production policy models five groups: `domain`, `ports`, "
+            "`application`, `adapters`, and `config`"
+        ),
+        (
+            "`domain`, `application`, and `ports` must not import adapters, "
+            "Cyclopts, Rich, the Markdown parser package, renderer "
+            "infrastructure, or delivery code, while `config` may"
+        ),
+        (
+            "hecate exits 0 when the check passes, 1 when it finds violations, "
+            "and 2 on a configuration or input error"
+        ),
+    )
+
+    missing_phrases = [
+        phrase
+        for phrase in required_phrases
+        if normalise_whitespace(phrase) not in import_boundary_adr
+    ]
+
+    assert missing_phrases == [], (
+        f"missing import-boundary commitments in {IMPORT_BOUNDARY_ADR}: "
+        f"{missing_phrases}"
+    )
+
+
+def test_import_boundary_adr_roadmap_item_is_closed() -> None:
+    """Mark roadmap item 1.1.3 done only once ADR-004 is accepted."""
+    roadmap = read_document(ROADMAP)
+    import_boundary_adr = read_document(IMPORT_BOUNDARY_ADR)
+
+    assert "Accepted on" in import_boundary_adr
+    assert "- [x] 1.1.3. Record the import-boundary enforcement decision." in roadmap
