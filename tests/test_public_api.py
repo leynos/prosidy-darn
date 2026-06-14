@@ -49,9 +49,10 @@ class TestPublicApi:
 
         with monkeypatch.context() as context:
             context.setattr(importlib, "import_module", fake_import_module)
+            loaded_runtime = importlib.reload(runtime)
 
             with pytest.raises(ModuleNotFoundError, match="inner_missing") as exc_info:
-                importlib.reload(runtime)
+                loaded_runtime.hello()
 
         assert exc_info.value.name == "inner_missing"
         importlib.reload(runtime)

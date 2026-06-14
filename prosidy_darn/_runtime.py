@@ -10,7 +10,7 @@ import prosidy_darn
 message = prosidy_darn.hello()
 ```
 
-Importing this module probes for the optional Rust extension. Missing extension
+Calling :func:`hello` probes for the optional Rust extension. Missing extension
 modules fall back to Python; import errors raised from inside the extension are
 re-raised.
 """
@@ -85,6 +85,3 @@ def hello() -> str:
         _python_hello = typ.cast("cabc.Callable[[], str]", python_hello)
 
     return _python_hello()
-
-
-_initialise_runtime()

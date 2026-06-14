@@ -59,8 +59,11 @@ the expected metadata, package entries, and extension layout.
 
 - Risk: maturin may not support the exact interpreter used by local gates.
   Severity: medium. Likelihood: medium. Mitigation: keep the wheel-build test
-  skippable when the toolchain or supported Python version is unavailable,
-  while still testing pin parsing.
+  skippable only on developer machines when the Rust toolchain, maturin, or a
+  supported Python version is unavailable, while still testing pin parsing. CI
+  and release workflows must fail hard when the Rust toolchain, maturin, or a
+  supported Python interpreter is missing, so the full gate cannot pass without
+  validating native wheel metadata and extension layout.
 
 - Risk: switching the build backend from hatchling to maturin changes pure
   wheel behaviour. Severity: medium. Likelihood: low. Mitigation: build a
@@ -107,8 +110,14 @@ the expected metadata, package entries, and extension layout.
 - The cuprum reference pins maturin in local dev dependencies, the wheel
   workflow, and the reusable wheel action; this repository currently has no
   maturin pin.
-- Maturin emits a CycloneDX SBOM entry in the native wheel, so the wheel
-  summary helper normalizes that entry just like it normalizes platform tags.
+- Maturin emits a CycloneDX SBOM entry under the wheel's
+  `.dist-info/sboms/` directory. Current maturin output names that file with a
+  `<crate_name>.cyclonedx.json` pattern, and the wheel summary helper replaces
+  version-specific `.dist-info` prefixes and the crate-specific SBOM basename
+  with placeholders so snapshots stay stable across package releases. Maturin's
+  SBOM format has evolved across releases, notably in the 1.5 upgrade, so tests
+  should pin both the expected directory path and the file-naming convention
+  they validate.
 
 ## Decision log
 
@@ -122,10 +131,11 @@ the expected metadata, package entries, and extension layout.
   and workflow names; Prosidy Darn needs the same compatibility contract with
   package-specific paths and without unrelated stream backend assumptions.
 
-- Decision: keep wheel-build tests skippable when the Rust toolchain, maturin,
-  or a supported Python version is unavailable. Rationale: pin synchronization
-  should always be checked, but local environments may reasonably lack native
-  build support.
+- Decision: keep wheel-build tests skippable only on developer machines when
+  the Rust toolchain, maturin, or a supported Python version is unavailable.
+  Rationale: pin synchronization should always be checked locally, but CI and
+  release workflows must fail hard when native build support is missing so they
+  prove that wheels build with the expected metadata and extension layout.
 
 - Decision: remove the release workflow's pure-wheel job and use the native
   wheel matrix for releases. Rationale: the package is now a mixed Python/Rust

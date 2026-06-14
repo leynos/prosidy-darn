@@ -79,7 +79,11 @@ __all__ = [
 ]
 
 _WORKFLOW_PIN_RE = re.compile(r'MATURIN_VERSION:\s*"(\d+\.\d+\.\d+)"')
-_ACTION_PIN_RE = re.compile(r'default:\s*"(\d+\.\d+\.\d+)"')
+_ACTION_PIN_RE = re.compile(
+    r"maturin-version:\s*\n"
+    r"(?:[ \t]+[A-Za-z-]+:.*\n)*?"
+    r'[ \t]+default:\s*"(\d+\.\d+\.\d+)"',
+)
 _GENERATOR_RE = re.compile(r"^Generator:\s*maturin\s*\(([^)]+)\)\s*$", re.MULTILINE)
 _EXTENSION_MODULE_RE = re.compile(
     rf"^{PACKAGE_IMPORT_NAME}/{RUST_EXTENSION_NAME}\.(?:cpython|cp)[^/]+\.(?:pyd|so)$",
@@ -142,15 +146,21 @@ def read_maturin_pins(root: pathlib.Path) -> dict[str, str]:
     action = (root / ".github/actions/build-wheels/action.yml").read_text(
         encoding="utf-8",
     )
-    build_system_requirement = pyproject["build-system"]["requires"][0]
-    if not build_system_requirement.startswith("maturin=="):
+    build_system_requirements = pyproject["build-system"]["requires"]
+    build_system_maturin_pins = [
+        requirement.removeprefix("maturin==")
+        for requirement in build_system_requirements
+        if requirement.startswith("maturin==")
+    ]
+    if len(build_system_maturin_pins) != 1:
         message = (
-            f"Expected maturin build backend pin, found {build_system_requirement}"
+            "Expected one maturin build backend pin, found "
+            f"{build_system_maturin_pins!r}"
         )
         raise PinSynchronisationError(message)
     return {
         "pyproject dev": read_expected_maturin_version(root),
-        "pyproject build-system": build_system_requirement.removeprefix("maturin=="),
+        "pyproject build-system": build_system_maturin_pins[0],
         "build-wheels.yml": _require_pin_match(
             _WORKFLOW_PIN_RE.search(workflow),
             ".github/workflows/build-wheels.yml",

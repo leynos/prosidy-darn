@@ -31,7 +31,9 @@ def test_maturin_pins_are_synchronized() -> None:
     """Maturin version pins stay aligned across CI and packaging metadata."""
     pins = read_maturin_pins(repo_root())
     assert len(set(pins.values())) == 1, f"Expected one maturin pin, found {pins!r}"
-    assert next(iter(pins.values())) == MATURIN_VERSION
+    assert next(iter(pins.values())) == MATURIN_VERSION, (
+        "Maturin pin constants must match repository packaging and CI pins"
+    )
 
 
 def test_installed_maturin_matches_expected_pin() -> None:
@@ -51,7 +53,7 @@ def test_pyo3_pin_matches_lockfile() -> None:
     assert pins == {
         "rust/prosidy-darn-rs/Cargo.toml": PYO3_VERSION,
         "rust/Cargo.lock": PYO3_VERSION,
-    }
+    }, "PyO3 manifest and lockfile pins must match the expected constant"
 
 
 @pytest.mark.timeout(300)
@@ -88,7 +90,7 @@ def test_maturin_wheel_build_summary(tmp_path: pth.Path) -> None:
             "prosidy_darn/_runtime.py",
             "prosidy_darn/pure.py",
         ],
-    }
+    }, "Native wheel metadata, SBOM, and extension layout must match the contract"
 
 
 @pytest.mark.timeout(300)
@@ -124,7 +126,9 @@ def test_rust_extension_hello_returns_expected_greeting(tmp_path: pth.Path) -> N
         # End-to-end: exercises the real extension, not a mock.
         module = importlib.import_module("prosidy_darn._prosidy_darn_rs")
 
-        assert module.hello() == "hello from Rust"
+        assert module.hello() == "hello from Rust", (
+            "Installed Rust extension must return the expected greeting"
+        )
     finally:
         sys.path[:] = original_path
         sys.modules.pop("prosidy_darn", None)
