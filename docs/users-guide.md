@@ -16,7 +16,8 @@ can align on the same shape.
 uv sync --group dev
 ```
 
-Run the current package smoke test:
+Run the current package smoke test. The Rust extension is preferred when it is
+available; otherwise the package falls back to the pure-Python implementation:
 
 ```bash
 uv run python - <<'PY'
@@ -26,10 +27,16 @@ print(hello())
 PY
 ```
 
-Expected output:
+Expected output when the Rust extension is available:
 
 ```plaintext
 hello from Rust
+```
+
+Expected output when the Rust extension is unavailable:
+
+```plaintext
+hello from Python
 ```
 
 Run the local lint gate with:

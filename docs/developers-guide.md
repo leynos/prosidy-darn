@@ -24,7 +24,7 @@ host.
 The package builds native wheels with maturin and PyO3. The Rust workspace
 lives under `rust/`, and the extension crate is `rust/prosidy-darn-rs`. Keep
 the maturin version synchronized across `pyproject.toml`,
-`.github/workflows/build-wheels.yml`, and
+`.github/workflows/build-wheels.yml`, `.github/workflows/release.yml`, and
 `.github/actions/build-wheels/action.yml`; `tests/test_maturin_build.py` checks
 that contract. Keep the PyO3 version in `rust/prosidy-darn-rs/Cargo.toml`
 aligned with `rust/Cargo.lock`; the same test module checks that lockfile

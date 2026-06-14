@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+import builtins
 import importlib
+import typing as typ
 
 import pytest
 
 import prosidy_darn
 import prosidy_darn._runtime as runtime
+
+if typ.TYPE_CHECKING:
+    import collections.abc as cabc
 
 
 class TestPublicApi:
@@ -54,6 +59,7 @@ class TestPublicApi:
     ) -> None:
         """Keep a broken Python fallback from breaking a working Rust runtime."""
         original_import_module = importlib.import_module
+        original_import = builtins.__import__
 
         class FakeRust:
             @staticmethod
@@ -63,14 +69,24 @@ class TestPublicApi:
         def fake_import_module(name: str, package: str | None = None) -> object:
             if name == runtime.RUST_MODULE_NAME:
                 return FakeRust()
+
+            return original_import_module(name, package)
+
+        def fake_import(
+            name: str,
+            *args: object,
+            **kwargs: object,
+        ) -> object:
             if name == "prosidy_darn.pure":
                 message = "broken fallback"
                 raise ModuleNotFoundError(message, name=name)
 
-            return original_import_module(name, package)
+            import_function = typ.cast("cabc.Callable[..., object]", original_import)
+            return import_function(name, *args, **kwargs)
 
         with monkeypatch.context() as context:
             context.setattr(importlib, "import_module", fake_import_module)
+            context.setattr(builtins, "__import__", fake_import)
             loaded_runtime = importlib.reload(runtime)
 
             assert loaded_runtime.hello() == "hello from Rust"

@@ -22,7 +22,7 @@ _WORKFLOW_PIN_RE = re.compile(r'MATURIN_VERSION:\s*"(\d+\.\d+\.\d+)"')
 _ACTION_PIN_RE = re.compile(r'default:\s*"(\d+\.\d+\.\d+)"')
 _GENERATOR_RE = re.compile(r"^Generator:\s*maturin\s*\(([^)]+)\)\s*$", re.MULTILINE)
 _EXTENSION_MODULE_RE = re.compile(
-    rf"^{PACKAGE_IMPORT_NAME}/{RUST_EXTENSION_NAME}\.cpython-[^/]+\.so$",
+    rf"^{PACKAGE_IMPORT_NAME}/{RUST_EXTENSION_NAME}\.(?:cpython|cp)[^/]+\.(?:pyd|so)$",
 )
 
 
@@ -187,7 +187,10 @@ def _parse_metadata(raw_metadata: str) -> dict[str, typ.Any]:
 def _normalise_wheel_entry(name: str) -> str:
     """Normalise platform and version-specific wheel entry names."""
     if _EXTENSION_MODULE_RE.match(name):
-        return f"{PACKAGE_IMPORT_NAME}/{RUST_EXTENSION_NAME}.cpython-<platform>.so"
+        return (
+            f"{PACKAGE_IMPORT_NAME}/{RUST_EXTENSION_NAME}"
+            ".cpython-<platform>.<extension>"
+        )
     if "/sboms/" in name:
         return f"{PACKAGE_IMPORT_NAME}-<version>.dist-info/sboms/<sbom>.cyclonedx.json"
     if name.startswith(f"{PACKAGE_IMPORT_NAME}-") and ".dist-info/" in name:

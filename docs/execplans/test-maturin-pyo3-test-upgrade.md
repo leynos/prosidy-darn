@@ -1,8 +1,8 @@
-# Update maturin and PyO3 Validation
+# Update maturin and PyO3 validation
 
 This ExecPlan (execution plan) is a living document. The sections `Constraints`,
-`Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`, `Decision Log`,
-and `Outcomes & Retrospective` must be kept up to date as work proceeds.
+`Tolerances`, `Risks`, `Progress`, `Surprises & discoveries`, `Decision log`,
+and `Outcomes & retrospective` must be kept up to date as work proceeds.
 
 Status: COMPLETE
 
@@ -22,6 +22,8 @@ make check-fmt
 make lint
 make typecheck
 make test
+cargo fmt --manifest-path rust/Cargo.toml --check
+cargo check --manifest-path rust/Cargo.toml
 ```
 
 The new tests also make future maturin and PyO3 upgrades visible by checking
@@ -86,9 +88,9 @@ the expected metadata, package entries, and extension layout.
   responsibilities.
 - [x] 2026-06-05: Run `make check-fmt`, `make lint`, `make typecheck`, and
   `make test`.
-- [x] 2026-06-05: Run `make markdownlint`, `make nixie`, `cargo fmt
-  --manifest-path rust/Cargo.toml --check`, and `cargo check --manifest-path
-  rust/Cargo.toml`.
+- [x] 2026-06-05: Run `make markdownlint`, `make nixie`,
+      `cargo fmt --manifest-path rust/Cargo.toml --check`, and
+      `cargo check --manifest-path rust/Cargo.toml`.
 - [x] 2026-06-05: Run `make build-release` and confirm it builds the source
   distribution and native CPython 3.14 wheel.
 - [x] 2026-06-05: Commit the gated implementation changes as
@@ -96,7 +98,7 @@ the expected metadata, package entries, and extension layout.
 - [x] 2026-06-05: Create draft pull request
   [#14](https://github.com/leynos/prosidy-darn/pull/14).
 
-## Surprises & Discoveries
+## Surprises & discoveries
 
 - The repository has the optional Rust runtime import path already, but no
   checked-in Rust crate or Cargo metadata.
@@ -108,7 +110,7 @@ the expected metadata, package entries, and extension layout.
 - Maturin emits a CycloneDX SBOM entry in the native wheel, so the wheel
   summary helper normalizes that entry just like it normalizes platform tags.
 
-## Decision Log
+## Decision log
 
 - Decision: use `prosidy_darn._prosidy_darn_rs` as the PyO3 extension module
   name. Rationale: `prosidy_darn._runtime.RUST_MODULE_NAME` already resolves to
@@ -130,7 +132,7 @@ the expected metadata, package entries, and extension layout.
   project, so the previous pure-wheel release path no longer described the
   artefacts being published.
 
-## Implementation Plan
+## Implementation plan
 
 First, add Cargo workspace metadata and a minimal Rust crate under `rust/` that
 exports one PyO3 function, `hello`, returning the same greeting as the current
@@ -153,7 +155,7 @@ builds exist and where the compatibility tests live.
 Finally, run the required gates with `tee` logs in `/tmp`, fix any failures,
 commit the gated changes, and create a draft pull request.
 
-## Outcomes & Retrospective
+## Outcomes & retrospective
 
 The implementation adds a minimal PyO3 extension crate at
 `rust/prosidy-darn-rs`, switches package builds to maturin `1.13.3`, pins PyO3

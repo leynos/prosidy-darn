@@ -52,7 +52,7 @@ def test_pyo3_pin_matches_lockfile() -> None:
     }
 
 
-@pytest.mark.timeout(0)
+@pytest.mark.timeout(300)
 def test_maturin_wheel_build_summary(tmp_path: pth.Path) -> None:
     """Native wheel metadata and layout match the expected maturin output."""
     root = repo_root()
@@ -82,7 +82,7 @@ def test_maturin_wheel_build_summary(tmp_path: pth.Path) -> None:
             "prosidy_darn-<version>.dist-info/licenses/LICENSE",
             "prosidy_darn-<version>.dist-info/sboms/<sbom>.cyclonedx.json",
             "prosidy_darn/__init__.py",
-            "prosidy_darn/_prosidy_darn_rs.cpython-<platform>.so",
+            "prosidy_darn/_prosidy_darn_rs.cpython-<platform>.<extension>",
             "prosidy_darn/_runtime.py",
             "prosidy_darn/pure.py",
         ],
