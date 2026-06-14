@@ -163,7 +163,8 @@ decision. They are recorded so the implementer need not re-research them.
   PyPI package supporting current CPython, including the project's Python 3.14
   target. Its `forbidden` contract with
   `include_external_packages = True` expresses the exact requirement
-  (`source_modules = [prosidy_darn.domain, prosidy_darn.application]`;
+  (`source_modules = [prosidy_darn.domain, prosidy_darn.application,
+  prosidy_darn.ports]`;
   `forbidden_modules` listing adapters plus `cyclopts`, `rich`, and the parser
   and renderer packages), and its `layers` contract maps onto the
   domain/application/adapters layering. Its companion `grimp` builds the import
@@ -1004,9 +1005,10 @@ The checker contract that later tasks rely on is:
 
 The fallback contract, if hecate must be replaced, is import-linter 2.11 behind
 the same `make check-imports` seam: a `forbidden` contract with
-`source_modules = ["prosidy_darn.domain", "prosidy_darn.application"]`,
-`forbidden_modules` listing the adapter packages plus `cyclopts`, `rich`, and the
-parser and renderer packages, and `include_external_packages = True`.
+`source_modules = ["prosidy_darn.domain", "prosidy_darn.application",
+"prosidy_darn.ports"]`, `forbidden_modules` listing the adapter packages plus
+`cyclopts`, `rich`, and the parser and renderer packages, and
+`include_external_packages = True`.
 
 ## Revision note
 
