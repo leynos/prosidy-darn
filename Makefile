@@ -16,6 +16,16 @@ PYLINT_TARGETS ?= $(PYLINT_PACKAGE_TARGETS) $(PYLINT_TEST_TARGETS) $(PYLINT_EXTR
 PYLINT_PYPY_SHIM_REF ?= 726d09f968b4d729ee4b29c71fc732e744854f3b
 PYLINT_PYPY_SHIM = git+https://github.com/leynos/pylint-pypy-shim.git@$(PYLINT_PYPY_SHIM_REF)
 PYLINT = $(UV_ENV) uv tool run --python $(PYLINT_PYTHON) --from '$(PYLINT_PYPY_SHIM)' pylint-pypy
+# hecate is the import-boundary fitness checker (ADR-004). It is git-ref-only:
+# the PyPI name "hecate" is an unrelated project, so never `uv add hecate` or
+# reference it by bare name. Resolve the pin with:
+#   git ls-remote https://github.com/leynos/hecate.git HEAD
+# hecate runs out-of-process under Python 3.14 so its Cyclopts dependency never
+# enters the project virtual environment. Wiring a `check-imports` gate against
+# the real tree is roadmap task 1.2.3; here the pin only powers the fixture test.
+HECATE_REF ?= 46f8c8798e7a80a3a1ab5a13c2a000a4423ffc12
+HECATE_SPEC = git+https://github.com/leynos/hecate.git@$(HECATE_REF)
+HECATE = $(UV_ENV) uv tool run --python 3.14 --from '$(HECATE_SPEC)' hecate
 
 .PHONY: help all clean build build-release lint fmt check-fmt \
         markdownlint nixie test typecheck $(TOOLS) $(VENV_TOOLS)
@@ -90,6 +100,9 @@ nixie: ## Validate Mermaid diagrams
 	$(call ensure_tool,nixie)
 	$(NIXIE) --no-sandbox
 
+# Export the hecate pin so tests/test_import_boundary_fitness.py can build the
+# pinned spec and run the checker out-of-process.
+test: export HECATE_REF := $(HECATE_REF)
 test: build uv $(VENV_TOOLS) ## Run tests
 	$(UV_ENV) uv run pytest -v -n auto
 

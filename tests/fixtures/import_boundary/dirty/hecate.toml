@@ -1,0 +1,30 @@
+# Fixture hecate policy mirroring the production rules documented in ADR-004.
+# Package roots resolve relative to this file, so `fixture_pkg` is the sibling
+# directory `fixture_pkg/`.
+[tool.hecate]
+root_packages = ["fixture_pkg"]
+include_external_packages = true
+
+# Order matters: specific prefixes precede general ones.
+[[tool.hecate.groups]]
+name = "fixture_domain"
+prefixes = ["fixture_pkg.fixture_domain"]
+allowed = ["fixture_domain", "fixture_ports"]
+
+[[tool.hecate.groups]]
+name = "fixture_ports"
+prefixes = ["fixture_pkg.fixture_ports"]
+allowed = ["fixture_ports", "fixture_domain"]
+
+[[tool.hecate.groups]]
+name = "fixture_adapters"
+prefixes = ["fixture_pkg.fixture_adapters"]
+allowed = ["fixture_adapters", "fixture_domain", "fixture_ports"]
+
+# Stand-in external framework: never installed, parsed only via `ast`. Its
+# absence from the domain and ports allow-lists is what turns a domain import
+# of it into a forbidden edge in the dirty tree.
+[[tool.hecate.groups]]
+name = "pretend_framework"
+prefixes = ["pretend_framework"]
+allowed = ["pretend_framework"]
