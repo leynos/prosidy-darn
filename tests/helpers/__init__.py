@@ -1,11 +1,12 @@
-"""Shared test helper package.
+"""Shared helper package for repository-level tests.
 
-This package contains reusable fixtures and helper modules for tests that need
-to validate repository-level contracts rather than a single Python function.
-Keep cross-cutting helpers here when multiple test modules need the same file
-parsing, build orchestration, or artifact inspection logic.
+This package contains helpers for tests that validate cross-cutting repository
+contracts rather than one Python function. Its current responsibility is the
+maturin and PyO3 validation support used by ``tests/test_maturin_build.py``:
+version-pin readers, Rust toolchain availability checks, native wheel build
+orchestration, and wheel metadata normalisation.
 
-Test files should import helpers from this package instead of duplicating
-metadata readers or wheel-inspection code locally. That keeps compatibility
-checks consistent as the Python package and Rust extension workspace grow.
+Test modules should import these helpers instead of duplicating packaging,
+lockfile, or wheel-inspection logic locally. That keeps the native extension
+compatibility checks consistent as the Python package and Rust workspace grow.
 """

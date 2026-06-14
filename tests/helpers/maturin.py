@@ -84,9 +84,11 @@ __all__ = [
 
 _WORKFLOW_PIN_RE = re.compile(r'MATURIN_VERSION:\s*"(\d+\.\d+\.\d+)"')
 _ACTION_PIN_RE = re.compile(
-    r"maturin-version:\s*\n"
-    r"(?:[ \t]+[A-Za-z-]+:.*\n)*?"
-    r'[ \t]+default:\s*"(\d+\.\d+\.\d+)"',
+    r"^  maturin-version:\n"
+    r"^    description: .*\n"
+    r"^    required: false\n"
+    r'^    default: "(\d+\.\d+\.\d+)"$',
+    re.MULTILINE,
 )
 _GENERATOR_RE = re.compile(r"^Generator:\s*maturin\s*\(([^)]+)\)\s*$", re.MULTILINE)
 _EXTENSION_MODULE_RE = re.compile(
