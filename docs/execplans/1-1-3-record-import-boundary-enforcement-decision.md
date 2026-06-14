@@ -27,7 +27,7 @@ the application layer never name an adapter, a framework, or a vendor library.
 
 The repository already contains a stub
 `docs/adr-004-import-boundary-fitness-check.md` whose status is "Proposed" and
-whose decision outcome is "Pending". This plan therefore finalises and closes an
+whose decision outcome is "Pending". This plan therefore finalizes and closes an
 existing decision rather than creating a new ADR file. The chosen tool is
 `leynos/hecate`, a purpose-built df12 hexagonal-architecture checker, with the
 mature PyPI package `import-linter` named as the pre-vetted fallback.
@@ -155,9 +155,10 @@ decision. They are recorded so the implementer need not re-research them.
 - The PyPI distribution named `hecate` is an unrelated project (David MacIver's
   ncurses CLI tester). `leynos/hecate` is therefore not installable by bare name
   and must be referenced only by a pinned git URL, exactly like
-  `pylint-pypy-shim`. The current default-branch HEAD is
-  `46f8c8798e7a80a3a1ab5a13c2a000a4423ffc12`; the implementer must re-resolve and
-  pin a full 40-character commit SHA at implementation time.
+  `pylint-pypy-shim`. The implementer must resolve hecate's current
+  default-branch HEAD with
+  `git ls-remote https://github.com/leynos/hecate.git HEAD` and pin that full
+  40-character commit SHA at implementation time.
 - `import-linter` 2.11 (by David Seddon) is a Production/Stable, BSD-2-licensed
   PyPI package supporting current CPython, including the project's Python 3.14
   target. Its `forbidden` contract with
@@ -358,10 +359,11 @@ Likelihood: high if ignored. Mitigation: the ADR models five groups with explici
 `allowed` lists, granting `domain` and `application` an inward edge to `ports`,
 and granting adapters an edge to `domain.ir` and `ports`.
 
-Risk: External import-name versus distribution-name skew. `include_external_
-packages` keys on the top-level import name, which can differ from the PyPI
-distribution name (for example the Markdown parser). A wrong name silently never
-fires. Severity: medium. Likelihood: medium. Mitigation: the ADR records the
+Risk: External import-name versus distribution-name skew.
+`include_external_packages` keys on the top-level import name, which can differ
+from the PyPI distribution name (for example the Markdown parser). A wrong name
+silently never fires. Severity: medium. Likelihood: medium. Mitigation: the ADR
+records the
 requirement to verify each banned and allowed external's actual import top-level
 name; the fixture uses a stand-in external prefix so the demonstration is
 self-contained and needs no real dependency installed.
@@ -419,7 +421,7 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
   test fails before the Makefile pin and fixture config exist.
 - [ ] Add the `HECATE_REF`, `HECATE_SPEC`, and `HECATE` Makefile variables and
   export `HECATE_REF` to the `test` target; pin a full hecate commit SHA.
-- [ ] Finalise ADR-004 (status, options table, decision, production config,
+- [ ] Finalize ADR-004 (status, options table, decision, production config,
   limitations, fallback) and capture the one-shot demonstration evidence.
 - [ ] Align `docs/prosidy-darn-technical-design.md` section 18, the developers'
   guide, and `docs/contents.md`.
@@ -434,7 +436,7 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
 
 - Observation: ADR-004 already exists as a "Proposed" stub with a pending
   outcome. Evidence: `docs/adr-004-import-boundary-fitness-check.md` lines 3-9.
-  Impact: the implementation finalises the existing file in place rather than
+  Impact: the implementation finalizes the existing file in place rather than
   creating a new one, preserving the stable review path the stub promises.
 - Observation: the PyPI distribution `hecate` is unrelated to `leynos/hecate`.
   Evidence: `https://pypi.org/pypi/hecate/json` returns David MacIver's ncurses
@@ -466,7 +468,7 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
 
 ## Decision log
 
-- Decision: Treat 1.1.3 as a decision-finalisation task that also adds a durable
+- Decision: Treat 1.1.3 as a decision-finalization task that also adds a durable
   demonstration, not documentation only. Rationale: the roadmap success criterion
   ("can fail a boundary violation in a minimal fixture") is executable, and
   ADR-006 already scopes import-boundary checks into Phase 1 tests. Documentation
@@ -554,7 +556,7 @@ tree. It records the decision, documents the production configuration shape for
 The key files for this task are:
 
 - `docs/roadmap.md`: item 1.1.3 and the sibling tasks 1.2.1, 1.2.2, and 1.2.3.
-- `docs/adr-004-import-boundary-fitness-check.md`: the stub to finalise.
+- `docs/adr-004-import-boundary-fitness-check.md`: the stub to finalize.
 - `docs/adr-001-markdown-parser-boundary.md` and
   `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`: accepted-ADR templates.
 - `docs/adr-006-test-matrix-phase-scope.md`: the warrant for a Phase 1
@@ -654,7 +656,7 @@ hecate is git-ref-only and must never be referenced by bare name. Export
 fixture test through `make test` and confirm it now passes (or skips only on
 confirmed unavailability).
 
-Milestone 5 finalises ADR-004. Replace the "Pending" outcome with "Accepted on
+Milestone 5 finalizes ADR-004. Replace the "Pending" outcome with "Accepted on
 `YYYY-MM-DD`". Keep the existing context and decision-driver material and add the
 sections the style guide requires: a decided options table comparing hecate,
 import-linter, tach, PyTestArch or custom `ast`, and Ruff `banned-api` across the
@@ -918,7 +920,7 @@ allowed = ["application", "domain", "ports"]
 [[tool.hecate.groups]]
 name = "adapters"
 prefixes = ["prosidy_darn.adapters"]
-allowed = ["adapters", "application", "ports", "domain", "markdown_parser", "rich", "delivery"]
+allowed = ["adapters", "application", "ports", "domain", "cyclopts", "rich", "markdown_parser", "delivery"]
 
 [[tool.hecate.groups]]
 name = "config"
@@ -926,7 +928,10 @@ prefixes = ["prosidy_darn.config"]
 allowed = ["config", "adapters", "application", "ports", "domain", "cyclopts", "rich", "markdown_parser", "delivery"]
 
 # External frameworks and infrastructure, banned from domain/application/ports
-# by their absence from those groups' allowed lists.
+# by their absence from those groups' allowed lists. Each external group's
+# prefix is the top-level IMPORT name, verified against the installed package
+# during implementation. Every group named in an "allowed" list above is defined
+# below, so the policy is self-consistent.
 [[tool.hecate.groups]]
 name = "cyclopts"
 prefixes = ["cyclopts"]
@@ -941,13 +946,22 @@ allowed = ["rich"]
 name = "markdown_parser"
 prefixes = ["mdast"]
 allowed = ["markdown_parser"]
+
+# Illustrative HTTP/webhook client for delivery sinks; confirm the actual import
+# name when task 4.3.3 selects the delivery library.
+[[tool.hecate.groups]]
+name = "delivery"
+prefixes = ["httpx"]
+allowed = ["delivery"]
 ```
 
 The Makefile tool reference to add (pin the full SHA resolved at implementation
 time):
 
 ```make
-HECATE_REF ?= 46f8c8798e7a80a3a1ab5a13c2a000a4423ffc12
+# Resolve the pin at implementation time:
+#   git ls-remote https://github.com/leynos/hecate.git HEAD
+HECATE_REF ?= <full-40-char-hecate-commit-sha>
 # hecate is git-ref-only: the PyPI name "hecate" is an unrelated project.
 HECATE_SPEC = git+https://github.com/leynos/hecate.git@$(HECATE_REF)
 HECATE = $(UV_ENV) uv tool run --python 3.14 --from '$(HECATE_SPEC)' hecate
