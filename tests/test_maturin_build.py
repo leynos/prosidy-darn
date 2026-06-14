@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import importlib
-import importlib.metadata as im
 import shutil
 import subprocess  # noqa: S404 - tests install a locally built wheel.
 import sys
@@ -38,10 +37,17 @@ def test_maturin_pins_are_synchronized() -> None:
 
 def test_installed_maturin_matches_expected_pin() -> None:
     """The active maturin CLI matches the pinned development dependency."""
-    if shutil.which("maturin") is None:
+    maturin_path = shutil.which("maturin")
+    if maturin_path is None:
         pytest.skip("maturin is not installed.")
     expected = read_expected_maturin_version(repo_root())
-    installed = im.version("maturin")
+    completed = subprocess.run(  # noqa: S603 - command list uses trusted executable.
+        [maturin_path, "--version"],
+        capture_output=True,
+        check=True,
+        text=True,
+    )
+    installed = completed.stdout.removeprefix("maturin ").strip()
     assert installed == expected, (
         f"Expected maturin {expected}, but {installed} is installed"
     )
@@ -64,7 +70,10 @@ def test_maturin_wheel_build_summary(tmp_path: pth.Path) -> None:
     if not toolchain_available():
         pytest.skip("Rust toolchain unavailable.")
     if sys.version_info >= (3, 15):
-        pytest.skip(f"maturin {expected} does not support this Python version.")
+        pytest.fail(
+            f"maturin {expected} must be updated and wheel contracts refreshed "
+            "before native-wheel tests run on Python 3.15+",
+        )
 
     wheel_path = build_native_wheel_artifact(root, tmp_path / "wheelhouse")
     summary = wheel_build_summary(wheel_path)
@@ -101,7 +110,10 @@ def test_rust_extension_hello_returns_expected_greeting(tmp_path: pth.Path) -> N
     if not toolchain_available():
         pytest.skip("Rust toolchain unavailable.")
     if sys.version_info >= (3, 15):
-        pytest.skip(f"maturin {expected} does not support this Python version.")
+        pytest.fail(
+            f"maturin {expected} must be updated and wheel contracts refreshed "
+            "before native-wheel tests run on Python 3.15+",
+        )
 
     wheel_path = build_native_wheel_artifact(root, tmp_path / "wheelhouse")
     site_dir = tmp_path / "site"
@@ -124,10 +136,10 @@ def test_rust_extension_hello_returns_expected_greeting(tmp_path: pth.Path) -> N
     try:
         sys.path.insert(0, str(site_dir))
         # End-to-end: exercises the real extension, not a mock.
-        module = importlib.import_module("prosidy_darn._prosidy_darn_rs")
+        module = importlib.import_module("prosidy_darn")
 
         assert module.hello() == "hello from Rust", (
-            "Installed Rust extension must return the expected greeting"
+            "Installed public API must select the Rust extension greeting"
         )
     finally:
         sys.path[:] = original_path

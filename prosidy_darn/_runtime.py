@@ -43,13 +43,13 @@ def _initialise_runtime() -> None:
         rust = importlib.import_module(RUST_MODULE_NAME)
         _rust_hello = typ.cast("cabc.Callable[[], str]", rust.hello)
         _HAS_RUST = True
-        _logger.debug(
+        _logger.info(
             "prosidy_darn: Rust extension loaded (%s)",
             RUST_MODULE_NAME,
         )
     except ModuleNotFoundError as exc:  # pragma: no cover - Python fallback
         if exc.name != RUST_MODULE_NAME:
-            _logger.debug(
+            _logger.info(
                 "prosidy_darn: re-raising ModuleNotFoundError from %s (name=%s)",
                 RUST_MODULE_NAME,
                 exc.name,
@@ -60,7 +60,7 @@ def _initialise_runtime() -> None:
 
         _python_hello = typ.cast("cabc.Callable[[], str]", python_hello)
         _HAS_RUST = False
-        _logger.debug(
+        _logger.info(
             "prosidy_darn: Rust extension unavailable (%s), using pure-Python fallback",
             RUST_MODULE_NAME,
         )

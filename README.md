@@ -48,6 +48,10 @@ Expected output:
 hello from Rust
 ```
 
+The smoke test prefers the optional Rust extension; when that extension is not
+available, the package falls back to the pure-Python implementation and prints
+`hello from Python`.
+
 ______________________________________________________________________
 
 ## Features
