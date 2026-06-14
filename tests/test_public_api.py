@@ -8,9 +8,7 @@ import typing as typ
 
 import pytest
 
-import prosidy_darn
 import prosidy_darn._runtime as runtime
-from prosidy_darn import pure
 
 if typ.TYPE_CHECKING:
     import collections.abc as cabc
@@ -24,11 +22,25 @@ class TestPublicApi:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         """Return the Python greeting when the Rust extension is unavailable."""
-        monkeypatch.setattr(runtime, "_HAS_RUST", False)
-        monkeypatch.setattr(runtime, "_python_hello", pure.hello)
-        monkeypatch.setattr(runtime, "_rust_hello", None)
+        original_import_module = importlib.import_module
 
-        assert prosidy_darn.hello() == "hello from Python"
+        def fake_import_module(name: str, package: str | None = None) -> object:
+            if name == runtime.RUST_MODULE_NAME:
+                message = f"No module named {runtime.RUST_MODULE_NAME!r}"
+                raise ModuleNotFoundError(message, name=runtime.RUST_MODULE_NAME)
+
+            return original_import_module(name, package)
+
+        with monkeypatch.context() as context:
+            context.setattr(importlib, "import_module", fake_import_module)
+            loaded_runtime = importlib.reload(runtime)
+            try:
+                assert loaded_runtime.hello() == "hello from Python", (
+                    "hello() must return the Python greeting when the Rust "
+                    "extension is absent"
+                )
+            finally:
+                importlib.reload(runtime)
 
     def test_runtime_import_reraises_nested_module_errors(
         self,
@@ -54,7 +66,9 @@ class TestPublicApi:
             with pytest.raises(ModuleNotFoundError, match="inner_missing") as exc_info:
                 loaded_runtime.hello()
 
-        assert exc_info.value.name == "inner_missing"
+        assert exc_info.value.name == "inner_missing", (
+            "Re-raised ModuleNotFoundError must preserve the inner module name"
+        )
         importlib.reload(runtime)
 
     def test_runtime_import_does_not_load_fallback_when_rust_loads(
@@ -93,7 +107,10 @@ class TestPublicApi:
             context.setattr(builtins, "__import__", fake_import)
             loaded_runtime = importlib.reload(runtime)
 
-            assert loaded_runtime.hello() == "hello from Rust"
+            assert loaded_runtime.hello() == "hello from Rust", (
+                "hello() must return the Rust greeting when the Rust extension "
+                "loads successfully"
+            )
 
         importlib.reload(runtime)
 

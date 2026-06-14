@@ -135,7 +135,7 @@ prosidy-darn-technical-design.md §§4-6 and 9.
   - Success: a deliberate domain-to-adapter import fails the check with an
     actionable diagnostic.
 - [x] 1.2.4. Add maturin and PyO3 validation for native wheels.
-  - Requires 1.1.1 and the maturin/PyO3 toolchain slice.
+  - Requires 1.2.1 and 1.2.2.
   - Add a minimal PyO3 extension, maturin build configuration, and compatibility
     tests for maturin pin synchronisation, PyO3 lockfile alignment, native wheel
     metadata, and extension import execution.

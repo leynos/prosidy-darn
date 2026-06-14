@@ -46,6 +46,8 @@ than duplicate the pin-synchronisation and wheel-validation pattern.
 from __future__ import annotations
 
 import importlib.util
+import logging
+import os
 import pathlib
 import re
 import shutil
@@ -54,6 +56,8 @@ import sys
 import tomllib
 import typing as typ
 import zipfile
+
+_logger = logging.getLogger(__name__)
 
 MATURIN_VERSION = "1.13.3"
 PYO3_VERSION = "0.28.3"
@@ -213,6 +217,7 @@ def build_native_wheel_artifact(
 ) -> pathlib.Path:
     """Build a native wheel with the pinned maturin version."""
     out_dir.mkdir(parents=True, exist_ok=True)
+    build_env = os.environ | {"CARGO_TARGET_DIR": str(out_dir / "target")}
     command = [
         sys.executable,
         "-m",
@@ -224,10 +229,16 @@ def build_native_wheel_artifact(
         "--manifest-path",
         str(root / "rust/prosidy-darn-rs/Cargo.toml"),
     ]
+    _logger.debug("build_native_wheel_artifact: running %s", command)
     subprocess.run(  # noqa: S603 - command list uses trusted paths and pinned maturin.
         command,
         check=True,
         cwd=root,
+        env=build_env,
+    )
+    _logger.debug(
+        "build_native_wheel_artifact: completed; output dir contains %s",
+        sorted(out_dir.iterdir()),
     )
     wheels = sorted(out_dir.glob("*.whl"))
     if len(wheels) != 1:
