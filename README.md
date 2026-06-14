@@ -48,9 +48,12 @@ Expected output:
 hello from Rust
 ```
 
-The smoke test prefers the optional Rust extension; when that extension is not
-available, the package falls back to the pure-Python implementation and prints
-`hello from Python`.
+This is placeholder scaffold behaviour while the repository structure and
+architecture decisions are being formalized. The smoke test prefers the
+optional Rust extension; when that extension is not available, the package
+falls back to the pure-Python implementation and prints `hello from Python`.
+The real Prosidy Darn behaviour will be implemented in the roadmap slices that
+follow.
 
 ______________________________________________________________________
 
