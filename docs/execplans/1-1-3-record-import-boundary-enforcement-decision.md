@@ -411,24 +411,28 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
 - [x] (2026-06-09) Ran a six-member Logisphere community-of-experts panel to
   stress-test and revise the decision before drafting.
 - [x] (2026-06-09) Drafted this pre-implementation ExecPlan.
-- [ ] Receive explicit user approval to implement the plan.
-- [ ] Rename the branch to
-  `1-1-3-record-import-boundary-enforcement-decision` and track the matching
-  remote.
-- [ ] Add the failing documentation-contract tests for ADR-004 acceptance and
-  confirm they fail for the expected reason.
-- [ ] Add the failing fixture demonstration test
-  (`tests/test_import_boundary_fitness.py`) and fixture trees, and confirm the
-  test fails before the Makefile pin and fixture config exist.
-- [ ] Add the `HECATE_REF`, `HECATE_SPEC`, and `HECATE` Makefile variables and
-  export `HECATE_REF` to the `test` target; pin a full hecate commit SHA.
-- [ ] Finalize ADR-004 (status, options table, decision, production config,
-  limitations, fallback) and capture the one-shot demonstration evidence.
-- [ ] Align `docs/prosidy-darn-technical-design.md` section 18, the developers'
-  guide, and `docs/contents.md`.
-- [ ] Correct `.github/workflows/ci.yml` and `.github/workflows/release.yml`
-  Python pins from `3.13` to `3.14`.
-- [ ] Mark roadmap item 1.1.3 done.
+- [x] (2026-06-14) Received the implementation request through issue #16, which
+  refines this plan's test-implementation milestones.
+- [x] (2026-06-14) Renamed the branch to
+  `issue-16-import-boundary-fitness-tests` per issue #16 (in place of the
+  plan's original `1-1-3-...` name) and resolved the hecate head SHA
+  `46f8c8798e7a80a3a1ab5a13c2a000a4423ffc12`.
+- [x] (2026-06-14) Added the failing documentation-contract tests for ADR-004
+  acceptance and confirmed they fail for the expected reason.
+- [x] (2026-06-14) Added the fixture demonstration test
+  (`tests/test_import_boundary_fitness.py`) and the clean and dirty fixture
+  trees, and verified hecate exits 0 on the clean tree and 1 on the dirty tree.
+- [x] (2026-06-14) Added the `HECATE_REF`, `HECATE_SPEC`, and `HECATE` Makefile
+  variables, exported `HECATE_REF` to the `test` target, and pinned the full
+  hecate commit SHA.
+- [x] (2026-06-14) Finalized ADR-004 (status, options table, decision,
+  production config, limitations, fallback).
+- [x] (2026-06-14) Aligned `docs/prosidy-darn-technical-design.md` section 18,
+  the developers' guide, and `docs/contents.md`.
+- [x] (2026-06-14) Confirmed `.github/workflows/ci.yml` and
+  `.github/workflows/release.yml` already pin `python-version: '3.14'`, so no
+  Python-pin correction was required.
+- [x] (2026-06-14) Marked roadmap item 1.1.3 done.
 - [ ] Run the local gates sequentially and capture logs under `/tmp`.
 - [ ] Run `coderabbit review --agent` and clear in-scope concerns.
 - [ ] Commit with a file-based message, push, and open the draft pull request.
@@ -466,6 +470,22 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
   helper is still caught (the helper is itself scanned), so per-module direct
   classification is sufficient for the strict layered rule; the ADR records this
   rather than overclaiming grimp-style transitive analysis.
+- Observation: by implementation time both `.github/workflows/ci.yml` and
+  `.github/workflows/release.yml` already pinned `python-version: '3.14'`.
+  Evidence: the two workflow files. Impact: Milestone 6a's pin correction was
+  already done upstream, so this task touched no workflow file.
+- Observation: the repository's own Ruff and `ty` gates scan `tests/fixtures`.
+  Evidence: `make lint` and `make typecheck` over the fixture trees. Impact: the
+  fixture modules bind each deliberate import to a module-level name so Ruff does
+  not report it as unused, and the never-installed stand-in external import
+  carries a single `# ty: ignore[unresolved-import]` comment; hecate still sees
+  every import because it parses the source with `ast`. This keeps the fixtures
+  self-contained without editing `pyproject.toml`.
+- Observation: hecate's JSON violation objects expose `importer`, `imported`,
+  `importer_group`, `imported_group`, `line`, `rule_id`, and `source_path`.
+  Evidence: a one-shot run against the dirty fixture. Impact: the test asserts on
+  the module-dotted `importer` and `imported` fields and never on `source_path`,
+  keeping assertions stable across machines.
 
 ## Decision log
 

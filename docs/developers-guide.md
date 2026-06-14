@@ -173,6 +173,38 @@ extend `PYLINT_PACKAGE_TARGETS`, `PYLINT_TEST_TARGETS`, or
 `PYLINT_EXTRA_TARGETS` so new Python paths do not silently fall outside the
 second lint tier.
 
+## Import-boundary fitness check
+
+The import-boundary fitness function is the architecture gate that holds the
+hexagonal dependency rule true: the domain and application layers must not
+import adapters, Cyclopts, Rich, the Markdown parser package, renderer
+infrastructure, or delivery code. The decision is recorded in
+[ADR 004: Import boundary fitness check](adr-004-import-boundary-fitness-check.md).
+
+The selected checker is `leynos/hecate`, controlled by these Makefile variables:
+
+- `HECATE_REF`: the pinned full 40-character commit of the `leynos/hecate`
+  repository. Update it deliberately, like `PYLINT_PYPY_SHIM_REF`, by resolving
+  a new head with `git ls-remote https://github.com/leynos/hecate.git HEAD` and
+  reviewing the change.
+- `HECATE_SPEC`: the `git+https` package URL assembled from the pinned
+  reference.
+- `HECATE`: the complete `uv tool run --python 3.14` command that invokes
+  `hecate` out-of-process.
+
+hecate is git-reference-only. Never run `uv add hecate`, `pip install hecate`,
+or add it to `pyproject.toml`: the PyPI name `hecate` is an unrelated project,
+so a bare-name install fetches the wrong package. Running hecate out-of-process
+also keeps its Cyclopts dependency out of the project virtual environment.
+
+The architecture-fitness check is a distinct third gate, separate from the two
+lint tiers, and must not be folded into `make lint`: the Pylint tier runs under
+managed PyPy (ADR-008), whose interpreter cannot run hecate. The stable seam
+for the future gate is `make check-imports`; wiring it against the real package
+tree is roadmap task 1.2.3. Until then the pin powers only
+`tests/test_import_boundary_fitness.py`, which `make test` runs by exporting
+`HECATE_REF`.
+
 ## Episodic lint policy
 
 Prosidy Darn imports its lint policy from
