@@ -782,8 +782,8 @@ coderabbit review --agent \
 Inspect, commit with a file-based message, and push:
 
 ```bash
-git diff -- docs tests Makefile
-git add docs tests Makefile
+git diff -- docs tests Makefile .github/workflows/ci.yml .github/workflows/release.yml
+git add docs tests Makefile .github/workflows/ci.yml .github/workflows/release.yml
 COMMIT_MSG_DIR=$(mktemp -d)
 cat > "$COMMIT_MSG_DIR/COMMIT_MSG.md" << 'ENDOFMSG'
 Record import-boundary fitness check decision (ADR-004)
