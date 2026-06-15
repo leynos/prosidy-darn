@@ -455,7 +455,8 @@ criterion.
   second attempt exited 0 and emitted no findings.
 - [x] (2026-06-15) Ran final `coderabbit review --agent`; it completed with
   `findings: 0`.
-- [ ] Commit with a file-based message, push, and open the draft pull request.
+- [x] (2026-06-15) Committed with file-based messages, pushed
+  `feat/boundary-import-guard`, and opened draft pull request #20.
 
 ## Surprises & discoveries
 
@@ -592,6 +593,7 @@ the stable `check-imports` seam. The fixture demonstration proves hecate exits 0
 on the clean tree and 1 on the dirty tree, the documentation-contract tests lock
 the policy, and roadmap item 1.1.3 is marked done. Local gates passed
 sequentially, and final CodeRabbit review completed with `findings: 0`.
+The branch was pushed and draft pull request #20 was opened.
 
 ## Context and orientation
 
