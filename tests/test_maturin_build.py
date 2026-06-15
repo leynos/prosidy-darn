@@ -25,6 +25,8 @@ from tests.helpers.maturin import (
 if typ.TYPE_CHECKING:
     import pathlib as pth
 
+    from syrupy.assertion import SnapshotAssertion
+
 
 def test_maturin_pins_are_synchronized() -> None:
     """Maturin version pins stay aligned across CI and packaging metadata."""
@@ -63,7 +65,10 @@ def test_pyo3_pin_matches_lockfile() -> None:
 
 
 @pytest.mark.timeout(300)
-def test_maturin_wheel_build_summary(tmp_path: pth.Path) -> None:
+def test_maturin_wheel_build_summary(
+    tmp_path: pth.Path,
+    snapshot: SnapshotAssertion,
+) -> None:
     """Native wheel metadata and layout match the expected maturin output."""
     root = repo_root()
     expected = read_expected_maturin_version(root)
@@ -77,29 +82,9 @@ def test_maturin_wheel_build_summary(tmp_path: pth.Path) -> None:
 
     wheel_path = build_native_wheel_artifact(root, tmp_path / "wheelhouse")
     summary = wheel_build_summary(wheel_path)
-    assert summary == {
-        "generator": expected,
-        "metadata": {
-            "name": "prosidy-darn",
-            "version": "0.1.0",
-            "requires_python": ">=3.14",
-            "requires_dist": [],
-        },
-        "wheel": {
-            "root_is_purelib": "false",
-        },
-        "entries": [
-            "prosidy_darn-<version>.dist-info/METADATA",
-            "prosidy_darn-<version>.dist-info/RECORD",
-            "prosidy_darn-<version>.dist-info/WHEEL",
-            "prosidy_darn-<version>.dist-info/licenses/LICENSE",
-            "prosidy_darn-<version>.dist-info/sboms/<sbom>.cyclonedx.json",
-            "prosidy_darn/__init__.py",
-            "prosidy_darn/_prosidy_darn_rs.cpython-<platform>.<extension>",
-            "prosidy_darn/_runtime.py",
-            "prosidy_darn/pure.py",
-        ],
-    }, "Native wheel metadata, SBOM, and extension layout must match the contract"
+    assert summary == snapshot, (
+        "Native wheel metadata, SBOM, and extension layout must match the snapshot"
+    )
 
 
 @pytest.mark.timeout(300)

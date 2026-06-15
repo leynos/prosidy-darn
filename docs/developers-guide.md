@@ -29,6 +29,15 @@ the maturin version synchronized across `pyproject.toml`,
 that contract. Keep the PyO3 version in `rust/prosidy-darn-rs/Cargo.toml`
 aligned with `rust/Cargo.lock`; the same test module checks that lockfile
 contract and builds a native wheel when the local toolchain supports it.
+When bumping maturin or PyO3, regenerate the wheel metadata snapshot with:
+
+```bash
+uv run pytest tests/test_maturin_build.py::test_maturin_wheel_build_summary \
+  --snapshot-update
+```
+
+Commit the updated `tests/__snapshots__/test_maturin_build.ambr` file with the
+dependency change.
 
 ## Development overview
 
