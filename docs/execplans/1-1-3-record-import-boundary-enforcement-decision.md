@@ -458,6 +458,12 @@ criterion.
 - [x] (2026-06-16) Committed with file-based messages, pushed
   `1-1-3-record-import-boundary-enforcement-decision`, and opened draft pull
   request #21.
+- [x] (2026-06-16) Expanded `docs/roadmap.md` so item 1.1.3 records the
+  accepted hecate decision, import-linter fallback, fixture evidence, execplan
+  reference, draft PR #21, and the remaining 1.2.3 real-tree gate boundary.
+- [x] (2026-06-16) Revalidated the roadmap update with `make check-fmt`,
+  `make markdownlint`, and `make nixie`; committed and pushed
+  `afed99e Update roadmap for import-boundary decision`.
 
 ## Surprises & discoveries
 
@@ -596,6 +602,8 @@ the policy, and roadmap item 1.1.3 is marked done. Local gates passed
 sequentially, and final CodeRabbit review completed with `findings: 0`.
 The branch was renamed to `1-1-3-record-import-boundary-enforcement-decision`,
 pushed, and draft pull request #21 was opened.
+The roadmap was then expanded to carry the implementation decision, evidence,
+observations, and remaining follow-on boundary for task 1.2.3.
 
 ## Context and orientation
 
