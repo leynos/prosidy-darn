@@ -117,6 +117,7 @@ def test_rust_extension_hello_returns_expected_greeting(tmp_path: pth.Path) -> N
 
     original_path = list(sys.path)
     previous_package = sys.modules.pop("prosidy_darn", None)
+    previous_runtime = sys.modules.pop("prosidy_darn._runtime", None)
     previous_extension = sys.modules.pop("prosidy_darn._prosidy_darn_rs", None)
     try:
         sys.path.insert(0, str(site_dir))
@@ -129,8 +130,11 @@ def test_rust_extension_hello_returns_expected_greeting(tmp_path: pth.Path) -> N
     finally:
         sys.path[:] = original_path
         sys.modules.pop("prosidy_darn", None)
+        sys.modules.pop("prosidy_darn._runtime", None)
         sys.modules.pop("prosidy_darn._prosidy_darn_rs", None)
         if previous_package is not None:
             sys.modules["prosidy_darn"] = previous_package
+        if previous_runtime is not None:
+            sys.modules["prosidy_darn._runtime"] = previous_runtime
         if previous_extension is not None:
             sys.modules["prosidy_darn._prosidy_darn_rs"] = previous_extension
