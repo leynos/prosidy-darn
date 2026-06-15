@@ -28,8 +28,8 @@ the maturin version synchronized across `pyproject.toml`,
 `.github/actions/build-wheels/action.yml`; `tests/test_maturin_build.py` checks
 that contract. Keep the PyO3 version in `rust/prosidy-darn-rs/Cargo.toml`
 aligned with `rust/Cargo.lock`; the same test module checks that lockfile
-contract and builds a native wheel when the local toolchain supports it.
-When bumping maturin or PyO3, regenerate the wheel metadata snapshot with:
+contract and builds a native wheel when the local toolchain supports it. When
+bumping maturin or PyO3, regenerate the wheel metadata snapshot with:
 
 ```bash
 uv run pytest tests/test_maturin_build.py::test_maturin_wheel_build_summary \
@@ -172,7 +172,6 @@ Override `PYLINT_TARGETS` only for local diagnosis. Committed changes should
 extend `PYLINT_PACKAGE_TARGETS`, `PYLINT_TEST_TARGETS`, or
 `PYLINT_EXTRA_TARGETS` so new Python paths do not silently fall outside the
 second lint tier.
-
 
 ## Import-boundary fitness check
 

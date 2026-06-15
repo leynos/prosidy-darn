@@ -117,10 +117,10 @@ the wrong project; only the pinned
 `git+https://github.com/leynos/hecate.git@<sha>` specifier is correct.
 
 import-linter is the vetted fallback behind a stable `check-imports` seam. If
-hecate must be replaced, the seam name `make check-imports` and the `HECATE_REF`
-/`HECATE_SPEC`/`HECATE` Makefile surface let the underlying tool be swapped
-without a documentation rewrite, using an import-linter `forbidden` contract
-over the same source and forbidden modules.
+hecate must be replaced, the seam name `make check-imports` and the
+`HECATE_REF` /`HECATE_SPEC`/`HECATE` Makefile surface let the underlying tool
+be swapped without a documentation rewrite, using an import-linter `forbidden`
+contract over the same source and forbidden modules.
 
 hecate exits 0 when the check passes, 1 when it finds violations, and 2 on a
 configuration or input error. This exit-code contract is distinct from the

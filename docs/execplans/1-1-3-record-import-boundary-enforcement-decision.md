@@ -27,8 +27,8 @@ the application layer never name an adapter, a framework, or a vendor library.
 
 The repository already contains a stub
 `docs/adr-004-import-boundary-fitness-check.md` whose status is "Proposed" and
-whose decision outcome is "Pending". This plan therefore finalizes and closes an
-existing decision rather than creating a new ADR file. The chosen tool is
+whose decision outcome is "Pending". This plan therefore finalizes and closes
+an existing decision rather than creating a new ADR file. The chosen tool is
 `leynos/hecate`, a purpose-built df12 hexagonal-architecture checker, with the
 mature PyPI package `import-linter` named as the pre-vetted fallback.
 
@@ -37,15 +37,15 @@ carries an executable success criterion: "the chosen check can fail a boundary
 violation in a minimal fixture branch". A prose ADR cannot satisfy a criterion
 whose verb is "fail". This plan therefore also adds a durable, re-runnable
 demonstration: a self-contained architecture fixture plus a pytest test that
-runs the selected checker and proves it reports a violation (exit status 1) on a
-dirty fixture and passes (exit status 0) on a clean one. `docs/adr-006-test-
-matrix-phase-scope.md` already scopes "import-boundary checks" into Phase 1
-tests, so this demonstration is in already-accepted scope.
+runs the selected checker and proves it reports a violation (exit status 1) on
+a dirty fixture and passes (exit status 0) on a clean one.
+`docs/adr-006-test- matrix-phase-scope.md` already scopes "import-boundary
+checks" into Phase 1 tests, so this demonstration is in already-accepted scope.
 
-After this plan is approved and implemented, a maintainer can observe success by
-reading the accepted ADR-004, seeing roadmap item 1.1.3 marked done, running the
-documentation and Python quality gates without failures, and watching the new
-fixture test prove that the selected checker fails a deliberate
+After this plan is approved and implemented, a maintainer can observe success
+by reading the accepted ADR-004, seeing roadmap item 1.1.3 marked done, running
+the documentation and Python quality gates without failures, and watching the
+new fixture test prove that the selected checker fails a deliberate
 domain-to-adapter import while passing a clean fixture.
 
 The implementation carried out from this plan must not create the real
@@ -57,8 +57,8 @@ distinct jobs of roadmap tasks 1.2.1, 1.2.2, and 1.2.3 respectively.
 
 ## Context and citations
 
-`docs/roadmap.md` defines roadmap item 1.1.3 under "Ratify the v1 decisions that
-block implementation". The item requires
+`docs/roadmap.md` defines roadmap item 1.1.3 under "Ratify the v1 decisions
+that block implementation". The item requires
 `docs/adr-004-import-boundary-fitness-check.md`, lists 1.0.1 and 1.1.1 as
 prerequisites (both already done), and declares success as: "the chosen check
 can fail a boundary violation in a minimal fixture branch". The roadmap also
@@ -71,12 +71,12 @@ Makefile target so a deliberate domain-to-adapter import fails with an
 actionable diagnostic).
 
 `docs/prosidy-darn-technical-design.md` is the architectural source of truth.
-Section 4 states that all dependencies point inward and that domain modules must
-not import Cyclopts, `mdast`, PyO3 extension modules, HTTP clients, filesystem
-delivery code, or text-to-speech (TTS) vendor libraries. Section 5 enumerates
-the driving and driven ports. Section 9 names the package boundary, lists
-`prosidy_darn.ports` as a distinct package holding driven-port protocols, and
-states that `prosidy_darn.config` is the composition root that may import
+Section 4 states that all dependencies point inward and that domain modules
+must not import Cyclopts, `mdast`, PyO3 extension modules, HTTP clients,
+filesystem delivery code, or text-to-speech (TTS) vendor libraries. Section 5
+enumerates the driving and driven ports. Section 9 names the package boundary,
+lists `prosidy_darn.ports` as a distinct package holding driven-port protocols,
+and states that `prosidy_darn.config` is the composition root that may import
 adapters and Cyclopts while `domain` and `application` may not. Section 16
 defines the one architecture fitness function: "`prosidy_darn.domain` and
 `prosidy_darn.application` must not import from `prosidy_darn.adapters` or
@@ -87,17 +87,17 @@ the already-accepted ADR-001 and ADR-002 outcomes; this task must record the
 ADR-004 outcome there and remove the open-decision bullet.
 
 `docs/adr-001-markdown-parser-boundary.md` and
-`docs/adr-002-tokenizer-and-semantic-scoring-policy.md` are the accepted ADRs to
-use as structural templates: status acceptance, decision drivers, options table
-with a caption, decision outcome, goals and non-goals, migration plan, known
-risks and limitations, and architectural rationale.
+`docs/adr-002-tokenizer-and-semantic-scoring-policy.md` are the accepted ADRs
+to use as structural templates: status acceptance, decision drivers, options
+table with a caption, decision outcome, goals and non-goals, migration plan,
+known risks and limitations, and architectural rationale.
 
-`docs/adr-006-test-matrix-phase-scope.md` scopes Phase 1 tests to import-boundary
-checks, public import tests, developer-documentation checks, and ADR link
-validation, and defers `pytest-bdd`, `syrupy`, Hypothesis, CrossHair, and Verus
-until the product surfaces they validate exist. The line that scopes
-"import-boundary checks" into Phase 1 is the warrant for adding a fixture test in
-this task.
+`docs/adr-006-test-matrix-phase-scope.md` scopes Phase 1 tests to
+import-boundary checks, public import tests, developer-documentation checks,
+and ADR link validation, and defers `pytest-bdd`, `syrupy`, Hypothesis,
+CrossHair, and Verus until the product surfaces they validate exist. The line
+that scopes "import-boundary checks" into Phase 1 is the warrant for adding a
+fixture test in this task.
 
 `docs/adr-008-two-tier-linting-architecture.md` is the precedent for adopting a
 pinned, off-PyPI, git-referenced internal tool (`leynos/pylint-pypy-shim`)
@@ -124,8 +124,8 @@ and roadmap closure linked to ADR acceptance. The constants `INITIAL_ADR_PATHS`
 and `PHASE_ONE_QUALITY_GATES` already include ADR-004 and the gate commands.
 
 `tests/test_public_api.py` exercises the current scaffold package
-(`prosidy_darn/__init__.py`, `_runtime.py`, `pure.py`). The new fixture test must
-not collide with it or with the real package namespace.
+(`prosidy_darn/__init__.py`, `_runtime.py`, `pure.py`). The new fixture test
+must not collide with it or with the real package namespace.
 
 `Makefile` exposes `check-fmt`, `lint`, `typecheck`, `test`, `markdownlint`, and
 `nixie` gates and defines the `PYLINT_PYPY_SHIM_REF` pin and the
@@ -133,8 +133,8 @@ not collide with it or with the real package namespace.
 that this task mirrors for hecate.
 
 `pyproject.toml` declares `requires-python = ">=3.14"`, an empty
-`dependencies = []`, and a `dev` dependency group. This task must not modify its
-dependency tables.
+`dependencies = []`, and a `dev` dependency group. This task must not modify
+its dependency tables.
 
 ### External prior art gathered with Firecrawl
 
@@ -143,28 +143,28 @@ decision. They are recorded so the implementer need not re-research them.
 
 - `leynos/hecate` is a standalone Python architecture checker for df12 internal
   hexagonal projects. It scans package roots with the standard-library `ast`
-  module, classifies each import into ordered groups declared in `[tool.hecate]`
-  (each group has `name`, `prefixes`, and `allowed`), supports
+  module, classifies each import into ordered groups declared in
+  `[tool.hecate]` (each group has `name`, `prefixes`, and `allowed`), supports
   `include_external_packages` to classify external prefixes such as `cyclopts`,
   supports `ignore_imports` for documented composition-root exceptions, expands
   `__init__.py` re-exports including statically resolvable star exports, emits
   `text` or `json` (`--format`), and uses exit codes 0 (clean), 1 (violations),
-  and 2 (configuration or input error). It requires Python >=3.14, uses Cyclopts
-  internally, and is configured through `[tool.hecate]` in `pyproject.toml` or a
-  `--config PATH` file with the same table shape. Its CLI is `hecate check`.
+  and 2 (configuration or input error). It requires Python >=3.14, uses
+  Cyclopts internally, and is configured through `[tool.hecate]` in
+  `pyproject.toml` or a `--config PATH` file with the same table shape. Its CLI
+  is `hecate check`.
 - The PyPI distribution named `hecate` is an unrelated project (David MacIver's
-  ncurses CLI tester). `leynos/hecate` is therefore not installable by bare name
-  and must be referenced only by a pinned git URL, exactly like
+  ncurses CLI tester). `leynos/hecate` is therefore not installable by bare
+  name and must be referenced only by a pinned git URL, exactly like
   `pylint-pypy-shim`. The implementer must resolve hecate's current
   default-branch HEAD with
   `git ls-remote https://github.com/leynos/hecate.git HEAD` and pin that full
   40-character commit SHA at implementation time.
 - `import-linter` 2.11 (by David Seddon) is a Production/Stable, BSD-2-licensed
   PyPI package supporting current CPython, including the project's Python 3.14
-  target. Its `forbidden` contract with
-  `include_external_packages = True` expresses the exact requirement
-  (`source_modules = [prosidy_darn.domain, prosidy_darn.application,
-  prosidy_darn.ports]`;
+  target. Its `forbidden` contract with `include_external_packages = True`
+  expresses the exact requirement
+  (`source_modules = [prosidy_darn.domain, prosidy_darn.application, prosidy_darn.ports]`;
   `forbidden_modules` listing adapters plus `cyclopts`, `rich`, and the parser
   and renderer packages), and its `layers` contract maps onto the
   domain/application/adapters layering. Its companion `grimp` builds the import
@@ -172,74 +172,81 @@ decision. They are recorded so the implementer need not re-research them.
   exits non-zero on a broken contract; it has no documented machine-readable
   output format. It is the named fallback for ADR-004.
 - `tach` (gauge-sh, Rust-backed, ~2.7k stars, PyPI, supports the project's
-  Python 3.14 target) enforces first-party module boundaries via `tach.toml` and
-  can check external
-  dependencies, but its model is module-graph-centric rather than the
-  hexagonal-group model hecate uses. It is a secondary alternative.
+  Python 3.14 target) enforces first-party module boundaries via `tach.toml`
+  and can check external dependencies, but its model is module-graph-centric
+  rather than the hexagonal-group model hecate uses. It is a secondary
+  alternative.
 - `PyTestArch` and the hand-rolled "walk the package with `ast` and assert"
-  approach are both viable but require bespoke maintenance and re-implement what
-  hecate already provides for df12 projects.
+  approach are both viable but require bespoke maintenance and re-implement
+  what hecate already provides for df12 projects.
 - Ruff's `flake8-tidy-imports` `banned-api` (TID251) is a global ban table with
   no per-source-module direction, so it cannot express "config may import
   adapters but domain may not" without brittle per-directory `.ruff.toml`
-  carve-outs that must re-declare the whole banned-api table. It is disqualified
-  for the directional rule and should not be revisited naively.
+  carve-outs that must re-declare the whole banned-api table. It is
+  disqualified for the directional rule and should not be revisited naively.
 
 ### Community-of-experts review
 
 A six-member Logisphere expert panel reviewed the proposed decision before this
 draft. Their unanimous conclusions are folded into this plan: adopt the tool
 plus a durable fixture plus a demonstration test at 1.1.3 (not documentation
-only); install the tool out-of-process through a pinned git reference rather than
-as a `pyproject.toml` dependency, so Cyclopts is never pulled into the project
-virtual environment and task 1.2.2's dependency work is not pre-empted; model
-five groups including `ports`, not four; place external prefixes in the `allowed`
-lists of `config` and the specific adapter groups, not merely "forbidden in
-domain"; assert on JSON output, not brittle text; demonstrate both the
-violation-fails and clean-passes directions; and name `import-linter` as the
-reversible escape hatch. The Decision Log records each adopted recommendation.
+only); install the tool out-of-process through a pinned git reference rather
+than as a `pyproject.toml` dependency, so Cyclopts is never pulled into the
+project virtual environment and task 1.2.2's dependency work is not pre-empted;
+model five groups including `ports`, not four; place external prefixes in the
+`allowed` lists of `config` and the specific adapter groups, not merely
+"forbidden in domain"; assert on JSON output, not brittle text; demonstrate
+both the violation-fails and clean-passes directions; and name `import-linter`
+as the reversible escape hatch. The Decision Log records each adopted
+recommendation.
 
 ### Relevant skills
 
 - `leta`, for semantic workspace navigation if code symbols must be inspected.
 - `hexagonal-architecture`, for the dependency-rule and ports-and-adapters
   framing the ADR must preserve.
-- `execplans`, which defines this document's approval gate before implementation.
+- `execplans`, which defines this document's approval gate before
+  implementation.
 - `firecrawl`, for any remaining open-source-tooling or prior-art checks.
 - `python-testing`, for the subprocess-driven fixture test design.
-- `commit-message`, for file-based commit messages when this plan is implemented.
+- `commit-message`, for file-based commit messages when this plan is
+  implemented.
 - `pr-creation` and `en-gb-oxendict`, for the draft pull request and British
   English with Oxford spelling.
 
 ## Constraints
 
 Do not implement the real hexagonal package layout in this task. The approved
-implementation must not create `prosidy_darn.domain`, `prosidy_darn.application`,
-`prosidy_darn.ports`, `prosidy_darn.adapters`, or `prosidy_darn.config`. Those
-packages are roadmap task 1.2.1.
+implementation must not create `prosidy_darn.domain`,
+`prosidy_darn.application`, `prosidy_darn.ports`, `prosidy_darn.adapters`, or
+`prosidy_darn.config`. Those packages are roadmap task 1.2.1.
 
 Do not add the checker, Cyclopts, Rich, or any runtime dependency to
-`pyproject.toml`. hecate must be referenced only through a pinned git URL invoked
-by `uv tool run`, never added to `[project.dependencies]` or
+`pyproject.toml`. hecate must be referenced only through a pinned git URL
+invoked by `uv tool run`, never added to `[project.dependencies]` or
 `[dependency-groups]`. Adding it to the dev group would pull its Cyclopts
-dependency into the project virtual environment, contradicting the very boundary
-this decision enforces, and would do task 1.2.2's dependency-spine work. If
-satisfying 1.1.3 appears to require a `pyproject.toml` dependency change, stop
-and escalate.
+dependency into the project virtual environment, contradicting the very
+boundary this decision enforces, and would do task 1.2.2's dependency-spine
+work. If satisfying 1.1.3 appears to require a `pyproject.toml` dependency
+change, stop and escalate.
 
-Do not wire the checker into `make lint`, `make all`, or any aggregate gate that
-scans real source. The demonstration runs only against the self-contained
+Do not wire the checker into `make lint`, `make all`, or any aggregate gate
+that scans real source. The demonstration runs only against the self-contained
 fixture through the new pytest test. Wiring the gate against the real
 `prosidy_darn` tree is roadmap task 1.2.3.
 
 Do not run hecate in-process. hecate is not a project dependency; it is an
 isolated CLI tool whose own Cyclopts dependency must stay out of the project
 virtual environment and test process. The demonstration test must shell out to
-hecate as a subprocess through
-`uv tool run --python 3.14 --from 'git+https://github.com/leynos/hecate.git@<sha>'
-hecate ...` and must never execute `import hecate`. Invoking
-`uv tool run --python 3.14` also pins the tool to the project's Python 3.14
-target regardless of the interpreter that runs `pytest`.
+hecate as a subprocess through this shape:
+
+```bash
+uv tool run --python 3.14 --from 'git+https://github.com/leynos/hecate.git@<sha>' hecate ...
+```
+
+It must never execute `import hecate`. Invoking `uv tool run --python 3.14`
+also pins the tool to the project's Python 3.14 target regardless of the
+interpreter that runs `pytest`.
 
 Pin hecate by a full 40-character commit SHA, never a branch or tag, so the pin
 is immutable and reproducible, mirroring `PYLINT_PYPY_SHIM_REF`.
@@ -268,8 +275,8 @@ every table.
 The plan must be approved before implementation begins. Silence is not approval.
 
 Do not mark roadmap item 1.1.3 done until the approved implementation has added
-the fixture demonstration and contract tests, passed the required gates, cleared
-CodeRabbit concerns, been committed, and been pushed.
+the fixture demonstration and contract tests, passed the required gates,
+cleared CodeRabbit concerns, been committed, and been pushed.
 
 ## Tolerances
 
@@ -293,8 +300,8 @@ changes outside these paths:
 
 Stop and ask for direction if more than 400 net lines of documentation, or more
 than 200 net lines of test, fixture, and Makefile code combined, are needed.
-This task records a decision and proves the tool on a fixture; it must not become
-an adapter or package-layout implementation slice.
+This task records a decision and proves the tool on a fixture; it must not
+become an adapter or package-layout implementation slice.
 
 Stop and ask for direction if any of these scope expansions become necessary:
 
@@ -333,53 +340,54 @@ that the tool is small stdlib-`ast` code and cheap to fork or vendor.
 
 Risk: PyPI name collision. A future `uv add hecate` or requirements entry would
 install an unrelated package. Severity: medium. Likelihood: medium. Mitigation:
-warn prominently in the ADR, the Makefile comment, and the developers' guide that
-hecate is git-ref-only and must never be referenced by bare name.
+warn prominently in the ADR, the Makefile comment, and the developers' guide
+that hecate is git-ref-only and must never be referenced by bare name.
 
 Risk: Erroneous CI Python pin. The project targets Python >=3.14, but
-`.github/workflows/ci.yml` and `.github/workflows/release.yml` pin `3.13`, which
-is a defect: CI does not exercise the supported interpreter. Severity: medium.
-Likelihood: high (already present). Mitigation: correct both workflows to `3.14`
-as part of this task. Independently, hecate runs only as an isolated
+`.github/workflows/ci.yml` and `.github/workflows/release.yml` pin `3.13`,
+which is a defect: CI does not exercise the supported interpreter. Severity:
+medium. Likelihood: high (already present). Mitigation: correct both workflows
+to `3.14` as part of this task. Independently, hecate runs only as an isolated
 `uv tool run --python 3.14` subprocess (never imported), so it is unaffected by
-the interpreter that runs `pytest`, and the Pylint tier's managed PyPy (ADR-008)
-remains a deliberate, separate exception.
+the interpreter that runs `pytest`, and the Pylint tier's managed PyPy
+(ADR-008) remains a deliberate, separate exception.
 
-Risk: False green (silent no-op). A mistyped prefix, an omitted external package,
-a barrel re-export, or an unknown-key-ignored config could make the dirty fixture
-pass with exit 0. Severity: high. Likelihood: medium. Mitigation: the
-demonstration asserts both directions on the same config path — clean passes
-(exit 0, no violations) and dirty fails (exit 1, the specific offending edge
-named) — and treats exit 2 as a harness failure distinct from exit 1.
+Risk: False green (silent no-op). A mistyped prefix, an omitted external
+package, a barrel re-export, or an unknown-key-ignored config could make the
+dirty fixture pass with exit 0. Severity: high. Likelihood: medium. Mitigation:
+the demonstration asserts both directions on the same config path — clean
+passes (exit 0, no violations) and dirty fails (exit 1, the specific offending
+edge named) — and treats exit 2 as a harness failure distinct from exit 1.
 
-Risk: Mis-modelled `ports` group. The technical design lists `prosidy_darn.ports`
-as a distinct package that `domain` and `application` legitimately import. A
-four-group model (domain, application, adapters, config) would either flag every
-`domain -> ports` import or leave `ports` unclassified. Severity: high.
-Likelihood: high if ignored. Mitigation: the ADR models five groups with explicit
-`allowed` lists, granting `domain` and `application` an inward edge to `ports`,
-and granting adapters an edge to `domain.ir` and `ports`.
+Risk: Mis-modelled `ports` group. The technical design lists
+`prosidy_darn.ports` as a distinct package that `domain` and `application`
+legitimately import. A four-group model (domain, application, adapters, config)
+would either flag every `domain -> ports` import or leave `ports` unclassified.
+Severity: high. Likelihood: high if ignored. Mitigation: the ADR models five
+groups with explicit `allowed` lists, granting `domain` and `application` an
+inward edge to `ports`, and granting adapters an edge to `domain.ir` and
+`ports`.
 
 Risk: External import-name versus distribution-name skew.
 `include_external_packages` keys on the top-level import name, which can differ
 from the PyPI distribution name (for example the Markdown parser). A wrong name
 silently never fires. Severity: medium. Likelihood: medium. Mitigation: the ADR
-records the
-requirement to verify each banned and allowed external's actual import top-level
-name; the fixture uses a stand-in external prefix so the demonstration is
-self-contained and needs no real dependency installed.
+records the requirement to verify each banned and allowed external's actual
+import top-level name; the fixture uses a stand-in external prefix so the
+demonstration is self-contained and needs no real dependency installed.
 
-Risk: Brittle text assertions. Asserting on hecate's human-readable text couples
-the test to unstable wording, ordering, and path rendering. Severity: medium.
-Likelihood: medium. Mitigation: the test asserts on `--format json` structured
-fields and module-dotted identifiers, never absolute filesystem paths.
+Risk: Brittle text assertions. Asserting on hecate's human-readable text
+couples the test to unstable wording, ordering, and path rendering. Severity:
+medium. Likelihood: medium. Mitigation: the test asserts on `--format json`
+structured fields and module-dotted identifiers, never absolute filesystem
+paths.
 
 Risk: Static-analysis blind spot. hecate (like every static checker) cannot see
 dynamic imports (`importlib.import_module`, `__import__`). The existing
-`_runtime.py` already uses `__import__`. Severity: low for this task. Likelihood:
-low. Mitigation: record it as an accepted limitation shared by all static
-checkers, mitigated by code review and the convention that dynamic imports live
-in `config` or `_runtime`.
+`_runtime.py` already uses `__import__`. Severity: low for this task.
+Likelihood: low. Mitigation: record it as an accepted limitation shared by all
+static checkers, mitigated by code review and the convention that dynamic
+imports live in `config` or `_runtime`.
 
 Risk: Fixture pollutes the real run later. A fixture placed inside the real
 package namespace would be swept into the production hecate run after 1.2.1.
@@ -388,10 +396,11 @@ Severity: medium. Likelihood: low. Mitigation: keep the fixture under
 `prosidy_darn` import surface.
 
 Risk: Demonstration proves tool capability, not production-config correctness.
-Because the real packages do not exist until 1.2.1, a green fixture says nothing
-about whether the production `[tool.hecate]` groups are right. Severity: medium.
-Likelihood: high if unstated. Mitigation: the ADR states this limitation
-explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
+Because the real packages do not exist until 1.2.1, a green fixture says
+nothing about whether the production `[tool.hecate]` groups are right.
+Severity: medium. Likelihood: high if unstated. Mitigation: the ADR states this
+limitation explicitly and assigns the real-tree proof to task 1.2.3's success
+criterion.
 
 ## Progress
 
@@ -399,42 +408,53 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
   `hexagonal-architecture` skills and the `execplans` skill, and created a leta
   workspace for this repository.
 - [x] (2026-06-09) Read the roadmap, the technical design (sections 4, 5, 9, 16,
-  and 18), ADR-001, ADR-002, ADR-006, ADR-008, the ADR-004 stub, the developers'
-  guide, the documentation style guide, the documentation-contract tests, the
-  Makefile, and `pyproject.toml`.
+  and 18), ADR-001, ADR-002, ADR-006, ADR-008, the ADR-004 stub, the
+  developers' guide, the documentation style guide, the documentation-contract
+  tests, the Makefile, and `pyproject.toml`.
 - [x] (2026-06-09) Inspected `leynos/hecate` (README, configuration schema, and
   `pyproject.toml`) and confirmed the PyPI name collision, the Python >=3.14
   requirement, the `[tool.hecate]` schema, and the exit-code taxonomy.
-- [x] (2026-06-09) Ran a Firecrawl-backed research agent team over `import-linter`,
-  `tach`, `PyTestArch`, the custom-`ast` approach, Ruff `flake8-tidy-imports`, and
-  the architecture-fitness-function prior art.
+- [x] (2026-06-09) Ran a Firecrawl-backed research agent team over
+      `import-linter`,
+  `tach`, `PyTestArch`, the custom-`ast` approach, Ruff `flake8-tidy-imports`,
+  and the architecture-fitness-function prior art.
 - [x] (2026-06-09) Ran a six-member Logisphere community-of-experts panel to
   stress-test and revise the decision before drafting.
-- [x] (2026-06-09) Drafted this pre-implementation ExecPlan.
-- [x] (2026-06-14) Received the implementation request through issue #16, which
-  refines this plan's test-implementation milestones.
-- [x] (2026-06-14) Renamed the branch to
-  `issue-16-import-boundary-fitness-tests` per issue #16 (in place of the
-  plan's original `1-1-3-...` name) and resolved the hecate head SHA
+- [x] (2026-06-15) Received explicit user approval to implement the plan.
+- [ ] Rename the branch to
+  `1-1-3-record-import-boundary-enforcement-decision` and track the matching
+  remote.
+- [x] (2026-06-15) Resolved the current hecate HEAD pin as
   `46f8c8798e7a80a3a1ab5a13c2a000a4423ffc12`.
-- [x] (2026-06-14) Added the failing documentation-contract tests for ADR-004
-  acceptance and confirmed they fail for the expected reason.
-- [x] (2026-06-14) Added the fixture demonstration test
+- [x] (2026-06-15) Added the documentation-contract tests for ADR-004
+  acceptance.
+- [x] (2026-06-15) Added the fixture demonstration test
   (`tests/test_import_boundary_fitness.py`) and the clean and dirty fixture
-  trees, and verified hecate exits 0 on the clean tree and 1 on the dirty tree.
-- [x] (2026-06-14) Added the `HECATE_REF`, `HECATE_SPEC`, and `HECATE` Makefile
+  trees.
+- [x] (2026-06-15) Added the `HECATE_REF`, `HECATE_SPEC`, and `HECATE` Makefile
   variables, exported `HECATE_REF` to the `test` target, and pinned the full
   hecate commit SHA.
-- [x] (2026-06-14) Finalized ADR-004 (status, options table, decision,
+- [x] (2026-06-15) Ran the focused hecate fixture test with `HECATE_REF`
+  set to `46f8c8798e7a80a3a1ab5a13c2a000a4423ffc12`; the clean and dirty
+  fixture tests both passed.
+- [x] (2026-06-15) Captured one-shot dirty-fixture evidence: hecate reported
+  the forbidden `fixture_domain.adapter_breach -> fixture_adapters.runtime` and
+  `fixture_domain.external_breach -> pretend_framework` edges and exited 1.
+- [x] (2026-06-15) Finalized ADR-004 (status, options table, decision,
   production config, limitations, fallback).
-- [x] (2026-06-14) Aligned `docs/prosidy-darn-technical-design.md` section 18,
+- [x] (2026-06-15) Aligned `docs/prosidy-darn-technical-design.md` section 18,
   the developers' guide, and `docs/contents.md`.
-- [x] (2026-06-14) Confirmed `.github/workflows/ci.yml` and
+- [x] (2026-06-15) Confirmed `.github/workflows/ci.yml` and
   `.github/workflows/release.yml` already pin `python-version: '3.14'`, so no
   Python-pin correction was required.
-- [x] (2026-06-14) Marked roadmap item 1.1.3 done.
-- [ ] Run the local gates sequentially and capture logs under `/tmp`.
-- [ ] Run `coderabbit review --agent` and clear in-scope concerns.
+- [x] (2026-06-15) Marked roadmap item 1.1.3 done.
+- [x] (2026-06-15) Ran the local gates sequentially with `/tmp` logs:
+  `make fmt`, `make check-fmt`, `make markdownlint`, `make nixie`,
+  `make typecheck`, `make lint`, and `make test` all passed.
+- [x] (2026-06-15) Ran `coderabbit review --agent` after focused tests; the
+  second attempt exited 0 and emitted no findings.
+- [x] (2026-06-15) Ran final `coderabbit review --agent`; it completed with
+  `findings: 0`.
 - [ ] Commit with a file-based message, push, and open the draft pull request.
 
 ## Surprises & discoveries
@@ -445,15 +465,16 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
   creating a new one, preserving the stable review path the stub promises.
 - Observation: the PyPI distribution `hecate` is unrelated to `leynos/hecate`.
   Evidence: `https://pypi.org/pypi/hecate/json` returns David MacIver's ncurses
-  CLI tester. Impact: hecate must be referenced only by pinned git URL; bare-name
-  installs are a foot-gun the ADR must warn against.
+  CLI tester. Impact: hecate must be referenced only by pinned git URL;
+  bare-name installs are a foot-gun the ADR must warn against.
 - Observation: the project targets Python >=3.14, but
   `.github/workflows/ci.yml` (line 21) and `.github/workflows/release.yml` (line
   27) erroneously pin `python-version: '3.13'`. Evidence: `pyproject.toml`
   `requires-python = ">=3.14"` versus the two workflow pins. Impact: both
   workflows must be corrected to `3.14` so CI exercises the supported
-  interpreter; this is folded into the task. (The `pyproject.toml` comment about
-  managed PyPy is the deliberate ADR-008 Pylint-tier exception, not an error.)
+  interpreter; this is folded into the task. (The `pyproject.toml` comment
+  about managed PyPy is the deliberate ADR-008 Pylint-tier exception, not an
+  error.)
 - Observation: hecate requires Python >=3.14 and imports Cyclopts. Evidence:
   hecate's `pyproject.toml`. Impact: hecate must run out-of-process as an
   isolated `uv tool run --python 3.14` subprocess and must not be folded into
@@ -461,96 +482,116 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
 - Observation: the technical design treats `prosidy_darn.ports` as a distinct
   package (section 9) that domain and application import, even though section 4
   says ports "belong to the domain or application layer". Evidence: design
-  sections 4 and 9; developers' guide line 53. Impact: the production config must
-  model a `ports` group and grant inward edges to it, or the gate becomes
+  sections 4 and 9; developers' guide line 53. Impact: the production config
+  must model a `ports` group and grant inward edges to it, or the gate becomes
   un-greenable.
 - Observation: hecate classifies every module's direct imports (with `__init__`
   barrel expansion) rather than building a transitive reachability graph.
-  Evidence: hecate README "Core concepts". Impact: a forbidden import in a domain
-  helper is still caught (the helper is itself scanned), so per-module direct
-  classification is sufficient for the strict layered rule; the ADR records this
-  rather than overclaiming grimp-style transitive analysis.
+  Evidence: hecate README "Core concepts". Impact: a forbidden import in a
+  domain helper is still caught (the helper is itself scanned), so per-module
+  direct classification is sufficient for the strict layered rule; the ADR
+  records this rather than overclaiming grimp-style transitive analysis.
 - Observation: by implementation time both `.github/workflows/ci.yml` and
   `.github/workflows/release.yml` already pinned `python-version: '3.14'`.
   Evidence: the two workflow files. Impact: Milestone 6a's pin correction was
   already done upstream, so this task touched no workflow file.
 - Observation: the repository's own Ruff and `ty` gates scan `tests/fixtures`.
-  Evidence: `make lint` and `make typecheck` over the fixture trees. Impact: the
-  fixture modules bind each deliberate import to a module-level name so Ruff does
-  not report it as unused, and the never-installed stand-in external import
-  carries a single `# ty: ignore[unresolved-import]` comment; hecate still sees
-  every import because it parses the source with `ast`. This keeps the fixtures
-  self-contained without editing `pyproject.toml`.
+  Evidence: `make lint` and `make typecheck` over the fixture trees. Impact:
+  the fixture modules bind each deliberate import to a module-level name so
+  Ruff does not report it as unused, and the never-installed stand-in external
+  import carries a single `# ty: ignore[unresolved-import]` comment; hecate
+  still sees every import because it parses the source with `ast`. This keeps
+  the fixtures self-contained without editing `pyproject.toml`.
 - Observation: hecate's JSON violation objects expose `importer`, `imported`,
   `importer_group`, `imported_group`, `line`, `rule_id`, and `source_path`.
-  Evidence: a one-shot run against the dirty fixture. Impact: the test asserts on
-  the module-dotted `importer` and `imported` fields and never on `source_path`,
-  keeping assertions stable across machines.
+  Evidence: a one-shot run against the dirty fixture. Impact: the test asserts
+  on the module-dotted `importer` and `imported` fields and never on
+  `source_path`, keeping assertions stable across machines.
+- Observation: the local branch
+  `1-1-3-record-import-boundary-enforcement-decision` already exists at
+  `89b2d896d7028d54f55bc72bef2199a0e762c676` and tracks a gone remote branch.
+  Evidence: `git branch -m` failed with "a branch named … already exists" and
+  `git branch -vv` showed the stale branch. Impact: implementation continues on
+  `feat/boundary-import-guard` unless the stale branch is cleaned up or a
+  GitHub branch rename is needed later.
+- Observation: a prior `issue-16-import-boundary-fitness-tests` branch contains
+  an older implementation of this task, but it is based before the current
+  Maturin/PyO3 work. Evidence:
+  `git diff --stat HEAD..issue-16-import-boundary-fitness-tests` showed
+  unrelated deletions and rewrites in Rust, workflow, README, runtime, and
+  test-helper files. Impact: only scoped commits and ideas are reused; the old
+  branch is not merged wholesale.
+- Observation: the first CodeRabbit milestone attempt connected and reached
+  "preparing_sandbox" but produced no findings, rate-limit response, or further
+  progress for over four minutes. Evidence: `/tmp/coderabbit-fixture-...out`
+  contains only setup status lines. Impact: the stalled local process was
+  terminated and CodeRabbit will be retried after the next complete milestone
+  and during final validation.
 
 ## Decision log
 
 - Decision: Treat 1.1.3 as a decision-finalization task that also adds a durable
-  demonstration, not documentation only. Rationale: the roadmap success criterion
-  ("can fail a boundary violation in a minimal fixture") is executable, and
-  ADR-006 already scopes import-boundary checks into Phase 1 tests. Documentation
-  only would push the sole proof of tool selection to 1.2.3. Date/Author:
-  2026-06-09 / Claude (planning).
+  demonstration, not documentation only. Rationale: the roadmap success
+  criterion ("can fail a boundary violation in a minimal fixture") is
+  executable, and ADR-006 already scopes import-boundary checks into Phase 1
+  tests. Documentation only would push the sole proof of tool selection to
+  1.2.3. Date/Author: 2026-06-09 / Claude (planning).
 - Decision: Select `leynos/hecate` as the v1 primary import-boundary fitness
-  function, with `import-linter` 2.11 named as the vetted fallback. Rationale: the
-  roadmap points to hecate; it is the df12 house tool purpose-built for the
+  function, with `import-linter` 2.11 named as the vetted fallback. Rationale:
+  the roadmap points to hecate; it is the df12 house tool purpose-built for the
   hexagonal-group model, models the composition-root exception through
-  `ignore_imports`, expands barrels, emits JSON, runs natively on Python 3.14, and
-  aligns with the existing pinned-git-ref tooling pattern. The supply-chain and
-  bus-factor risks are accepted and made reversible by naming a capability-
-  equivalent PyPI fallback behind a stable seam. Date/Author: 2026-06-09 / Claude
-  (planning).
+  `ignore_imports`, expands barrels, emits JSON, runs natively on Python 3.14,
+  and aligns with the existing pinned-git-ref tooling pattern. The supply-chain
+  and bus-factor risks are accepted and made reversible by naming a capability-
+  equivalent PyPI fallback behind a stable seam. Date/Author: 2026-06-09 /
+  Claude (planning).
 - Decision: Install hecate out-of-process via a pinned git reference invoked by
-  `uv tool run`, not as a `pyproject.toml` dependency. Rationale: adding it to the
-  dev group would pull Cyclopts into the project virtual environment
+  `uv tool run`, not as a `pyproject.toml` dependency. Rationale: adding it to
+  the dev group would pull Cyclopts into the project virtual environment
   (contradicting the boundary) and would do task 1.2.2's dependency work; the
-  established `pylint-pypy-shim` pattern keeps such tools isolated. Date/Author:
-  2026-06-09 / Claude (planning).
+  established `pylint-pypy-shim` pattern keeps such tools isolated.
+  Date/Author: 2026-06-09 / Claude (planning).
 - Decision: Run hecate only as an isolated `uv tool run --python 3.14`
   subprocess, and correct the two CI workflows that erroneously pin Python 3.13
-  to 3.14. Rationale: the project targets Python >=3.14, so the 3.13 CI pins are
-  defects; hecate is not a project dependency and imports Cyclopts, so it must
-  run isolated to keep Cyclopts out of the project environment. The Pylint tier's
-  managed PyPy (ADR-008) is a separate, deliberate exception. Date/Author:
-  2026-06-09 / Claude (planning).
+  to 3.14. Rationale: the project targets Python >=3.14, so the 3.13 CI pins
+  are defects; hecate is not a project dependency and imports Cyclopts, so it
+  must run isolated to keep Cyclopts out of the project environment. The Pylint
+  tier's managed PyPy (ADR-008) is a separate, deliberate exception.
+  Date/Author: 2026-06-09 / Claude (planning).
 - Decision: Model five groups (`domain`, `ports`, `application`, `adapters`,
   `config`) with explicit `allowed` lists, and place external prefixes in the
   `allowed` lists of `config` and the relevant adapter groups, absent from
   `domain`, `application`, and `ports`. Rationale: ports is a real package that
-  domain and application import, and externals such as Cyclopts are legitimately
-  imported by config and the CLI adapter; a four-group or "forbid-in-domain-only"
-  model produces false positives or false negatives. Date/Author: 2026-06-09 /
-  Claude (planning).
+  domain and application import, and externals such as Cyclopts are
+  legitimately imported by config and the CLI adapter; a four-group or
+  "forbid-in-domain-only" model produces false positives or false negatives.
+  Date/Author: 2026-06-09 / Claude (planning).
 - Decision: Demonstrate with a self-contained, multi-case fixture and a
   subprocess pytest test asserting JSON structured fields, proving exit 0 on a
-  clean tree and exit 1 on a dirty tree, and treating exit 2 as a harness failure.
-  Use a stand-in external prefix so the external-ban path needs no real
-  dependency. Rationale: a fail-only or text-grep test cannot catch the
+  clean tree and exit 1 on a dirty tree, and treating exit 2 as a harness
+  failure. Use a stand-in external prefix so the external-ban path needs no
+  real dependency. Rationale: a fail-only or text-grep test cannot catch the
   false-green and false-positive failure modes; JSON and module-dotted
   identifiers are determinism-safe. Date/Author: 2026-06-09 / Claude (planning).
 - Decision: Ratify a stable `check-imports` seam name and the
-  `HECATE_REF`/`HECATE_SPEC`/`HECATE` Makefile variable surface in the ADR and the
-  developers' guide now, but leave the real gate wiring to 1.2.3. Rationale:
-  declaring the seam makes the tool swappable by construction without doing
-  1.2.3's work. Date/Author: 2026-06-09 / Claude (planning).
-- Decision: Use `pytest` documentation-contract tests plus one subprocess fixture
-  test, not `pytest-bdd`, `syrupy`, Hypothesis, CrossHair, or Verus. Rationale:
-  ADR-006 scopes Phase 1 to documentation, link, and import-boundary checks; no
-  user behaviour, output snapshot, input invariant, or proof-worthy logic is
-  introduced. Date/Author: 2026-06-09 / Claude (planning).
+  `HECATE_REF`/`HECATE_SPEC`/`HECATE` Makefile variable surface in the ADR and
+  the developers' guide now, but leave the real gate wiring to 1.2.3.
+  Rationale: declaring the seam makes the tool swappable by construction
+  without doing 1.2.3's work. Date/Author: 2026-06-09 / Claude (planning).
+- Decision: Use `pytest` documentation-contract tests plus one subprocess
+  fixture test, not `pytest-bdd`, `syrupy`, Hypothesis, CrossHair, or Verus.
+  Rationale: ADR-006 scopes Phase 1 to documentation, link, and import-boundary
+  checks; no user behaviour, output snapshot, input invariant, or proof-worthy
+  logic is introduced. Date/Author: 2026-06-09 / Claude (planning).
 
 ## Outcomes & retrospective
 
-To be completed at implementation. The plan is accepted as delivered when
-ADR-004 is accepted naming hecate primary and import-linter fallback, the
-fixture demonstration proves exit 1 on a violation and exit 0 on a clean tree,
-the contract tests lock the policy, roadmap item 1.1.3 is marked done, all local
-gates pass, CodeRabbit reports no unresolved in-scope concerns, and the draft
-pull request is open.
+Implemented on 2026-06-15. ADR-004 is accepted, names hecate as the primary v1
+import-boundary fitness function, and names import-linter as the fallback behind
+the stable `check-imports` seam. The fixture demonstration proves hecate exits 0
+on the clean tree and 1 on the dirty tree, the documentation-contract tests lock
+the policy, and roadmap item 1.1.3 is marked done. Local gates passed
+sequentially, and final CodeRabbit review completed with `findings: 0`.
 
 ## Context and orientation
 
@@ -579,7 +620,8 @@ The key files for this task are:
 - `docs/roadmap.md`: item 1.1.3 and the sibling tasks 1.2.1, 1.2.2, and 1.2.3.
 - `docs/adr-004-import-boundary-fitness-check.md`: the stub to finalize.
 - `docs/adr-001-markdown-parser-boundary.md` and
-  `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`: accepted-ADR templates.
+  `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`: accepted-ADR
+  templates.
 - `docs/adr-006-test-matrix-phase-scope.md`: the warrant for a Phase 1
   import-boundary fixture test.
 - `docs/adr-008-two-tier-linting-architecture.md`: the pinned-git-ref tool
@@ -595,8 +637,8 @@ The key files for this task are:
 Important terms:
 
 - "Group" (hecate): a named set of dotted module prefixes plus the list of group
-  names it is `allowed` to import. The first group whose prefix matches a module
-  wins, so specific prefixes precede general ones.
+  names it is `allowed` to import. The first group whose prefix matches a
+  module wins, so specific prefixes precede general ones.
 - "Composition root": `prosidy_darn.config`, the only group allowed to import
   adapters and frameworks.
 - "Stand-in external prefix": a fake top-level import name used only in the
@@ -613,15 +655,15 @@ Milestone 1 prepares the branch and confirms the baseline. Confirm the current
 branch and, if it is not already
 `1-1-3-record-import-boundary-enforcement-decision`, rename it with
 `git branch -m`. Re-resolve hecate's HEAD commit SHA with
-`git ls-remote https://github.com/leynos/hecate.git HEAD` and record the full SHA
-to pin. Read the roadmap, the ADR-004 stub, ADR-001, ADR-002, ADR-006, ADR-008,
-the technical design sections named above, the developers' guide, the
+`git ls-remote https://github.com/leynos/hecate.git HEAD` and record the full
+SHA to pin. Read the roadmap, the ADR-004 stub, ADR-001, ADR-002, ADR-006,
+ADR-008, the technical design sections named above, the developers' guide, the
 documentation-contract tests, and the Makefile.
 
 Milestone 2 adds failing documentation-contract tests first. Extend
-`tests/test_developer_docs.py` with tests that prove roadmap item 1.1.3 cannot be
-closed unless ADR-004 is accepted and states the chosen policy. The tests should
-check for these observable facts:
+`tests/test_developer_docs.py` with tests that prove roadmap item 1.1.3 cannot
+be closed unless ADR-004 is accepted and states the chosen policy. The tests
+should check for these observable facts:
 
 - ADR-004 exists and is accepted (status section contains "## Status" and
   "Accepted on ").
@@ -629,70 +671,76 @@ check for these observable facts:
   a pinned git reference and run out-of-process through `uv tool run`.
 - ADR-004 names `import-linter` as the vetted fallback behind a stable
   `check-imports` seam.
-- ADR-004 states that the checker is never added to `pyproject.toml` and is never
-  referenced by bare name because the PyPI `hecate` is an unrelated package.
+- ADR-004 states that the checker is never added to `pyproject.toml` and is
+  never referenced by bare name because the PyPI `hecate` is an unrelated
+  package.
 - ADR-004 states the five-group production model and that `domain`,
-  `application`, and `ports` may not import adapters, Cyclopts, Rich, the parser
-  package, renderers, or delivery code, while `config` may.
+  `application`, and `ports` may not import adapters, Cyclopts, Rich, the
+  parser package, renderers, or delivery code, while `config` may.
 - ADR-004 records hecate's exit-code contract (0 clean, 1 violations, 2
   configuration or input error), distinct from the application CLI taxonomy.
 - The roadmap item for 1.1.3 is marked done only when ADR-004 is accepted.
 
-Run the focused test and confirm it fails for the expected reason before editing
-the ADR.
+Run the focused test and confirm it fails for the expected reason before
+editing the ADR.
 
 Milestone 3 adds the failing fixture demonstration test. Create
-`tests/fixtures/import_boundary/` containing a clean tree and a dirty tree, plus
-a fixture-local hecate configuration file, and
-`tests/test_import_boundary_fitness.py` that shells out to hecate over each tree.
-The fixture trees model the real five-group shape with throwaway package names so
-the config exercises the same rule classes the production config will:
+`tests/fixtures/import_boundary/` containing a clean tree and a dirty tree,
+plus a fixture-local hecate configuration file, and
+`tests/test_import_boundary_fitness.py` that shells out to hecate over each
+tree. The fixture trees model the real five-group shape with throwaway package
+names so the config exercises the same rule classes the production config will:
 
 - the clean tree contains a `domain` module importing a `ports` module, and an
-  `adapters` module importing a `domain` IR-style module; both edges are allowed,
-  so hecate must exit 0 with no violations;
+  `adapters` module importing a `domain` IR-style module; both edges are
+  allowed, so hecate must exit 0 with no violations;
 - the dirty tree contains a `domain` module importing an `adapters` module (a
-  forbidden first-party edge) and a `domain` module importing a stand-in external
-  prefix classified into an infrastructure group (a forbidden external edge); so
-  hecate must exit 1 and name both offending edges in its JSON output.
+  forbidden first-party edge) and a `domain` module importing a stand-in
+  external prefix classified into an infrastructure group (a forbidden external
+  edge); so hecate must exit 1 and name both offending edges in its JSON output.
 
-The test invokes hecate as a subprocess via
-`uv tool run --python 3.14 --from '<HECATE_SPEC>' hecate check --config <fixture
-config> --format json`, reading the pinned reference from the `HECATE_REF`
-environment variable exported by `make test`. It asserts exit 0 and an empty
-violation list on the clean tree, and exit 1 with the specific offending
-module-dotted edges on the dirty tree. It treats exit 2 (configuration or input
-error) as a harness failure, not a pass. If `uv tool run` cannot fetch or resolve
-the tool (a confirmed network or ref-availability error, distinct from a contract
-result), the test skips with a clear reason; otherwise it asserts. Confirm the
-test fails (or skips with an explanatory message) before the Makefile pin exists.
+The test invokes hecate as a subprocess via this command shape:
+
+```bash
+uv tool run --python 3.14 --from '<HECATE_SPEC>' hecate check --config <fixture config> --format json
+```
+
+It reads the pinned reference from the `HECATE_REF` environment variable
+exported by `make test`. It asserts exit 0 and an empty violation list on the
+clean tree, and exit 1 with the specific offending module-dotted edges on the
+dirty tree. It treats exit 2 (configuration or input error) as a harness
+failure, not a pass. If `uv tool run` cannot fetch or resolve the tool (a
+confirmed network or ref-availability error, distinct from a contract result),
+the test skips with a clear reason; otherwise it asserts. Confirm the test
+fails (or skips with an explanatory message) before the Makefile pin exists.
 
 Milestone 4 adds the Makefile tool reference. Add `HECATE_REF` (the full pinned
 SHA), `HECATE_SPEC` (`git+https://github.com/leynos/hecate.git@$(HECATE_REF)`),
-and `HECATE` (`$(UV_ENV) uv tool run --python 3.14 --from '$(HECATE_SPEC)'
-hecate`) near the `PYLINT_PYPY_SHIM_REF` block, with a comment warning that
-hecate is git-ref-only and must never be referenced by bare name. Export
-`HECATE_REF` to the `test` target so the fixture test can read it. Do not add a
-`check-imports` target to `lint` or `all`; the real gate is task 1.2.3. Run the
-fixture test through `make test` and confirm it now passes (or skips only on
-confirmed unavailability).
+and `HECATE`
+(`$(UV_ENV) uv tool run --python 3.14 --from '$(HECATE_SPEC)' hecate`) near the
+`PYLINT_PYPY_SHIM_REF` block, with a comment warning that hecate is
+git-ref-only and must never be referenced by bare name. Export `HECATE_REF` to
+the `test` target so the fixture test can read it. Do not add a `check-imports`
+target to `lint` or `all`; the real gate is task 1.2.3. Run the fixture test
+through `make test` and confirm it now passes (or skips only on confirmed
+unavailability).
 
 Milestone 5 finalizes ADR-004. Replace the "Pending" outcome with "Accepted on
-`YYYY-MM-DD`". Keep the existing context and decision-driver material and add the
-sections the style guide requires: a decided options table comparing hecate,
-import-linter, tach, PyTestArch or custom `ast`, and Ruff `banned-api` across the
-project's concrete requirements (first-party ban, external ban, composition-root
-exception, JSON output, Python 3.14, barrel handling, supply-chain cost); the
-decision outcome; the documented production `[tool.hecate]` five-group config
-block; goals and non-goals; a migration plan; known risks and limitations
-(supply chain and bus factor, PyPI name collision, interpreter isolation,
-static-`ast` blind spot, the `TYPE_CHECKING`-import policy determined against a
-fixture during implementation, and the fixture-proves-capability-not-production-
-correctness caveat); and the architectural rationale. State that the seam is
-`make check-imports` and that wiring against the real tree is task 1.2.3, and
-that import-linter is the reversible escape hatch. Capture the one-shot
-demonstration command and its exit-1 output in the Artifacts section of this
-plan.
+`YYYY-MM-DD`". Keep the existing context and decision-driver material and add
+the sections the style guide requires: a decided options table comparing
+hecate, import-linter, tach, PyTestArch or custom `ast`, and Ruff `banned-api`
+across the project's concrete requirements (first-party ban, external ban,
+composition-root exception, JSON output, Python 3.14, barrel handling,
+supply-chain cost); the decision outcome; the documented production
+`[tool.hecate]` five-group config block; goals and non-goals; a migration plan;
+known risks and limitations (supply chain and bus factor, PyPI name collision,
+interpreter isolation, static-`ast` blind spot, the `TYPE_CHECKING`-import
+policy determined against a fixture during implementation, and the
+fixture-proves-capability-not-production- correctness caveat); and the
+architectural rationale. State that the seam is `make check-imports` and that
+wiring against the real tree is task 1.2.3, and that import-linter is the
+reversible escape hatch. Capture the one-shot demonstration command and its
+exit-1 output in the Artifacts section of this plan.
 
 Milestone 6 aligns surrounding documentation. Update
 `docs/prosidy-darn-technical-design.md` section 18 to remove the
@@ -702,19 +750,20 @@ ADR-001 and ADR-002. Update `docs/developers-guide.md` to document the
 `PYLINT_PYPY_SHIM_REF`), the future `check-imports` seam, the bare-name
 prohibition, and that the architecture-fitness check is a distinct third gate
 that must not be folded into `make lint`. Add the 1.1.3 execplan entry to
-`docs/contents.md`. Touch `docs/users-guide.md` only if a user-visible statement
-needs correcting.
+`docs/contents.md`. Touch `docs/users-guide.md` only if a user-visible
+statement needs correcting.
 
 Milestone 6a corrects the erroneous CI Python pins. The project targets Python
 >=3.14, but `.github/workflows/ci.yml` (line 21) and
 `.github/workflows/release.yml` (line 27) pin `python-version: '3.13'`. Change
-both to `'3.14'` so CI and release workflows exercise the supported interpreter.
-This is an unambiguous correctness fix surfaced during review; keep it to the two
-one-line pin changes and do not otherwise alter the workflows.
+both to `'3.14'` so CI and release workflows exercise the supported
+interpreter. This is an unambiguous correctness fix surfaced during review;
+keep it to the two one-line pin changes and do not otherwise alter the
+workflows.
 
-Milestone 7 updates task tracking. Mark item 1.1.3 in `docs/roadmap.md` done only
-after ADR-004 is accepted, the fixture demonstration passes, and the contract
-tests pass. Do not mark 1.2.1, 1.2.2, or 1.2.3 done.
+Milestone 7 updates task tracking. Mark item 1.1.3 in `docs/roadmap.md` done
+only after ADR-004 is accepted, the fixture demonstration passes, and the
+contract tests pass. Do not mark 1.2.1, 1.2.2, or 1.2.3 done.
 
 Milestone 8 validates the change. Run formatting checks, Markdown linting,
 Mermaid validation, type checking, linting, and tests sequentially with `tee`
@@ -727,10 +776,10 @@ for adapter code, package-layout creation, or dependency additions, record the
 concern in the Decision Log and escalate instead of expanding scope.
 
 Milestone 10 commits and opens the draft pull request. Use the `commit-message`
-skill's file-based workflow. Push the branch with upstream tracking. Open a draft
-pull request whose title includes `(1.1.3)`, whose summary mentions this
-ExecPlan, and whose `## References` section includes the Lody session URL derived
-from `echo ${LODY_SESSION_ID}`.
+skill's file-based workflow. Push the branch with upstream tracking. Open a
+draft pull request whose title includes `(1.1.3)`, whose summary mentions this
+ExecPlan, and whose `## References` section includes the Lody session URL
+derived from `echo ${LODY_SESSION_ID}`.
 
 ## Concrete steps
 
@@ -841,31 +890,31 @@ ExecPlan, and the final `## References` section must include
 
 The approved implementation is accepted when all of these are true:
 
-- `tests/test_developer_docs.py` verifies that ADR-004 is accepted and states the
-  hecate-primary and import-linter-fallback decision, the pinned-git-ref
+- `tests/test_developer_docs.py` verifies that ADR-004 is accepted and states
+  the hecate-primary and import-linter-fallback decision, the pinned-git-ref
   out-of-process install, the bare-name prohibition, the five-group production
   model, and the exit-code contract.
 - `tests/test_import_boundary_fitness.py` runs the selected checker as a
-  subprocess and asserts exit 0 with no violations on the clean fixture and exit
-  1 naming the offending edges on the dirty fixture, treating exit 2 as a harness
-  failure. The test is collected by `make test` and skips only on confirmed tool
-  unavailability with a clear reason.
-- `docs/adr-004-import-boundary-fitness-check.md` is accepted and carries Status,
-  Date, Context and problem statement, Decision drivers, Options considered (with
-  a captioned comparison table), Decision outcome, the documented production
-  `[tool.hecate]` config, Goals and non-goals, Migration plan, Known risks and
-  limitations, and Architectural rationale.
+  subprocess and asserts exit 0 with no violations on the clean fixture and
+  exit 1 naming the offending edges on the dirty fixture, treating exit 2 as a
+  harness failure. The test is collected by `make test` and skips only on
+  confirmed tool unavailability with a clear reason.
+- `docs/adr-004-import-boundary-fitness-check.md` is accepted and carries
+  Status, Date, Context and problem statement, Decision drivers, Options
+  considered (with a captioned comparison table), Decision outcome, the
+  documented production `[tool.hecate]` config, Goals and non-goals, Migration
+  plan, Known risks and limitations, and Architectural rationale.
 - `docs/roadmap.md` marks item 1.1.3 done only after ADR-004 is accepted and the
   tests pass.
-- `docs/prosidy-darn-technical-design.md` section 18, `docs/developers-guide.md`,
-  and `docs/contents.md` are aligned with the accepted decision, and no document
-  contradicts ADR-004.
+- `docs/prosidy-darn-technical-design.md` section 18,
+  `docs/developers-guide.md`, and `docs/contents.md` are aligned with the
+  accepted decision, and no document contradicts ADR-004.
 - No real `prosidy_darn` domain, application, ports, adapters, or config package
-  is created; no `pyproject.toml` dependency is added; no gate over real
-  source is wired.
+  is created; no `pyproject.toml` dependency is added; no gate over real source
+  is wired.
 - `.github/workflows/ci.yml` and `.github/workflows/release.yml` pin
-  `python-version: '3.14'`, with no remaining reference to an earlier interpreter
-  outside the deliberate ADR-008 PyPy Pylint tier.
+  `python-version: '3.14'`, with no remaining reference to an earlier
+  interpreter outside the deliberate ADR-008 PyPy Pylint tier.
 - `make check-fmt`, `make markdownlint`, `make nixie`, `make typecheck`,
   `make lint`, and `make test` all pass.
 - `coderabbit review --agent` reports no unresolved in-scope concerns.
@@ -873,11 +922,11 @@ The approved implementation is accepted when all of these are true:
   `(1.1.3)` and whose body links this ExecPlan and the Lody session.
 
 Record the Red-Green evidence for the test-first work. Red: the contract tests
-and the fixture test fail (or the fixture test skips with an explanatory message)
-before the ADR, Makefile pin, and fixture config exist. Green: after the ADR is
-accepted, the pin is added, and the fixture and config exist, the focused test
-command reports all tests passing and the one-shot demonstration command prints
-the dirty-tree violations with `exit=1`.
+and the fixture test fail (or the fixture test skips with an explanatory
+message) before the ADR, Makefile pin, and fixture config exist. Green: after
+the ADR is accepted, the pin is added, and the fixture and config exist, the
+focused test command reports all tests passing and the one-shot demonstration
+command prints the dirty-tree violations with `exit=1`.
 
 No `pytest-bdd` scenario is required because the task adds no user interaction
 behaviour. No `syrupy` snapshot is required because no output format is
@@ -891,25 +940,25 @@ business logic.
 All read and validation commands are safe to rerun. Re-running the tests and
 quality gates does not change the worktree apart from repository-ignored caches.
 
-If `make fmt` changes unrelated files, inspect `git diff` immediately and restore
-unrelated churn unless the user approves keeping it.
+If `make fmt` changes unrelated files, inspect `git diff` immediately and
+restore unrelated churn unless the user approves keeping it.
 
-If a validation command fails, inspect its `/tmp` log, make the smallest related
-fix, and rerun only the failed gate before rerunning the full sequence.
+If a validation command fails, inspect its `/tmp` log, make the smallest
+related fix, and rerun only the failed gate before rerunning the full sequence.
 
 If `uv tool run` cannot fetch hecate (network restriction, removed SHA, or
 interpreter unavailability), the fixture test must skip with a clear reason
 rather than hang or emit an inscrutable traceback; record the unavailability in
-the Decision Log and, if the demonstration evidence cannot be captured even once,
-stop and escalate per the Tolerances.
+the Decision Log and, if the demonstration evidence cannot be captured even
+once, stop and escalate per the Tolerances.
 
 If the branch push fails because the remote branch already exists, inspect the
-remote with `git fetch origin`, `git status --short --branch`, and `git branch
--vv`. Do not force-push unless explicitly approved. If the draft pull request
-already exists, update its title and body rather than opening a duplicate. If the
-branch must be renamed after the pull request exists, use GitHub's branch-rename
-flow so the pull request follows the rename rather than renaming locally and
-pushing.
+remote with `git fetch origin`, `git status --short --branch`, and
+`git branch -vv`. Do not force-push unless explicitly approved. If the draft
+pull request already exists, update its title and body rather than opening a
+duplicate. If the branch must be renamed after the pull request exists, use
+GitHub's branch-rename flow so the pull request follows the rename rather than
+renaming locally and pushing.
 
 ## Artifacts and notes
 
@@ -980,12 +1029,23 @@ The Makefile tool reference to add (pin the full SHA resolved at implementation
 time):
 
 ```make
-# Resolve the pin at implementation time:
+# Resolved with:
 #   git ls-remote https://github.com/leynos/hecate.git HEAD
-HECATE_REF ?= <full-40-char-hecate-commit-sha>
+HECATE_REF ?= 46f8c8798e7a80a3a1ab5a13c2a000a4423ffc12
 # hecate is git-ref-only: the PyPI name "hecate" is an unrelated project.
 HECATE_SPEC = git+https://github.com/leynos/hecate.git@$(HECATE_REF)
 HECATE = $(UV_ENV) uv tool run --python 3.14 --from '$(HECATE_SPEC)' hecate
+```
+
+Implementation resolved `HECATE_REF` to
+`46f8c8798e7a80a3a1ab5a13c2a000a4423ffc12`.
+
+One-shot dirty-fixture evidence captured on 2026-06-15:
+
+```plaintext
+fixture_pkg.fixture_domain.adapter_breach -> fixture_pkg.fixture_adapters.runtime
+fixture_pkg.fixture_domain.external_breach -> pretend_framework
+exit=1
 ```
 
 Firecrawl research evidence:
@@ -996,8 +1056,8 @@ Firecrawl research evidence:
 - `https://pypi.org/pypi/hecate/json`: the PyPI `hecate` name belongs to an
   unrelated ncurses CLI tester.
 - `https://import-linter.readthedocs.io/` and
-  `https://pypi.org/project/import-linter/`: import-linter 2.11, BSD-2, supports
-  the project's Python 3.14 target, `forbidden` and `layers` contracts,
+  `https://pypi.org/project/import-linter/`: import-linter 2.11, BSD-2,
+  supports the project's Python 3.14 target, `forbidden` and `layers` contracts,
   `include_external_packages`, `lint-imports`.
 - `https://docs.gauge.sh/` and `https://github.com/gauge-sh/tach`: tach module
   and external-dependency enforcement via `tach.toml`.
@@ -1025,19 +1085,18 @@ The checker contract that later tasks rely on is:
 
 The fallback contract, if hecate must be replaced, is import-linter 2.11 behind
 the same `make check-imports` seam: a `forbidden` contract with
-`source_modules = ["prosidy_darn.domain", "prosidy_darn.application",
-"prosidy_darn.ports"]`, `forbidden_modules` listing the adapter packages plus
-`cyclopts`, `rich`, and the parser and renderer packages, and
-`include_external_packages = True`.
+`source_modules = ["prosidy_darn.domain", "prosidy_darn.application", "prosidy_darn.ports"]`,
+`forbidden_modules` listing the adapter packages plus `cyclopts`, `rich`, and
+the parser and renderer packages, and `include_external_packages = True`.
 
 ## Revision note
 
 Initial draft created on 2026-06-09. It captures the repository findings, the
-Firecrawl-backed tooling research, the six-member Logisphere community-of-experts
-review, the approval gate, the test-first milestones (documentation-contract
-tests and a subprocess fixture demonstration), the validation commands, and the
-pull-request requirements for roadmap item 1.1.3. Implementation must not start
-until the user explicitly approves the plan.
+Firecrawl-backed tooling research, the six-member Logisphere
+community-of-experts review, the approval gate, the test-first milestones
+(documentation-contract tests and a subprocess fixture demonstration), the
+validation commands, and the pull-request requirements for roadmap item 1.1.3.
+Implementation must not start until the user explicitly approves the plan.
 
 Revised on 2026-06-09 after review feedback that the project targets Python
 >=3.14 and any reference to an earlier interpreter is an error. Reframed the
