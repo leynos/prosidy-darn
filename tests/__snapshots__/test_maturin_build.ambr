@@ -1,0 +1,27 @@
+# serializer version: 1
+# name: test_maturin_wheel_build_summary
+  dict({
+    'entries': list([
+      'prosidy_darn-<version>.dist-info/METADATA',
+      'prosidy_darn-<version>.dist-info/RECORD',
+      'prosidy_darn-<version>.dist-info/WHEEL',
+      'prosidy_darn-<version>.dist-info/licenses/LICENSE',
+      'prosidy_darn-<version>.dist-info/sboms/<sbom>.cyclonedx.json',
+      'prosidy_darn/__init__.py',
+      'prosidy_darn/_prosidy_darn_rs.cpython-<platform>.<extension>',
+      'prosidy_darn/_runtime.py',
+      'prosidy_darn/pure.py',
+    ]),
+    'generator': '1.13.3',
+    'metadata': dict({
+      'name': 'prosidy-darn',
+      'requires_dist': list([
+      ]),
+      'requires_python': '>=3.14',
+      'version': '0.1.0',
+    }),
+    'wheel': dict({
+      'root_is_purelib': 'false',
+    }),
+  })
+# ---

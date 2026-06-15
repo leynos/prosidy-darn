@@ -10,6 +10,10 @@ inputs:
   artifact-name:
     description: Name of the uploaded artifact
     required: true
+  maturin-version:
+    description: Maturin version to install for native builds
+    required: false
+    default: "1.13.3"
 runs:
   using: composite
   steps:
@@ -22,13 +26,36 @@ runs:
         python-version: ${{ inputs.python-version }}
     - name: Install uv
       uses: astral-sh/setup-uv@f0ec1fc3b38f5e7cd731bb6ce540c5af426746bb
+    - name: Set up QEMU for Linux cross-architecture builds
+      if: runner.os == 'Linux' && inputs.cibw-arch != 'x86_64'
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: arm64
     - name: Build wheels
       shell: bash
       run: |
-        uvx --with 'cibuildwheel>=2.16.0,<4.0.0' cibuildwheel --output-dir wheelhouse
+        uvx \
+          --with "maturin==${MATURIN_VERSION}" \
+          --with 'cibuildwheel>=2.16.0,<4.0.0' \
+          cibuildwheel --output-dir wheelhouse
       env:
         CIBW_ARCHS: ${{ inputs.cibw-arch }}
+        CIBW_BEFORE_ALL_LINUX: |
+          set -eu
+          case "$(uname -m)" in
+            x86_64) rustup_target="x86_64-unknown-linux-gnu" ;;
+            aarch64) rustup_target="aarch64-unknown-linux-gnu" ;;
+            *) echo "unsupported rustup target architecture: $(uname -m)" >&2; exit 1 ;;
+          esac
+          rustup_url="https://static.rust-lang.org/rustup/dist/${rustup_target}"
+          curl --proto '=https' --tlsv1.2 -fsSLO "${rustup_url}/rustup-init"
+          curl --proto '=https' --tlsv1.2 -fsSLO "${rustup_url}/rustup-init.sha256"
+          sha256sum -c rustup-init.sha256
+          chmod +x rustup-init
+          ./rustup-init -y --profile minimal
+        CIBW_ENVIRONMENT_LINUX: 'PATH="$HOME/.cargo/bin:$PATH"'
         CIBW_SKIP: 'pp*'
+        MATURIN_VERSION: ${{ inputs.maturin-version }}
     - name: Upload wheel artifact
       uses: actions/upload-artifact@v4
       with:

@@ -1,7 +1,9 @@
 MDLINT ?= markdownlint-cli2
 NIXIE ?= nixie
 MDFORMAT_ALL ?= mdformat-all
-TOOLS = $(MDFORMAT_ALL) ruff ty $(MDLINT) uv
+RUFF_VERSION ?= 0.15.12
+RUFF = $(UV_ENV) uv tool run --from ruff==$(RUFF_VERSION) ruff
+TOOLS = $(MDFORMAT_ALL) ty $(MDLINT) uv
 VENV_TOOLS = pytest
 UV_ENV = UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools
 PYLINT_PYTHON ?= pypy
@@ -28,8 +30,9 @@ all: build check-fmt lint typecheck test
 build: uv .venv ## Build virtual-env and install deps
 	$(UV_ENV) uv sync --group dev
 
-build-release: ## Build artefacts (sdist & wheel)
-	python -m build --sdist --wheel
+build-release: build ## Build artefacts (sdist & wheel)
+	$(UV_ENV) uv run maturin build --release --sdist --out dist \
+	  --manifest-path rust/prosidy-darn-rs/Cargo.toml
 
 clean: ## Remove build artifacts
 	rm -rf build dist *.egg-info \
@@ -63,17 +66,17 @@ $(VENV_TOOLS): ## Verify required CLI tools in venv
 	$(call ensure_tool_venv,$@)
 endif
 
-fmt: ruff $(MDFORMAT_ALL) ## Format sources
-	ruff format
-	ruff check --select I --fix
+fmt: uv $(MDFORMAT_ALL) ## Format sources
+	$(RUFF) format
+	$(RUFF) check --select I --fix
 	$(MDFORMAT_ALL)
 
-check-fmt: ruff ## Verify formatting
-	ruff format --check
+check-fmt: uv ## Verify formatting
+	$(RUFF) format --check
 	# mdformat-all doesn't currently do checking
 
-lint: ruff uv ## Run linters
-	ruff check
+lint: uv ## Run linters
+	$(RUFF) check
 	$(PYLINT) $(PYLINT_TARGETS)
 
 typecheck: build ty ## Run typechecking

@@ -9,11 +9,14 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "maturin==1.13.3",
+    "pip==26.1.2",
     "pytest",
-    "ruff",
+    "ruff==0.15.12",
     "pyright",
     "pytest-timeout",
     "pytest-xdist",
+    "syrupy==5.3.2",
 ]
 
 [tool.ruff]
@@ -308,7 +311,12 @@ timeout = 30
 [tool.uv]
 package = true
 
+[tool.maturin]
+bindings = "pyo3"
+manifest-path = "rust/prosidy-darn-rs/Cargo.toml"
+module-name = "prosidy_darn._prosidy_darn_rs"
+python-source = "."
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["maturin==1.13.3"]
+build-backend = "maturin"

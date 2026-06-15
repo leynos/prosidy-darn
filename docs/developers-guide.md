@@ -21,6 +21,24 @@ installation, and tool execution. The repository targets Python 3.14, and the
 quality gates assume the shared `uv` and Cargo caches supplied by the agent
 host.
 
+The package builds native wheels with maturin and PyO3. The Rust workspace
+lives under `rust/`, and the extension crate is `rust/prosidy-darn-rs`. Keep
+the maturin version synchronized across `pyproject.toml`,
+`.github/workflows/build-wheels.yml`, `.github/workflows/release.yml`, and
+`.github/actions/build-wheels/action.yml`; `tests/test_maturin_build.py` checks
+that contract. Keep the PyO3 version in `rust/prosidy-darn-rs/Cargo.toml`
+aligned with `rust/Cargo.lock`; the same test module checks that lockfile
+contract and builds a native wheel when the local toolchain supports it.
+When bumping maturin or PyO3, regenerate the wheel metadata snapshot with:
+
+```bash
+uv run pytest tests/test_maturin_build.py::test_maturin_wheel_build_summary \
+  --snapshot-update
+```
+
+Commit the updated `tests/__snapshots__/test_maturin_build.ambr` file with the
+dependency change.
+
 ## Development overview
 
 Phase 1 establishes contracts before feature work depends on them. Keep changes
@@ -91,6 +109,11 @@ For code changes, run the relevant gates before committing:
 - `make lint`: run the two-tier Python lint gate.
 - `make typecheck`: run `ty check`.
 - `make test`: run the pytest suite.
+
+For Rust extension changes, also run:
+
+- `cargo fmt --manifest-path rust/Cargo.toml --check`: verify Rust formatting.
+- `cargo check --manifest-path rust/Cargo.toml`: typecheck the Rust workspace.
 
 For Markdown-only changes, run:
 
