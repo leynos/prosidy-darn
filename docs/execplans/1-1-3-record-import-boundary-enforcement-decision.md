@@ -421,7 +421,7 @@ criterion.
 - [x] (2026-06-09) Ran a six-member Logisphere community-of-experts panel to
   stress-test and revise the decision before drafting.
 - [x] (2026-06-15) Received explicit user approval to implement the plan.
-- [ ] Rename the branch to
+- [x] (2026-06-16) Renamed the branch to
   `1-1-3-record-import-boundary-enforcement-decision` and track the matching
   remote.
 - [x] (2026-06-15) Resolved the current hecate HEAD pin as
@@ -455,8 +455,9 @@ criterion.
   second attempt exited 0 and emitted no findings.
 - [x] (2026-06-15) Ran final `coderabbit review --agent`; it completed with
   `findings: 0`.
-- [x] (2026-06-15) Committed with file-based messages, pushed
-  `feat/boundary-import-guard`, and opened draft pull request #20.
+- [x] (2026-06-16) Committed with file-based messages, pushed
+  `1-1-3-record-import-boundary-enforcement-decision`, and opened draft pull
+  request #21.
 
 ## Surprises & discoveries
 
@@ -509,12 +510,12 @@ criterion.
   on the module-dotted `importer` and `imported` fields and never on
   `source_path`, keeping assertions stable across machines.
 - Observation: the local branch
-  `1-1-3-record-import-boundary-enforcement-decision` already exists at
+  `1-1-3-record-import-boundary-enforcement-decision` already existed at
   `89b2d896d7028d54f55bc72bef2199a0e762c676` and tracks a gone remote branch.
   Evidence: `git branch -m` failed with "a branch named … already exists" and
-  `git branch -vv` showed the stale branch. Impact: implementation continues on
-  `feat/boundary-import-guard` unless the stale branch is cleaned up or a
-  GitHub branch rename is needed later.
+  `git branch -vv` showed the stale branch. Impact: the stale branch was
+  preserved as `stale/1-1-3-record-import-boundary-enforcement-decision-20260615`
+  so the current branch could be renamed safely.
 - Observation: a prior `issue-16-import-boundary-fitness-tests` branch contains
   an older implementation of this task, but it is based before the current
   Maturin/PyO3 work. Evidence:
@@ -593,7 +594,8 @@ the stable `check-imports` seam. The fixture demonstration proves hecate exits 0
 on the clean tree and 1 on the dirty tree, the documentation-contract tests lock
 the policy, and roadmap item 1.1.3 is marked done. Local gates passed
 sequentially, and final CodeRabbit review completed with `findings: 0`.
-The branch was pushed and draft pull request #20 was opened.
+The branch was renamed to `1-1-3-record-import-boundary-enforcement-decision`,
+pushed, and draft pull request #21 was opened.
 
 ## Context and orientation
 
