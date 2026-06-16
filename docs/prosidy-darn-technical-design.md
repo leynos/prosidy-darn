@@ -32,8 +32,8 @@ stable enough shape.
 Speech Synthesis Markup Language (SSML) is the first renderer target, not the
 source of truth. W3C SSML defines document structure, pronunciation, prosody,
 voice, pause, and marker elements, and its synthesis process explicitly allows
-processors to infer structure and normalization when markup does not provide it.
-[^4] SSML also notes that processor behaviour can vary by synthesis engine.
+processors to infer structure and normalization when markup does not provide
+it.[^4] SSML also notes that processor behaviour can vary by synthesis engine.
 Prosidy Darn therefore keeps an engine-neutral cue intermediate representation
 (IR) and compiles it to SSML or vendor-specific payloads.
 
@@ -1228,7 +1228,6 @@ non-trivial adapter lands.
 - Whether profile files should allow arbitrary custom rule expressions or only
   named rule weights.
 - Which vendor renderer should be the first non-SSML target.
-- Which import-boundary checker should enforce hexagonal dependency rules.
 
 ADR-001 accepts `mdast` as the initial Markdown-aware parser when its version
 and compatibility probe pass, with PyO3 retained as a contingency rather than a
@@ -1240,6 +1239,13 @@ port, keeps `tokenizers`, `transformers` `AutoTokenizer`, and
 declares optional dependencies via PEP 621 `[project.optional-dependencies]`,
 and requires default-disabled adapters that raise an explicit `ImportError`
 naming the extra to install when their optional dependency is missing.
+
+ADR-004 accepts `leynos/hecate` as the v1 import-boundary fitness function, run
+out-of-process through `uv tool run` against a pinned git reference, with
+`import-linter` named as the vetted fallback behind a stable `check-imports`
+seam. It models five groups (`domain`, `ports`, `application`, `adapters`, and
+`config`) so the inward layers cannot import adapters or frameworks while the
+composition root may.
 
 ## 19. References
 

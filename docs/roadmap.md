@@ -23,7 +23,7 @@ Open design decisions from SS18 map to these resolution deadlines and tasks:
   in task 1.1.2. Record `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`.
 - Profile custom rule-expression policy: resolve before Phase 2 start in task
   1.1.4. Record `docs/adr-003-profile-rule-expression-policy.md`.
-- Import-boundary checker: resolve before Phase 1 exit in task 1.1.3. Record
+- Import-boundary checker: resolved in task 1.1.3 by accepted
   `docs/adr-004-import-boundary-fitness-check.md`.
 - First non-SSML vendor renderer: defer until Phase 5+ and resolve in task
   6.2.1. Record `docs/adr-005-first-vendor-renderer.md` only when that task
@@ -91,14 +91,27 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - See prosidy-darn-technical-design.md §§7, 10, and 18.
   - Success: optional dependencies can be installed or omitted without changing
     the public segmentation API.
-- [ ] 1.1.3. Record the import-boundary enforcement decision.
+- [x] 1.1.3. Record the import-boundary enforcement decision.
   - Requires 1.0.1 and 1.1.1.
-  - Select the CI fitness function that prevents `domain` and `application`
-    modules from importing adapters, Cyclopts, or renderer infrastructure.
-  - Write `docs/adr-004-import-boundary-fitness-check.md`.
+  - Selected `leynos/hecate` as the v1 import-boundary fitness function,
+    invoked out-of-process through a pinned git reference so Cyclopts stays out
+    of the project virtual environment.
+  - Named `import-linter` as the vetted fallback behind the stable
+    `check-imports` seam.
+  - Accepted `docs/adr-004-import-boundary-fitness-check.md` and documented the
+    five-group production model (`domain`, `ports`, `application`, `adapters`,
+    and `config`).
+  - Added a self-contained clean/dirty fixture demonstration proving hecate
+    exits 0 for allowed inward edges and exits 1 for forbidden
+    domain-to-adapter and domain-to-external imports.
+  - Ensured direct CI pytest runs exercise the pinned checker by deriving the
+    repository `HECATE_REF` pin when the Makefile export is absent.
+  - Recorded implementation evidence and observations in
+    `docs/execplans/1-1-3-record-import-boundary-enforcement-decision.md`.
   - See prosidy-darn-technical-design.md §§4, 5, 9, and 16.
-  - Success: the chosen check can fail a boundary violation in a minimal
-    fixture branch.
+  - Success: the chosen check fails a boundary violation in the minimal fixture
+    branch and passes the clean fixture. Wiring the real-tree gate remains task
+    1.2.3 after task 1.2.1 creates the real package layout.
 - [ ] 1.1.4. Record the profile rule-expression policy.
   - Requires 1.0.1 and 1.1.2.
   - Decide whether profile files allow arbitrary custom rule expressions or only
