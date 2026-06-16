@@ -131,10 +131,17 @@ harness failure rather than a boundary violation.
 
 The production policy models five groups: `domain`, `ports`, `application`,
 `adapters`, and `config`, ordered so specific prefixes precede general ones.
-`domain`, `application`, and `ports` must not import adapters, Cyclopts, Rich,
-the Markdown parser package, renderer infrastructure, or delivery code, while
-`config` may import them as the composition root, and the relevant adapter
-groups may import the external frameworks they own.
+These are the core hexagonal architecture groups. `domain`, `application`, and
+`ports` must not import adapters, Cyclopts, Rich, the Markdown parser package,
+renderer infrastructure, or delivery code, while `config` may import them as
+the composition root, and the relevant adapter groups may import the external
+frameworks they own.
+
+The TOML below also defines four auxiliary groups: `cyclopts`, `rich`,
+`markdown_parser`, and `delivery`. These are not extra architectural layers;
+they exist only to classify external imports so hecate can enforce the boundary
+constraints. The policy is therefore a five-group hexagonal architecture with
+auxiliary external-dependency groups for import classification.
 
 External frameworks are banned from the inward layers by their absence from
 those groups' `allowed` lists, not by an explicit deny rule. Each external

@@ -107,8 +107,7 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - Ensured direct CI pytest runs exercise the pinned checker by deriving the
     repository `HECATE_REF` pin when the Makefile export is absent.
   - Recorded implementation evidence and observations in
-    `docs/execplans/1-1-3-record-import-boundary-enforcement-decision.md`;
-    draft PR #21 tracks the completed task branch.
+    `docs/execplans/1-1-3-record-import-boundary-enforcement-decision.md`.
   - See prosidy-darn-technical-design.md §§4, 5, 9, and 16.
   - Success: the chosen check fails a boundary violation in the minimal fixture
     branch and passes the clean fixture. Wiring the real-tree gate remains task

@@ -181,7 +181,9 @@ import adapters, Cyclopts, Rich, the Markdown parser package, renderer
 infrastructure, or delivery code. The decision is recorded in
 [ADR 004: Import boundary fitness check](adr-004-import-boundary-fitness-check.md).
 
-The selected checker is `leynos/hecate`, controlled by these Makefile variables:
+The selected checker is `leynos/hecate`, controlled by these Makefile
+variables. The stable `check-imports` seam may swap in `import-linter` if the
+pinned hecate invocation is unavailable or needs replacement.
 
 - `HECATE_REF`: the pinned full 40-character commit of the `leynos/hecate`
   repository. Update it deliberately, like `PYLINT_PYPY_SHIM_REF`, by resolving

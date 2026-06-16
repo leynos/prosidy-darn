@@ -27,7 +27,7 @@ the application layer never name an adapter, a framework, or a vendor library.
 
 The repository already contains a stub
 `docs/adr-004-import-boundary-fitness-check.md` whose status is "Proposed" and
-whose decision outcome is "Pending". This plan therefore finalizes and closes
+whose decision outcome is "Pending". This plan therefore finalises and closes
 an existing decision rather than creating a new ADR file. The chosen tool is
 `leynos/hecate`, a purpose-built df12 hexagonal-architecture checker, with the
 mature PyPI package `import-linter` named as the pre-vetted fallback.
@@ -39,7 +39,7 @@ whose verb is "fail". This plan therefore also adds a durable, re-runnable
 demonstration: a self-contained architecture fixture plus a pytest test that
 runs the selected checker and proves it reports a violation (exit status 1) on
 a dirty fixture and passes (exit status 0) on a clean one.
-`docs/adr-006-test- matrix-phase-scope.md` already scopes "import-boundary
+`docs/adr-006-test-matrix-phase-scope.md` already scopes "import-boundary
 checks" into Phase 1 tests, so this demonstration is in already-accepted scope.
 
 After this plan is approved and implemented, a maintainer can observe success
@@ -295,8 +295,8 @@ changes outside these paths:
 - `tests/test_developer_docs.py`
 - `tests/test_import_boundary_fitness.py` (new)
 - `tests/fixtures/import_boundary/**` (new fixture trees and config)
-- `.github/workflows/ci.yml` and `.github/workflows/release.yml` (correct the
-  erroneous `python-version: '3.13'` pins to `3.14`)
+- `.github/workflows/ci.yml` and `.github/workflows/release.yml` (verify the
+  `python-version: '3.14'` pins remain aligned with the project target)
 
 Stop and ask for direction if more than 400 net lines of documentation, or more
 than 200 net lines of test, fixture, and Makefile code combined, are needed.
@@ -343,11 +343,10 @@ install an unrelated package. Severity: medium. Likelihood: medium. Mitigation:
 warn prominently in the ADR, the Makefile comment, and the developers' guide
 that hecate is git-ref-only and must never be referenced by bare name.
 
-Risk: Erroneous CI Python pin. The project targets Python >=3.14, but
-`.github/workflows/ci.yml` and `.github/workflows/release.yml` pin `3.13`,
-which is a defect: CI does not exercise the supported interpreter. Severity:
-medium. Likelihood: high (already present). Mitigation: correct both workflows
-to `3.14` as part of this task. Independently, hecate runs only as an isolated
+Risk: CI Python pin drift. The project targets Python >=3.14, so the CI and
+release workflows must exercise Python 3.14. Severity: medium. Likelihood:
+medium. Mitigation: verify both workflows pin `python-version: '3.14'` as part
+of this task. Independently, hecate runs only as an isolated
 `uv tool run --python 3.14` subprocess (never imported), so it is unaffected by
 the interpreter that runs `pytest`, and the Pylint tier's managed PyPy
 (ADR-008) remains a deliberate, separate exception.
@@ -440,7 +439,7 @@ criterion.
 - [x] (2026-06-15) Captured one-shot dirty-fixture evidence: hecate reported
   the forbidden `fixture_domain.adapter_breach -> fixture_adapters.runtime` and
   `fixture_domain.external_breach -> pretend_framework` edges and exited 1.
-- [x] (2026-06-15) Finalized ADR-004 (status, options table, decision,
+- [x] (2026-06-15) Finalised ADR-004 (status, options table, decision,
   production config, limitations, fallback).
 - [x] (2026-06-15) Aligned `docs/prosidy-darn-technical-design.md` section 18,
   the developers' guide, and `docs/contents.md`.
@@ -472,25 +471,32 @@ criterion.
   unset; both hecate fixture tests executed and the full suite passed.
 - [x] (2026-06-16) Ran `coderabbit review --agent` for the CI hecate fixture
   fix; it completed with `findings: 0`.
+- [x] (2026-06-16) Verified current inline review findings and fixed only the
+  still-valid issues: ADR-004 core-versus-auxiliary group wording, developer
+  guide fallback wording, execplan link/spelling/milestone consistency, roadmap
+  PR-number stability, and `HECATE_REF` environment override validation.
+- [x] (2026-06-16) Revalidated the inline-finding fixes with focused hecate
+  tests, the CI-equivalent slipcover pytest command, `make check-fmt`,
+  `make markdownlint`, `make nixie`, `make lint`, `make typecheck`, and
+  `make test`.
+- [x] (2026-06-16) Ran `coderabbit review --agent` after the inline-finding
+  fixes; it completed with `findings: 0`.
 
 ## Surprises & discoveries
 
 - Observation: ADR-004 already exists as a "Proposed" stub with a pending
   outcome. Evidence: `docs/adr-004-import-boundary-fitness-check.md` lines 3-9.
-  Impact: the implementation finalizes the existing file in place rather than
+  Impact: the implementation finalises the existing file in place rather than
   creating a new one, preserving the stable review path the stub promises.
 - Observation: the PyPI distribution `hecate` is unrelated to `leynos/hecate`.
   Evidence: `https://pypi.org/pypi/hecate/json` returns David MacIver's ncurses
   CLI tester. Impact: hecate must be referenced only by pinned git URL;
   bare-name installs are a foot-gun the ADR must warn against.
-- Observation: the project targets Python >=3.14, but
-  `.github/workflows/ci.yml` (line 21) and `.github/workflows/release.yml` (line
-  27) erroneously pin `python-version: '3.13'`. Evidence: `pyproject.toml`
-  `requires-python = ">=3.14"` versus the two workflow pins. Impact: both
-  workflows must be corrected to `3.14` so CI exercises the supported
-  interpreter; this is folded into the task. (The `pyproject.toml` comment
-  about managed PyPy is the deliberate ADR-008 Pylint-tier exception, not an
-  error.)
+- Observation: by implementation time both `.github/workflows/ci.yml` and
+  `.github/workflows/release.yml` pinned `python-version: '3.14'`. Evidence:
+  the two workflow files. Impact: Milestone 6a became a verification step
+  rather than a workflow-editing step. (The `pyproject.toml` comment about
+  managed PyPy is the deliberate ADR-008 Pylint-tier exception, not an error.)
 - Observation: hecate requires Python >=3.14 and imports Cyclopts. Evidence:
   hecate's `pyproject.toml`. Impact: hecate must run out-of-process as an
   isolated `uv tool run --python 3.14` subprocess and must not be folded into
@@ -528,8 +534,9 @@ criterion.
   `89b2d896d7028d54f55bc72bef2199a0e762c676` and tracks a gone remote branch.
   Evidence: `git branch -m` failed with "a branch named … already exists" and
   `git branch -vv` showed the stale branch. Impact: the stale branch was
-  preserved as `stale/1-1-3-record-import-boundary-enforcement-decision-20260615`
-  so the current branch could be renamed safely.
+  preserved as
+  `stale/1-1-3-record-import-boundary-enforcement-decision-20260615` so the
+  current branch could be renamed safely.
 - Observation: a prior `issue-16-import-boundary-fitness-tests` branch contains
   an older implementation of this task, but it is based before the current
   Maturin/PyO3 work. Evidence:
@@ -575,12 +582,12 @@ criterion.
   established `pylint-pypy-shim` pattern keeps such tools isolated.
   Date/Author: 2026-06-09 / Claude (planning).
 - Decision: Run hecate only as an isolated `uv tool run --python 3.14`
-  subprocess, and correct the two CI workflows that erroneously pin Python 3.13
-  to 3.14. Rationale: the project targets Python >=3.14, so the 3.13 CI pins
-  are defects; hecate is not a project dependency and imports Cyclopts, so it
-  must run isolated to keep Cyclopts out of the project environment. The Pylint
-  tier's managed PyPy (ADR-008) is a separate, deliberate exception.
-  Date/Author: 2026-06-09 / Claude (planning).
+  subprocess, and verify the CI workflows pin Python 3.14. Rationale: the
+  project targets Python >=3.14; hecate is not a project dependency and imports
+  Cyclopts, so it must run isolated to keep Cyclopts out of the project
+  environment. The Pylint tier's managed PyPy (ADR-008) is a separate,
+  deliberate exception. Date/Author: 2026-06-09 / Claude (planning; updated
+  2026-06-16 during implementation).
 - Decision: Model five groups (`domain`, `ports`, `application`, `adapters`,
   `config`) with explicit `allowed` lists, and place external prefixes in the
   `allowed` lists of `config` and the relevant adapter groups, absent from
@@ -610,17 +617,17 @@ criterion.
 ## Outcomes & retrospective
 
 Implemented on 2026-06-15. ADR-004 is accepted, names hecate as the primary v1
-import-boundary fitness function, and names import-linter as the fallback behind
-the stable `check-imports` seam. The fixture demonstration proves hecate exits 0
-on the clean tree and 1 on the dirty tree, the documentation-contract tests lock
-the policy, and roadmap item 1.1.3 is marked done. Local gates passed
-sequentially, and final CodeRabbit review completed with `findings: 0`.
+import-boundary fitness function, and names import-linter as the fallback
+behind the stable `check-imports` seam. The fixture demonstration proves hecate
+exits 0 on the clean tree and 1 on the dirty tree, the documentation-contract
+tests lock the policy, and roadmap item 1.1.3 is marked done. Local gates
+passed sequentially, and final CodeRabbit review completed with `findings: 0`.
 The branch was renamed to `1-1-3-record-import-boundary-enforcement-decision`,
-pushed, and draft pull request #21 was opened.
-The roadmap was then expanded to carry the implementation decision, evidence,
-observations, and remaining follow-on boundary for task 1.2.3.
-The hecate fixture test now exercises the pinned checker under direct pytest,
-`make test`, and the CI slipcover invocation.
+pushed, and draft pull request #21 was opened. The roadmap was then expanded to
+carry the implementation decision, evidence, observations, and remaining
+follow-on boundary for task 1.2.3. The hecate fixture test now exercises the
+pinned checker under direct pytest, `make test`, and the CI slipcover
+invocation.
 
 ## Context and orientation
 
@@ -754,7 +761,7 @@ target to `lint` or `all`; the real gate is task 1.2.3. Run the fixture test
 through `make test` and confirm it now passes (or skips only on confirmed
 unavailability).
 
-Milestone 5 finalizes ADR-004. Replace the "Pending" outcome with "Accepted on
+Milestone 5 finalises ADR-004. Replace the "Pending" outcome with "Accepted on
 `YYYY-MM-DD`". Keep the existing context and decision-driver material and add
 the sections the style guide requires: a decided options table comparing
 hecate, import-linter, tach, PyTestArch or custom `ast`, and Ruff `banned-api`
@@ -769,7 +776,7 @@ fixture-proves-capability-not-production- correctness caveat); and the
 architectural rationale. State that the seam is `make check-imports` and that
 wiring against the real tree is task 1.2.3, and that import-linter is the
 reversible escape hatch. Capture the one-shot demonstration command and its
-exit-1 output in the Artifacts section of this plan.
+exit-1 output in the Artefacts section of this plan.
 
 Milestone 6 aligns surrounding documentation. Update
 `docs/prosidy-darn-technical-design.md` section 18 to remove the
@@ -782,13 +789,11 @@ that must not be folded into `make lint`. Add the 1.1.3 execplan entry to
 `docs/contents.md`. Touch `docs/users-guide.md` only if a user-visible
 statement needs correcting.
 
-Milestone 6a corrects the erroneous CI Python pins. The project targets Python
->=3.14, but `.github/workflows/ci.yml` (line 21) and
-`.github/workflows/release.yml` (line 27) pin `python-version: '3.13'`. Change
-both to `'3.14'` so CI and release workflows exercise the supported
-interpreter. This is an unambiguous correctness fix surfaced during review;
-keep it to the two one-line pin changes and do not otherwise alter the
-workflows.
+Milestone 6a verifies the CI Python pins. The project targets Python >=3.14,
+and by implementation time `.github/workflows/ci.yml` and
+`.github/workflows/release.yml` already pinned `python-version: '3.14'`.
+Confirm both workflows still exercise the supported interpreter and do not
+otherwise alter the workflows.
 
 Milestone 7 updates task tracking. Mark item 1.1.3 in `docs/roadmap.md` done
 only after ADR-004 is accepted, the fixture demonstration passes, and the
@@ -989,7 +994,7 @@ duplicate. If the branch must be renamed after the pull request exists, use
 GitHub's branch-rename flow so the pull request follows the rename rather than
 renaming locally and pushing.
 
-## Artifacts and notes
+## Artefacts and notes
 
 The production `[tool.hecate]` configuration that ADR-004 documents (for task
 1.2.3 to commit against the real tree; the exact external import names are
@@ -1130,8 +1135,8 @@ Implementation must not start until the user explicitly approves the plan.
 Revised on 2026-06-09 after review feedback that the project targets Python
 >=3.14 and any reference to an earlier interpreter is an error. Reframed the
 out-of-process hecate rationale around tool isolation and the ADR-008 PyPy tier
-rather than the CI interpreter version; recorded that
-`.github/workflows/ci.yml` and `.github/workflows/release.yml` erroneously pin
-Python 3.13; and folded correcting both pins to 3.14 into the task scope,
-progress, tolerances, validation, and Milestone 6a. This does not change the
-import-boundary decision or the demonstration design.
+rather than the CI interpreter version. Later implementation verified that
+`.github/workflows/ci.yml` and `.github/workflows/release.yml` already pin
+Python 3.14, so Milestone 6a is a verification step rather than a workflow
+edit. This does not change the import-boundary decision or the demonstration
+design.

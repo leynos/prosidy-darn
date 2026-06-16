@@ -31,6 +31,7 @@ DIRTY_CONFIG = DIRTY_TREE / "hecate.toml"
 MAKEFILE = REPO_ROOT / "Makefile"
 
 HECATE_REPO_URL = "git+https://github.com/leynos/hecate.git"
+GIT_SHA_PATTERN = re.compile(r"^[0-9a-f]{40}$")
 HECATE_REF_PATTERN = re.compile(
     r"^HECATE_REF\s*\?=\s*(?P<ref>[0-9a-f]{40})\s*$",
     flags=re.MULTILINE,
@@ -48,7 +49,7 @@ pytestmark = pytest.mark.timeout(300)
 @functools.cache
 def _hecate_ref() -> str | None:
     """Return the pinned hecate git reference from the environment or Makefile."""
-    if env_ref := os.environ.get("HECATE_REF"):
+    if (env_ref := os.environ.get("HECATE_REF")) and GIT_SHA_PATTERN.fullmatch(env_ref):
         return env_ref
 
     makefile = MAKEFILE.read_text(encoding="utf-8")
