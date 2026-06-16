@@ -464,6 +464,14 @@ criterion.
 - [x] (2026-06-16) Revalidated the roadmap update with `make check-fmt`,
   `make markdownlint`, and `make nixie`; committed and pushed
   `afed99e Update roadmap for import-boundary decision`.
+- [x] (2026-06-16) Fixed the hecate fixture test so direct pytest and CI
+  slipcover runs derive the repository `HECATE_REF` pin from the Makefile when
+  the Makefile-only environment export is absent.
+- [x] (2026-06-16) Verified the CI-equivalent command
+  `uv run python -m slipcover ... -m pytest --forked -v` with `HECATE_REF`
+  unset; both hecate fixture tests executed and the full suite passed.
+- [x] (2026-06-16) Ran `coderabbit review --agent` for the CI hecate fixture
+  fix; it completed with `findings: 0`.
 
 ## Surprises & discoveries
 
@@ -535,6 +543,13 @@ criterion.
   contains only setup status lines. Impact: the stalled local process was
   terminated and CodeRabbit will be retried after the next complete milestone
   and during final validation.
+- Observation: the GitHub CI workflow runs pytest directly through slipcover
+  rather than `make test`, so `HECATE_REF` was not exported by Makefile in that
+  path. Evidence: `.github/workflows/ci.yml` invokes
+  `uv run python -m slipcover ... -m pytest --forked -v`. Impact:
+  `tests/test_import_boundary_fitness.py` now falls back to the Makefile
+  `HECATE_REF` pin, and a CI-equivalent slipcover run with `HECATE_REF` unset
+  exercised both hecate fixture tests instead of skipping them.
 
 ## Decision log
 
@@ -604,6 +619,8 @@ The branch was renamed to `1-1-3-record-import-boundary-enforcement-decision`,
 pushed, and draft pull request #21 was opened.
 The roadmap was then expanded to carry the implementation decision, evidence,
 observations, and remaining follow-on boundary for task 1.2.3.
+The hecate fixture test now exercises the pinned checker under direct pytest,
+`make test`, and the CI slipcover invocation.
 
 ## Context and orientation
 

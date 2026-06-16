@@ -15,20 +15,26 @@ import functools
 import json
 import os
 import pathlib
+import re
 import shutil
 import subprocess  # noqa: S404 - fixed argument vectors, no shell, trusted inputs
 import typing as typ
 
 import pytest
 
+REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 FIXTURES_DIR = pathlib.Path(__file__).resolve().parent / "fixtures" / "import_boundary"
 CLEAN_TREE = FIXTURES_DIR / "clean"
 DIRTY_TREE = FIXTURES_DIR / "dirty"
 CLEAN_CONFIG = CLEAN_TREE / "hecate.toml"
 DIRTY_CONFIG = DIRTY_TREE / "hecate.toml"
+MAKEFILE = REPO_ROOT / "Makefile"
 
 HECATE_REPO_URL = "git+https://github.com/leynos/hecate.git"
-HECATE_REF = os.environ.get("HECATE_REF")
+HECATE_REF_PATTERN = re.compile(
+    r"^HECATE_REF\s*\?=\s*(?P<ref>[0-9a-f]{40})\s*$",
+    flags=re.MULTILINE,
+)
 
 EXIT_CLEAN = 0
 EXIT_VIOLATIONS = 1
@@ -39,10 +45,23 @@ EXIT_CONFIG_ERROR = 2
 pytestmark = pytest.mark.timeout(300)
 
 
+@functools.cache
+def _hecate_ref() -> str | None:
+    """Return the pinned hecate git reference from the environment or Makefile."""
+    if env_ref := os.environ.get("HECATE_REF"):
+        return env_ref
+
+    makefile = MAKEFILE.read_text(encoding="utf-8")
+    match = HECATE_REF_PATTERN.search(makefile)
+    if match is None:
+        return None
+    return match.group("ref")
+
+
 def _hecate_command(*args: str) -> list[str]:
     """Build the ``uv tool run`` command that invokes the pinned hecate."""
     uv = shutil.which("uv") or "uv"
-    spec = f"{HECATE_REPO_URL}@{HECATE_REF}"
+    spec = f"{HECATE_REPO_URL}@{_hecate_ref()}"
     return [uv, "tool", "run", "--python", "3.14", "--from", spec, "hecate", *args]
 
 
@@ -64,8 +83,8 @@ def _hecate_unavailable_reason() -> str | None:
     execute the pinned tool, so any later non-result exit code is a genuine
     checker error rather than a tool-fetch failure.
     """
-    if not HECATE_REF:
-        return "HECATE_REF is not set; run the suite through `make test`"
+    if _hecate_ref() is None:
+        return "HECATE_REF is not set and no Makefile HECATE_REF pin was found"
     if shutil.which("uv") is None:
         return "uv executable is not available on PATH"
     try:

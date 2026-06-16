@@ -104,6 +104,8 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - Added a self-contained clean/dirty fixture demonstration proving hecate
     exits 0 for allowed inward edges and exits 1 for forbidden
     domain-to-adapter and domain-to-external imports.
+  - Ensured direct CI pytest runs exercise the pinned checker by deriving the
+    repository `HECATE_REF` pin when the Makefile export is absent.
   - Recorded implementation evidence and observations in
     `docs/execplans/1-1-3-record-import-boundary-enforcement-decision.md`;
     draft PR #21 tracks the completed task branch.
