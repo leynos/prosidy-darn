@@ -4,7 +4,7 @@ This ExecPlan (execution plan) is a living document. The sections `Constraints`,
 `Tolerances`, `Risks`, `Progress`, `Surprises & Discoveries`, `Decision Log`,
 and `Outcomes & Retrospective` must be kept up to date as work proceeds.
 
-Status: DRAFT
+Status: IN PROGRESS
 
 ## Purpose / big picture
 
@@ -340,7 +340,13 @@ the accepted policy.
 - [x] (2026-06-18) Renamed the working branch to
   `1-1-4-record-the-profile-rule-expression-policy`.
 - [x] (2026-06-18) Drafted this pre-implementation ExecPlan.
-- [ ] Await explicit user approval to implement the plan.
+- [x] (2026-06-24) Received explicit user approval to implement the plan in
+  this Lody session.
+- [x] (2026-06-24) Confirmed the branch name
+  `1-1-4-record-the-profile-rule-expression-policy`, set it to track
+  `origin/1-1-4-record-the-profile-rule-expression-policy`, updated the PR
+  title to remove the `Plan:` prefix, renamed the Lody session, and refreshed
+  the PR `## References` session link.
 - [ ] Add failing documentation-contract tests for ADR-003 acceptance and the
   locked policy commitments.
 - [ ] Confirm the new tests fail for the expected reason before editing the ADR.
@@ -757,6 +763,12 @@ pre-selecting a future expression engine.
 
 Firecrawl prior-art evidence is captured under "External prior art" above with
 source URLs and the 2026-06-18 access date.
+
+Implementation resumed on 2026-06-24 after explicit user approval. The branch
+already had the required task name; the local branch now tracks the matching
+remote branch, the pull request title is `Profile rule-expression policy
+(1.1.4)`, and the Lody session title and pull request session reference match
+the active implementation session.
 
 ## Interfaces and dependencies
 
