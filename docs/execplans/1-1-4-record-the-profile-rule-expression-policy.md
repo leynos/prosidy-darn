@@ -347,6 +347,12 @@ the accepted policy.
   `origin/1-1-4-record-the-profile-rule-expression-policy`, updated the PR
   title to remove the `Plan:` prefix, renamed the Lody session, and refreshed
   the PR `## References` session link.
+- [x] (2026-06-24) Ran `make markdownlint nixie`; both documentation gates
+  passed after fixing a Markdown lint issue in this execplan.
+- [x] (2026-06-24) Committed and pushed the implementation-start execplan
+  update as `995d0ef`.
+- [x] (2026-06-24) Updated `docs/roadmap.md` to record that roadmap item 1.1.4
+  is in progress, without marking it complete.
 - [ ] Add failing documentation-contract tests for ADR-003 acceptance and the
   locked policy commitments.
 - [ ] Confirm the new tests fail for the expected reason before editing the ADR.
@@ -375,6 +381,15 @@ the accepted policy.
   sparse overlays on defaults, not complete objects. Evidence: design lines
   626-651. Impact: The ADR must define partial-profile semantics and where
   cross-field invariants are checked relative to Cyclopts' tiered merge.
+- Observation: The project-wide `make fmt` target currently fails on two
+  pre-existing line-length issues in
+  `docs/execplans/1-1-3-record-import-boundary-enforcement-decision.md`, which
+  is outside this plan's approved path list. Evidence: the 2026-06-24
+  `/tmp/fmt-*-1-1-4-record-the-profile-rule-expression-policy.out` log reports
+  MD013 failures on lines 242 and 650 of that 1.1.3 execplan. Impact:
+  implementation must not carry unrelated formatter churn; use the deterministic
+  Markdown gates for changed files and escalate before editing the 1.1.3 plan
+  unless explicitly authorized.
 
 ## Decision log
 
@@ -415,6 +430,11 @@ the accepted policy.
   scopes Phase 1 tests to documentation and link contracts until parser
   behaviour, output snapshots, input invariants, or proof-worthy logic exist.
   Date/Author: 2026-06-18 / Claude (planning).
+- Decision: Keep roadmap item 1.1.4 open while recording it as in progress.
+  Rationale: branch and pull-request housekeeping are complete, but the roadmap
+  success criterion still depends on ADR-003 acceptance, documentation-contract
+  tests, CodeRabbit review, and final quality gates. Date/Author: 2026-06-24 /
+  Codex (implementation).
 
 ## Outcomes & retrospective
 
@@ -769,6 +789,11 @@ already had the required task name; the local branch now tracks the matching
 remote branch, the pull request title is `Profile rule-expression policy
 (1.1.4)`, and the Lody session title and pull request session reference match
 the active implementation session.
+
+The first implementation-status update was committed and pushed as `995d0ef`
+after `make markdownlint nixie` passed. The roadmap now records item 1.1.4 as
+in progress but not complete, matching the remaining ADR, test, CodeRabbit, and
+final-gate work.
 
 ## Interfaces and dependencies
 
