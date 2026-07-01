@@ -29,7 +29,7 @@ time.
 
 This ADR fixes the policy that later optional-dependency and adapter work must
 follow. It does not introduce adapter code, ports, or dependency entries in
-`pyproject.toml`; those land in task 1.2.2 (runtime and development dependency
+`pyproject.toml`; those land in task 1.3.2 (runtime and development dependency
 spine) and task 5.1.2 (first embedding-backed semantic scorer).
 
 ## Decision drivers
@@ -76,7 +76,7 @@ the first v1 candidate.
 ### Option D: Defer the token-counter decision and supply only a disabled adapter
 
 Deferring leaves the open question in section 18 unresolved through Phase 1,
-delays dependency selection in task 1.2.2, and blocks the renderer-side
+delays dependency selection in task 1.3.2, and blocks the renderer-side
 token-limit work scheduled for Phase 4. A disabled-only stance also weakens the
 dependency policy because there is no concrete adapter to validate it against.
 
@@ -121,7 +121,7 @@ user-facing optional adapter dependencies; it remains available for
 development-only groups.
 
 Concrete dependency entries do not land in `pyproject.toml` as part of this
-ADR. Task 1.2.2 owns the actual extras declaration once the package skeleton
+ADR. Task 1.3.2 owns the actual extras declaration once the package skeleton
 lands, and task 5.1.2 owns the first embedding-backed `SemanticScorer` adapter.
 
 ## Goals and non-goals
@@ -145,7 +145,7 @@ lands, and task 5.1.2 owns the first embedding-backed `SemanticScorer` adapter.
 
 1. Land this ADR with documentation-contract tests that lock the accepted
    policy in place.
-2. In task 1.2.2, add `[project.optional-dependencies]` to `pyproject.toml`
+2. In task 1.3.2, add `[project.optional-dependencies]` to `pyproject.toml`
    with `tokenizer` (containing `tiktoken`) and reserve a `semantic` extra for
    the Phase 5 embedding adapter. Keep both extras out of the default install
    set.

@@ -17,13 +17,13 @@ separately.
 
 Open design decisions from SS18 map to these resolution deadlines and tasks:
 
-- Markdown parser strategy: resolve before Phase 1 exit in task 1.1.1. Record
+- Markdown parser strategy: resolve before Phase 1 exit in task 1.2.1. Record
   `docs/adr-001-markdown-parser-boundary.md`.
 - Tokenizer and semantic-scoring dependency policy: resolve before Phase 1 exit
-  in task 1.1.2. Record `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`.
+  in task 1.2.2. Record `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`.
 - Profile custom rule-expression policy: resolve before Phase 2 start in task
-  1.1.4. Record `docs/adr-003-profile-rule-expression-policy.md`.
-- Import-boundary checker: resolve before Phase 1 exit in task 1.1.3. Record
+  1.2.4. Record `docs/adr-003-profile-rule-expression-policy.md`.
+- Import-boundary checker: resolve before Phase 1 exit in task 1.2.3. Record
   `docs/adr-004-import-boundary-fitness-check.md`.
 - First non-SSML vendor renderer: defer until Phase 5+ and resolve in task
   6.2.1. Record `docs/adr-005-first-vendor-renderer.md` only when that task
@@ -52,14 +52,14 @@ Phase 1 acceptance checklist:
 - initial ADRs exist under `docs/` for the v1 blocking decisions;
 - local formatting, Markdown linting, and diagram validation pass.
 
-### 1.0. Establish baseline developer documentation and ADR locations
+### 1.1. Establish baseline developer documentation and ADR locations
 
 This step answers whether contributors have enough maintainer-facing guidance
 to implement Phase 1 consistently. Its outcome gates the ADR and package
 boundary work that follows. See prosidy-darn-technical-design.md §§4, 9, 16,
 and 18.
 
-- [x] 1.0.1. Create baseline developer docs and initial ADR files.
+- [x] 1.1.1. Create baseline developer docs and initial ADR files.
   - Add `docs/developers-guide.md` with the hexagonal package layout, local
     quality gates, testing expectations, and documentation update rules.
   - Place the initial ADR files under `docs/` so Phase 1 decisions have stable
@@ -68,39 +68,39 @@ and 18.
   - Success: developer documentation checks pass, and ADR paths are discoverable
     from the roadmap and developers' guide.
 
-### 1.1. Ratify the v1 decisions that block implementation
+### 1.2. Ratify the v1 decisions that block implementation
 
 This step answers which design choices are fixed for v1 and which remain
 swappable behind ports. Its outcome informs dependency selection, package
 layout, and the first implementation slice. See
 prosidy-darn-technical-design.md §§8, 10, and 18.
 
-- [x] 1.1.1. Record the Markdown parser boundary as an ADR.
-  - Requires 1.0.1.
+- [x] 1.2.1. Record the Markdown parser boundary as an ADR.
+  - Requires 1.1.1.
   - Decide whether v1 ships one Markdown-aware parser plus plain text or ships
     both `mdast` and a PyO3 `markdown-rs` range extractor immediately.
   - Write `docs/adr-001-markdown-parser-boundary.md`.
   - See prosidy-darn-technical-design.md §§1 and 10.
   - Success: one accepted ADR defines the parser adapter order and fallback
     behaviour.
-- [x] 1.1.2. Record the token-limit and semantic-scoring dependency policy.
-  - Requires 1.0.1 and 1.1.1.
+- [x] 1.2.2. Record the token-limit and semantic-scoring dependency policy.
+  - Requires 1.1.1 and 1.2.1.
   - Decide which token counter is optional in v1 and how embedding adapters stay
     out of the core import path.
   - Write `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`.
   - See prosidy-darn-technical-design.md §§7, 10, and 18.
   - Success: optional dependencies can be installed or omitted without changing
     the public segmentation API.
-- [ ] 1.1.3. Record the import-boundary enforcement decision.
-  - Requires 1.0.1 and 1.1.1.
+- [ ] 1.2.3. Record the import-boundary enforcement decision.
+  - Requires 1.1.1 and 1.2.1.
   - Select the CI fitness function that prevents `domain` and `application`
     modules from importing adapters, Cyclopts, or renderer infrastructure.
   - Write `docs/adr-004-import-boundary-fitness-check.md`.
   - See prosidy-darn-technical-design.md §§4, 5, 9, and 16.
   - Success: the chosen check can fail a boundary violation in a minimal
     fixture branch.
-- [ ] 1.1.4. Record the profile rule-expression policy.
-  - Requires 1.0.1 and 1.1.2.
+- [ ] 1.2.4. Record the profile rule-expression policy.
+  - Requires 1.1.1 and 1.2.2.
   - Decide whether profile files allow arbitrary custom rule expressions or only
     named rule weights before Phase 2 starts.
   - Write `docs/adr-003-profile-rule-expression-policy.md`.
@@ -108,34 +108,34 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - Success: profile configuration can be implemented without adding a new
     expression-language decision in the segmenter.
 
-### 1.2. Establish the package skeleton and dependency spine
+### 1.3. Establish the package skeleton and dependency spine
 
 This step answers whether the repository can express the design's ports and
 adapters without leaking framework concerns into the domain. See
 prosidy-darn-technical-design.md §§4-6 and 9.
 
-- [ ] 1.2.1. Create the hexagonal package layout.
-  - Requires 1.1.3.
+- [ ] 1.3.1. Create the hexagonal package layout.
+  - Requires 1.2.3.
   - Add `domain`, `application`, `ports`, `adapters`, and `config` packages.
   - Preserve the existing public import surface while introducing the new
     structure.
   - Success: the package imports without optional adapter dependencies.
-- [ ] 1.2.2. Add the v1 runtime and development dependencies.
-  - Requires 1.1.1 and 1.2.1.
+- [ ] 1.3.2. Add the v1 runtime and development dependencies.
+  - Requires 1.2.1 and 1.3.1.
   - Add Cyclopts and Rich as runtime dependencies.
   - Add `pytest-bdd`, `syrupy`, and Hypothesis to the development dependency
     group alongside `pytest`.
   - See prosidy-darn-technical-design.md §§8, 13, and 16.
   - Success: `make build` installs the declared v1 toolchain without manual
     package installation.
-- [ ] 1.2.3. Wire the architecture fitness check into the local gate.
-  - Requires 1.1.3 and 1.2.1.
+- [ ] 1.3.3. Wire the architecture fitness check into the local gate.
+  - Requires 1.2.3 and 1.3.1.
   - Add the selected import-boundary check to the appropriate Makefile target.
   - See prosidy-darn-technical-design.md §§4, 9, and 16.
   - Success: a deliberate domain-to-adapter import fails the check with an
     actionable diagnostic.
-- [ ] 1.2.4. Add maturin and PyO3 validation for native wheels.
-  - Requires 1.2.1 and 1.2.2.
+- [ ] 1.3.4. Add maturin and PyO3 validation for native wheels.
+  - Requires 1.3.1 and 1.3.2.
   - Add a minimal PyO3 extension, maturin build configuration, and compatibility
     tests for maturin pin synchronization, PyO3 lockfile alignment, native wheel
     metadata, and extension import execution.
@@ -146,22 +146,22 @@ prosidy-darn-technical-design.md §§4-6 and 9.
     `cargo fmt --manifest-path rust/Cargo.toml --check`, and
     `cargo check --manifest-path rust/Cargo.toml` pass.
 
-### 1.3. Build the shared fixture and contract corpus
+### 1.4. Build the shared fixture and contract corpus
 
 This step answers whether the project can verify source fidelity, Unicode
 offsets, and output contracts before the segmenter grows complex. The fixture
 corpus informs every subsequent vertical slice. See
 prosidy-darn-technical-design.md §§6, 7, and 16.
 
-- [ ] 1.3.1. Add canonical Markdown and prose fixtures.
-  - Requires 1.2.1.
+- [ ] 1.4.1. Add canonical Markdown and prose fixtures.
+  - Requires 1.3.1.
   - Cover headings, paragraphs, lists, blockquotes, tables, inline code, code
     blocks, dialogue, quote attribution, and scene breaks.
   - Include ASCII and non-ASCII examples with smart quotes, combining marks,
     emoji, accented names, and non-Latin scripts.
   - Success: fixtures exercise every range kind required by the design.
-- [ ] 1.3.2. Add deterministic snapshot fixtures for output contracts.
-  - Requires 1.3.1 and 1.2.2.
+- [ ] 1.4.2. Add deterministic snapshot fixtures for output contracts.
+  - Requires 1.4.1 and 1.3.2.
   - Use `syrupy` for `agent-context`, explanation output, JSONL cue sheets,
     SSML fragments, and Rich terminal output.
   - See prosidy-darn-technical-design.md §16.
@@ -185,7 +185,7 @@ Python and Rust offset models. Its outcome unlocks all later segmentation work.
 See prosidy-darn-technical-design.md §§6, 7.1, and 10.
 
 - [ ] 2.1.1. Implement the Unicode source index.
-  - Requires steps 1.1-1.3.
+  - Requires steps 1.2-1.4.
   - Provide character-to-byte and byte-to-character conversion for every valid
     source boundary through the `SourceIndex` protocol.
   - Include a memory smoke test or benchmark for ASCII-dominant and
@@ -203,7 +203,7 @@ See prosidy-darn-technical-design.md §§6, 7.1, and 10.
   - Success: representative fixtures produce deterministic merged range sets
     and reject misspelled built-in range kinds.
 - [ ] 2.1.3. Implement Markdown and plain-text structure parsers.
-  - Requires 2.1.2 and 1.1.1.
+  - Requires 2.1.2 and 1.2.1.
   - Add the selected Markdown parser adapter, its version and compatibility
     probes, and a plain-text fallback adapter.
   - Keep the PyO3 range extractor as a contingency only if ADR-001 selects it
@@ -467,7 +467,7 @@ without overriding hard structural rules. See prosidy-darn-technical-design.md
   - Success: semantic scoring can be absent without changing deterministic
     segmentation output.
 - [ ] 5.1.2. Add the first embedding-backed semantic scorer.
-  - Requires 5.1.1 and 1.1.2.
+  - Requires 5.1.1 and 1.2.2.
   - Use scores as rewards and internal-break costs, not hard split rules.
   - See prosidy-darn-technical-design.md §§7.3-7.4.
   - Success: explanations show semantic contributions separately from
