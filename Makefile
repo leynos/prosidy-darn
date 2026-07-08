@@ -1,6 +1,8 @@
 MDLINT ?= markdownlint-cli2
 NIXIE ?= nixie
 MDFORMAT_ALL ?= mdformat-all
+CARGO ?= cargo
+WHITAKER ?= whitaker
 RUFF_VERSION ?= 0.15.12
 RUFF = $(UV_ENV) uv tool run --from ruff==$(RUFF_VERSION) ruff
 TOOLS = $(MDFORMAT_ALL) ty $(MDLINT) uv
@@ -17,7 +19,7 @@ PYLINT_PYPY_SHIM_REF ?= 726d09f968b4d729ee4b29c71fc732e744854f3b
 PYLINT_PYPY_SHIM = git+https://github.com/leynos/pylint-pypy-shim.git@$(PYLINT_PYPY_SHIM_REF)
 PYLINT = $(UV_ENV) uv tool run --python $(PYLINT_PYTHON) --from '$(PYLINT_PYPY_SHIM)' pylint-pypy
 
-.PHONY: help all clean build build-release lint fmt check-fmt \
+.PHONY: help all clean build build-release lint lint-rust fmt check-fmt \
         markdownlint nixie test typecheck $(TOOLS) $(VENV_TOOLS)
 
 .DEFAULT_GOAL := all
@@ -78,6 +80,10 @@ check-fmt: uv ## Verify formatting
 lint: uv ## Run linters
 	$(RUFF) check
 	$(PYLINT) $(PYLINT_TARGETS)
+
+lint-rust: ## Lint the Rust workspace (Clippy and Whitaker)
+	$(CARGO) clippy --manifest-path rust/Cargo.toml --all-targets --all-features -- -D warnings
+	cd rust && RUSTFLAGS="-D warnings" $(WHITAKER) --all -- --all-targets --all-features
 
 typecheck: build ty ## Run typechecking
 	ty --version
