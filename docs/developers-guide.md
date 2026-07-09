@@ -114,6 +114,11 @@ For Rust extension changes, also run:
 
 - `cargo fmt --manifest-path rust/Cargo.toml --check`: verify Rust formatting.
 - `cargo check --manifest-path rust/Cargo.toml`: typecheck the Rust workspace.
+- `make lint-rust`: run Clippy and the
+  [Whitaker Dylint suite](https://github.com/leynos/whitaker) over the Rust
+  workspace with warnings denied. The `whitaker` wrapper must be on `PATH`;
+  install it with
+  `cargo install --locked whitaker-installer && whitaker-installer`.
 
 For Markdown-only changes, run:
 
