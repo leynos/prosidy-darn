@@ -12,7 +12,7 @@ Fixtures
     ``importlib.reload()`` can otherwise leak that state into later tests. The
     reload is especially important for ``pytest -n auto`` runs, where workers
     execute different test modules in parallel and must not inherit stale
-    runtime initialisation.
+    runtime initialization.
 
 Future fixtures or pytest configuration additions in this file should be
 documented in this module docstring so suite-wide behaviour remains visible to

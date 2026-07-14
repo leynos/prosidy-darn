@@ -1,7 +1,7 @@
 """Shared maturin and PyO3 build-validation helpers.
 
 This module contains shared test helpers for validating maturin and PyO3
-version-pin synchronisation and native wheel correctness. The helpers read
+version-pin synchronization and native wheel correctness. The helpers read
 repository packaging metadata, build the Rust extension wheel with the pinned
 maturin backend, and reduce wheel metadata to stable structures that tests can
 compare without depending on platform-specific filenames.
@@ -22,25 +22,25 @@ Public functions
 ``read_expected_maturin_version``
     Read the maturin development dependency pin from ``pyproject.toml``.
 ``read_maturin_pins``
-    Read every maturin pin that must stay synchronised across packaging and
+    Read every maturin pin that must stay synchronized across packaging and
     wheel-build configuration.
 ``read_pyo3_versions``
     Read the PyO3 dependency version from the Rust crate manifest and lockfile.
 ``toolchain_available``
     Report whether the local process can resolve Rust and maturin build tools.
-``build_native_wheel_artifact``
+``build_native_wheel_artefact``
     Build a native wheel into a caller-provided output directory and return
     the single wheel path that build produced.
 ``wheel_build_summary``
-    Inspect a built wheel and return normalised metadata, wheel settings, and
+    Inspect a built wheel and return normalized metadata, wheel settings, and
     archive entries.
 
 The primary caller is ``tests/test_maturin_build.py``. Keep this module
 separate from that test file because it is the reuse point for the next Rust
 extension crate added under ``rust/``. A second extension test should import
 ``read_maturin_pins``, ``read_pyo3_versions``, ``toolchain_available``,
-``build_native_wheel_artifact``, and ``wheel_build_summary`` from here rather
-than duplicate the pin-synchronisation and wheel-validation pattern.
+``build_native_wheel_artefact``, and ``wheel_build_summary`` from here rather
+than duplicate the pin-synchronization and wheel-validation pattern.
 """
 
 from __future__ import annotations
@@ -71,9 +71,9 @@ __all__ = [
     "PACKAGE_NAME",
     "PYO3_VERSION",
     "RUST_EXTENSION_NAME",
-    "PinSynchronisationError",
+    "PinSynchronizationError",
     "WheelMetadataError",
-    "build_native_wheel_artifact",
+    "build_native_wheel_artefact",
     "read_expected_maturin_version",
     "read_maturin_pins",
     "read_pyo3_versions",
@@ -100,8 +100,8 @@ class WheelMetadataError(ValueError):
     """Raised when wheel or packaging metadata fails a structural validation check."""
 
 
-class PinSynchronisationError(ValueError):
-    """Raised when maturin or PyO3 version pins are not synchronised across repository files."""  # noqa: E501
+class PinSynchronizationError(ValueError):
+    """Raised when maturin or PyO3 version pins are not synchronized across repository files."""  # noqa: E501
 
 
 def repo_root() -> pathlib.Path:
@@ -131,7 +131,7 @@ def read_expected_maturin_version(root: pathlib.Path) -> str:
     ]
     if len(maturin_pins) != 1:
         message = f"Expected one maturin dev dependency pin, found {maturin_pins!r}"
-        raise PinSynchronisationError(message)
+        raise PinSynchronizationError(message)
     return maturin_pins[0]
 
 
@@ -139,7 +139,7 @@ def _require_pin_match(match: re.Match[str] | None, location: str) -> str:
     """Extract a version from a regex match or raise with source context."""
     if match is None:
         message = f"Could not locate maturin version pin in {location}"
-        raise PinSynchronisationError(message)
+        raise PinSynchronizationError(message)
     return match.group(1)
 
 
@@ -163,7 +163,7 @@ def read_maturin_pins(root: pathlib.Path) -> dict[str, str]:
             "Expected one maturin build backend pin, found "
             f"{build_system_maturin_pins!r}"
         )
-        raise PinSynchronisationError(message)
+        raise PinSynchronizationError(message)
     return {
         "pyproject dev": read_expected_maturin_version(root),
         "pyproject build-system": build_system_maturin_pins[0],
@@ -189,7 +189,7 @@ def read_pyo3_versions(root: pathlib.Path) -> dict[str, str]:
     )
     if pyo3_package is None:
         message = "Could not locate pyo3 package in rust/Cargo.lock"
-        raise PinSynchronisationError(message)
+        raise PinSynchronizationError(message)
     return {
         "rust/prosidy-darn-rs/Cargo.toml": pyo3_dependency["version"],
         "rust/Cargo.lock": pyo3_package["version"],
@@ -213,7 +213,7 @@ def toolchain_available() -> bool:
     )
 
 
-def build_native_wheel_artifact(
+def build_native_wheel_artefact(
     root: pathlib.Path,
     out_dir: pathlib.Path,
 ) -> pathlib.Path:
@@ -258,7 +258,7 @@ def _header_value(headers: dict[str, list[str]], key: str) -> str | None:
 
 
 def _parse_metadata(raw_metadata: str) -> dict[str, typ.Any]:
-    """Parse RFC 2822-style metadata headers into a normalised dictionary."""
+    """Parse RFC 2822-style metadata headers into a normalized dictionary."""
     headers: dict[str, list[str]] = {}
     current_key: str | None = None
     for line in raw_metadata.splitlines():
@@ -279,8 +279,8 @@ def _parse_metadata(raw_metadata: str) -> dict[str, typ.Any]:
     }
 
 
-def _normalise_wheel_entry(name: str) -> str:
-    """Normalise platform and version-specific wheel entry names."""
+def _normalize_wheel_entry(name: str) -> str:
+    """Normalize platform and version-specific wheel entry names."""
     if _EXTENSION_MODULE_RE.match(name):
         return (
             f"{PACKAGE_IMPORT_NAME}/{RUST_EXTENSION_NAME}"
@@ -330,7 +330,7 @@ def _parse_wheel_header(
 
 
 def wheel_build_summary(whl_path: pathlib.Path) -> dict[str, typ.Any]:
-    """Return normalised wheel metadata and layout."""
+    """Return normalized wheel metadata and layout."""
     try:
         with zipfile.ZipFile(whl_path) as archive:
             entry_names = archive.namelist()
@@ -348,5 +348,5 @@ def wheel_build_summary(whl_path: pathlib.Path) -> dict[str, typ.Any]:
         "wheel": {
             "root_is_purelib": root_is_purelib,
         },
-        "entries": sorted(_normalise_wheel_entry(name) for name in entry_names),
+        "entries": sorted(_normalize_wheel_entry(name) for name in entry_names),
     }

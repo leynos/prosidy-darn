@@ -118,7 +118,7 @@ well-chosen bet.
 
 **W4. 🟡 Deferred decisions are accumulating.** SS18 lists five open decisions.
 The roadmap adds several more implicit ones (which import-boundary checker,
-which tokeniser, which vendor renderer). The design would benefit from a
+which tokenizer, which vendor renderer). The design would benefit from a
 decision deadline for each: which must be resolved before Phase 1 code, which
 can wait until Phase 2, and which are genuinely deferrable to Phase 5+. The
 roadmap partially addresses this with dependency annotations, but the mapping

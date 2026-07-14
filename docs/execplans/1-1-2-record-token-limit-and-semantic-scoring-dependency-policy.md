@@ -20,7 +20,7 @@ inherits the policy chosen here.
 The repository already contains a stub
 `docs/adr-002-tokenizer-and-semantic- scoring-policy.md` whose status is
 "Proposed" and whose decision outcome is "Pending". This plan therefore treats
-1.1.2 as a decision-finalisation and closure task. After this plan is approved
+1.1.2 as a decision-finalization and closure task. After this plan is approved
 and implemented, a maintainer can observe success by reading the accepted
 ADR-002, seeing roadmap item 1.1.2 marked done, running the documentation and
 Python quality gates without failures, and confirming that no optional
@@ -327,7 +327,7 @@ accepted policy.
 
 ## Decision log
 
-- Decision: Treat 1.1.2 as a documentation finalisation and closure task.
+- Decision: Treat 1.1.2 as a documentation finalization and closure task.
   Rationale: ADR-002 already exists in Proposed status, the roadmap checkbox
   remains open, and the missing work is policy specification, contract tests,
   and task closure rather than adapter implementation. Date/Author: 2026-05-23
@@ -340,7 +340,7 @@ accepted policy.
   adds runtime model-file distribution surface. Date/Author: 2026-05-23 /
   Claude (planning).
 - Decision: Use PEP 621 `[project.optional-dependencies]` to document the
-  future extras shape. Rationale: PEP 621 is the standardised mechanism for
+  future extras shape. Rationale: PEP 621 is the standardized mechanism for
   user-facing published extras; PEP 735 `[dependency-groups]` does not install
   the package or its runtime dependencies and is therefore unsuited to optional
   adapter dependencies. Date/Author: 2026-05-23 / Claude (planning).
@@ -472,7 +472,7 @@ Run the focused test after adding it and confirm it fails for the expected
 reason before changing the ADR. If a subset already passes because the ADR stub
 satisfies it, document that in `Surprises & Discoveries` and continue.
 
-Milestone 3 finalises ADR-002. Replace the "Pending" decision outcome with
+Milestone 3 finalizes ADR-002. Replace the "Pending" decision outcome with
 "Accepted on `YYYY-MM-DD`" plus the chosen policy. Add the sections required by
 the documentation style guide and absent from the stub: options considered,
 decision outcome, goals and non-goals, migration plan, known risks and
@@ -700,12 +700,12 @@ Do not force-push unless explicitly approved.
 If the draft pull request already exists, update its title and body rather than
 opening a duplicate.
 
-## Artifacts and notes
+## Artefacts and notes
 
 Firecrawl-class research evidence gathered during planning:
 
 - `https://pypi.org/project/tiktoken/` and `https://github.com/openai/tiktoken`:
-  `tiktoken` is a small native MIT-licensed BPE tokeniser, Python 3.9+, with
+  `tiktoken` is a small native MIT-licensed BPE tokenizer, Python 3.9+, with
   `cl100k_base` and `o200k_base` encodings bundled.
 - `https://pypi.org/project/transformers/` and
   `https://github.com/huggingface/transformers/issues/31043`: `transformers`
@@ -718,7 +718,7 @@ Firecrawl-class research evidence gathered during planning:
   embedding model (384-dim, ~22.7 M parameters); recommended runtime pulls
   PyTorch.
 - `https://pypi.org/project/darn-it/`: `darn-it` 1.2.0 ships
-  `requires_dist: None`; the tokeniser is bundled inside the Rust wheel.
+  `requires_dist: None`; the tokenizer is bundled inside the Rust wheel.
 - `https://peps.python.org/pep-0621/` and `https://peps.python.org/pep-0735/`:
   PEP 621 is the standard mechanism for `[project.optional-dependencies]`; PEP
   735 `[dependency-groups]` is for development-only sets and does not install
@@ -731,7 +731,7 @@ Firecrawl-class research evidence gathered during planning:
 Wyvern planning evidence:
 
 - ADR-002 already exists in Proposed status, so roadmap closure should
-  finalise the existing ADR rather than create one from scratch.
+  finalize the existing ADR rather than create one from scratch.
 - The repository has not yet introduced the final hexagonal package layout,
   the `TokenCounter` and `SemanticScorer` ports, or any tokenizer or embedding
   dependency.

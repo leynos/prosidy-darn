@@ -65,7 +65,7 @@
   - New functionality or behaviour changes are fully validated by relevant unit
     and behavioural tests.
   - Bug fixes include a failing test before the fix and a passing test
-    afterward.
+    afterwards.
   - Code passes lint checks.
   - Formatting is correct and validated.
 - **For Python files:**
@@ -76,6 +76,8 @@
   - **Typechecking:** Passes type checking (`make typecheck`).
 - **For Markdown files (`.md` only):**
   - **Linting:** Passes markdown lint checks (`make markdownlint`).
+  - **Spelling:** Passes the en-GB-oxendict `typos` gate, which runs as part
+    of `make markdownlint`.
   - **Mermaid diagrams:** Passes validation using nixie (`make nixie`).
 - **Committing:**
   - Only changes that meet all quality gates should be committed.
@@ -135,7 +137,15 @@
 
 ## Markdown guidance
 
-- Validate Markdown files using `make markdownlint`.
+- Validate Markdown files using `make markdownlint`. This target also runs
+  `make spelling` to enforce en-GB-oxendict spelling with Typos.
+- `typos.toml` is generated from the shared Oxford dictionary and the local
+  `typos.local.toml` overlay. Do not edit the generated file by hand.
+- Run `make spelling-config-write` to regenerate the configuration, or
+  `make spelling-config` to verify it. The focused shared builder refreshes the
+  untracked dictionary cache only when the authoritative copy is newer.
+- Quoted APIs and identifiers retain upstream spelling. Protect them with
+  narrow exact or full-line patterns rather than bare accepted words.
 - Run `make fmt` after documentation changes to format Markdown and fix table
   markup.
 - Validate Mermaid diagrams in Markdown by running `make nixie`.

@@ -1,0 +1,33 @@
+# Repository-specific quotations and machine interfaces.
+
+schema = 1
+
+[oxford]
+stems = []
+
+[words]
+accepted = []
+
+[words.corrections]
+
+[patterns]
+ignore = [
+  # Official documentation and product names.
+  'Azure Architecture\s+Center\s+\|\s+Microsoft Learn',
+  'GitHub\s+Flavored\s+Markdown',
+  # Valid compounds whose components must remain visible elsewhere.
+  '\bMis-modelled\b',
+  '\bpre-empted\b',
+  # Composite-action inputs and expressions are machine interfaces.
+  '(?m)^          artifact-name: wheels-\$\{\{ matrix\.os \}\}-\$\{\{ matrix\.arch \}\}$',
+  '(?m)^        name: \$\{\{ inputs\.artifact-name \}\}$',
+  '(?m)^  artifact-name:$',
+  # Existing trace messages are diagnostic contracts.
+  '(?m)^        "build_native_wheel_artifact: completed; output dir contains %s",$',
+  '(?m)^    _logger\.debug\("build_native_wheel_artifact: running %s", command\)$',
+  # GitHub's pull-request event value is an exact API literal.
+  '(?m)^    types: \[opened, reopened, synchronize, labeled, ready_for_review\]$',
+]
+
+[files]
+exclude = []
