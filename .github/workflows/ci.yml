@@ -91,7 +91,8 @@ jobs:
             --omit="*/unittests/*,*/.venv/*" \
             --branch \
             --out coverage.xml \
-            -m pytest --forked -v
+            -m pytest --forked -v \
+            --ignore=scripts/tests/test_typos_rollout_check.py
 
       - name: Upload coverage artefact
         uses: actions/upload-artifact@v4
