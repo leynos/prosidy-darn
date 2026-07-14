@@ -122,9 +122,28 @@ For Rust extension changes, also run:
 
 For Markdown-only changes, run:
 
-- `make markdownlint`: lint Markdown files.
+- `make markdownlint`: lint Markdown files and enforce Oxford spelling.
 - `make nixie`: validate Mermaid diagrams.
 - `git diff --check`: catch trailing whitespace and conflict markers.
+
+### Spelling policy
+
+Run `make spelling` to enforce en-GB-oxendict prose spelling with the pinned
+Typos release. The tracked `typos.toml` is generated from the shared estate
+dictionary and the narrow repository policy in `typos.local.toml`; never edit
+the generated file by hand.
+
+`make spelling-config-write` invokes the exact, commit-pinned
+`typos-config-builder` CLI to refresh the untracked shared-dictionary cache
+when its authority is newer and write the deterministic configuration. Use
+`make spelling-config` to verify cache and generated-config drift. The builder
+only parses, refreshes, merges and renders spelling policy. Harvesting, Typos
+execution, phrase enforcement and Mermaid validation remain consumer-owned.
+
+The phrase checker rejects punctuation-sensitive shared corrections such as
+`hand-written` in tracked UTF-8 text. Repository exceptions belong in the
+local overlay as narrow exact or full-line patterns; do not add bare accepted
+words for machine interfaces or formal names.
 
 ## Two-tier linting
 

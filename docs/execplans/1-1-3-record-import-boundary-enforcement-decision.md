@@ -671,7 +671,7 @@ fixture during implementation, and the fixture-proves-capability-not-production-
 correctness caveat); and the architectural rationale. State that the seam is
 `make check-imports` and that wiring against the real tree is task 1.2.3, and
 that import-linter is the reversible escape hatch. Capture the one-shot
-demonstration command and its exit-1 output in the Artifacts section of this
+demonstration command and its exit-1 output in the Artefacts section of this
 plan.
 
 Milestone 6 aligns surrounding documentation. Update
@@ -891,7 +891,7 @@ branch must be renamed after the pull request exists, use GitHub's branch-rename
 flow so the pull request follows the rename rather than renaming locally and
 pushing.
 
-## Artifacts and notes
+## Artefacts and notes
 
 The production `[tool.hecate]` configuration that ADR-004 documents (for task
 1.2.3 to commit against the real tree; the exact external import names are

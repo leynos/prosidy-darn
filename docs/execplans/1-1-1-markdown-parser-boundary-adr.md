@@ -545,7 +545,7 @@ Do not force-push unless explicitly approved.
 If the draft pull request already exists, update its title and body rather than
 opening a duplicate.
 
-## Artifacts and notes
+## Artefacts and notes
 
 Firecrawl evidence gathered during planning:
 

@@ -34,8 +34,8 @@ _rust_hello: cabc.Callable[[], str] | None = None
 _python_hello: cabc.Callable[[], str] | None = None
 
 
-def _initialise_runtime() -> None:
-    """Initialise the active runtime implementation if it is not loaded."""
+def _initialize_runtime() -> None:
+    """Initialize the active runtime implementation if it is not loaded."""
     global _HAS_RUST, _python_hello, _rust_hello
 
     if _HAS_RUST or _python_hello is not None:
@@ -77,7 +77,7 @@ def hello() -> str:
     """Return the greeting from the active runtime implementation."""
     global _python_hello
 
-    _initialise_runtime()
+    _initialize_runtime()
 
     if _HAS_RUST:
         if _rust_hello is None:

@@ -8,7 +8,7 @@ inputs:
     description: Architecture to pass to cibuildwheel
     required: true
   artifact-name:
-    description: Name of the uploaded artifact
+    description: Name of the uploaded artefact
     required: true
   maturin-version:
     description: Maturin version to install for native builds
@@ -56,7 +56,7 @@ runs:
         CIBW_ENVIRONMENT_LINUX: 'PATH="$HOME/.cargo/bin:$PATH"'
         CIBW_SKIP: 'pp*'
         MATURIN_VERSION: ${{ inputs.maturin-version }}
-    - name: Upload wheel artifact
+    - name: Upload wheel artefact
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.artifact-name }}

@@ -13,7 +13,7 @@ import pytest
 from tests.helpers.maturin import (
     MATURIN_VERSION,
     PYO3_VERSION,
-    build_native_wheel_artifact,
+    build_native_wheel_artefact,
     read_expected_maturin_version,
     read_maturin_pins,
     read_pyo3_versions,
@@ -80,7 +80,7 @@ def test_maturin_wheel_build_summary(
             "before native-wheel tests run on Python 3.15+",
         )
 
-    wheel_path = build_native_wheel_artifact(root, tmp_path / "wheelhouse")
+    wheel_path = build_native_wheel_artefact(root, tmp_path / "wheelhouse")
     summary = wheel_build_summary(wheel_path)
     assert summary == snapshot, (
         "Native wheel metadata, SBOM, and extension layout must match the snapshot"
@@ -100,7 +100,7 @@ def test_rust_extension_hello_returns_expected_greeting(tmp_path: pth.Path) -> N
             "before native-wheel tests run on Python 3.15+",
         )
 
-    wheel_path = build_native_wheel_artifact(root, tmp_path / "wheelhouse")
+    wheel_path = build_native_wheel_artefact(root, tmp_path / "wheelhouse")
     site_dir = tmp_path / "site"
     subprocess.run(  # noqa: S603 - command list uses trusted paths and local wheel.
         [

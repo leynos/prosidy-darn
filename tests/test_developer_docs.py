@@ -34,7 +34,7 @@ def read_document(path: pathlib.Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def normalise_whitespace(text: str) -> str:
+def normalize_whitespace(text: str) -> str:
     """Collapse Markdown wrapping so contract checks ignore line reflow."""
     return re.sub(r"\s+", " ", text).strip()
 
@@ -98,7 +98,7 @@ def test_markdown_parser_boundary_adr_is_accepted() -> None:
 
 def test_markdown_parser_boundary_adr_defines_v1_adapter_order() -> None:
     """Keep the selected Markdown parser order explicit before adapter work."""
-    markdown_parser_adr = normalise_whitespace(read_document(MARKDOWN_PARSER_ADR))
+    markdown_parser_adr = normalize_whitespace(read_document(MARKDOWN_PARSER_ADR))
     required_phrases = (
         "V1 ships one Markdown-aware parser adapter plus a plain-text fallback",
         (
@@ -115,7 +115,7 @@ def test_markdown_parser_boundary_adr_defines_v1_adapter_order() -> None:
     missing_phrases = [
         phrase
         for phrase in required_phrases
-        if normalise_whitespace(phrase) not in markdown_parser_adr
+        if normalize_whitespace(phrase) not in markdown_parser_adr
     ]
 
     assert missing_phrases == [], (
@@ -143,7 +143,7 @@ def test_tokenizer_policy_adr_is_accepted() -> None:
 
 def test_tokenizer_policy_adr_defines_v1_adapter_policy() -> None:
     """Lock the accepted ADR-002 policy before downstream adapter work."""
-    tokenizer_policy_adr = normalise_whitespace(read_document(TOKENIZER_POLICY_ADR))
+    tokenizer_policy_adr = normalize_whitespace(read_document(TOKENIZER_POLICY_ADR))
     required_phrases = (
         "`tiktoken` is the first v1 `TokenCounter` candidate behind the port",
         (
@@ -178,7 +178,7 @@ def test_tokenizer_policy_adr_defines_v1_adapter_policy() -> None:
     missing_phrases = [
         phrase
         for phrase in required_phrases
-        if normalise_whitespace(phrase) not in tokenizer_policy_adr
+        if normalize_whitespace(phrase) not in tokenizer_policy_adr
     ]
 
     assert missing_phrases == [], (
