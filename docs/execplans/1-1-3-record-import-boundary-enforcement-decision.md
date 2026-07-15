@@ -9,7 +9,7 @@ Status: DRAFT
 
 ## Purpose / big picture
 
-Roadmap task 1.1.3 closes the import-boundary blocking decision for Prosidy
+Roadmap task 1.2.3 closes the import-boundary blocking decision for Prosidy
 Darn: v1 must name the continuous-integration (CI) fitness function that
 prevents `prosidy_darn.domain` and `prosidy_darn.application` from importing
 adapters, Cyclopts, parser packages, renderer infrastructure, or delivery code.
@@ -32,7 +32,7 @@ existing decision rather than creating a new ADR file. The chosen tool is
 `leynos/hecate`, a purpose-built df12 hexagonal-architecture checker, with the
 mature PyPI package `import-linter` named as the pre-vetted fallback.
 
-Unlike roadmap tasks 1.1.1 and 1.1.2, which were documentation-only, task 1.1.3
+Unlike roadmap tasks 1.2.1 and 1.2.2, which were documentation-only, task 1.2.3
 carries an executable success criterion: "the chosen check can fail a boundary
 violation in a minimal fixture branch". A prose ADR cannot satisfy a criterion
 whose verb is "fail". This plan therefore also adds a durable, re-runnable
@@ -43,7 +43,7 @@ matrix-phase-scope.md` already scopes "import-boundary checks" into Phase 1
 tests, so this demonstration is in already-accepted scope.
 
 After this plan is approved and implemented, a maintainer can observe success by
-reading the accepted ADR-004, seeing roadmap item 1.1.3 marked done, running the
+reading the accepted ADR-004, seeing roadmap item 1.2.3 marked done, running the
 documentation and Python quality gates without failures, and watching the new
 fixture test prove that the selected checker fails a deliberate
 domain-to-adapter import while passing a clean fixture.
@@ -53,20 +53,20 @@ The implementation carried out from this plan must not create the real
 `prosidy_darn.adapters`, or `prosidy_darn.config` packages; must not add
 Cyclopts, Rich, or the checker to `pyproject.toml`; and must not wire the
 checker into `make lint` or `make all` against real source. Those are the
-distinct jobs of roadmap tasks 1.2.1, 1.2.2, and 1.2.3 respectively.
+distinct jobs of roadmap tasks 1.3.1, 1.3.2, and 1.3.3 respectively.
 
 ## Context and citations
 
-`docs/roadmap.md` defines roadmap item 1.1.3 under "Ratify the v1 decisions that
+`docs/roadmap.md` defines roadmap item 1.2.3 under "Ratify the v1 decisions that
 block implementation". The item requires
-`docs/adr-004-import-boundary-fitness-check.md`, lists 1.0.1 and 1.1.1 as
+`docs/adr-004-import-boundary-fitness-check.md`, lists 1.1.1 and 1.2.1 as
 prerequisites (both already done), and declares success as: "the chosen check
 can fail a boundary violation in a minimal fixture branch". The roadmap also
 points to `https://github.com/leynos/hecate` for hexagonal-architecture
 enforcement tooling, and lists three sibling tasks that this plan must not
-encroach upon: 1.2.1 (create the hexagonal package layout), 1.2.2 (add the v1
+encroach upon: 1.3.1 (create the hexagonal package layout), 1.3.2 (add the v1
 runtime and development dependencies, including Cyclopts and Rich, so
-`make build` installs the toolchain), and 1.2.3 (wire the selected check into a
+`make build` installs the toolchain), and 1.3.3 (wire the selected check into a
 Makefile target so a deliberate domain-to-adapter import fails with an
 actionable diagnostic).
 
@@ -189,10 +189,10 @@ decision. They are recorded so the implementer need not re-research them.
 
 A six-member Logisphere expert panel reviewed the proposed decision before this
 draft. Their unanimous conclusions are folded into this plan: adopt the tool
-plus a durable fixture plus a demonstration test at 1.1.3 (not documentation
+plus a durable fixture plus a demonstration test at 1.2.3 (not documentation
 only); install the tool out-of-process through a pinned git reference rather than
 as a `pyproject.toml` dependency, so Cyclopts is never pulled into the project
-virtual environment and task 1.2.2's dependency work is not pre-empted; model
+virtual environment and task 1.3.2's dependency work is not pre-empted; model
 five groups including `ports`, not four; place external prefixes in the `allowed`
 lists of `config` and the specific adapter groups, not merely "forbidden in
 domain"; assert on JSON output, not brittle text; demonstrate both the
@@ -216,21 +216,21 @@ reversible escape hatch. The Decision Log records each adopted recommendation.
 Do not implement the real hexagonal package layout in this task. The approved
 implementation must not create `prosidy_darn.domain`, `prosidy_darn.application`,
 `prosidy_darn.ports`, `prosidy_darn.adapters`, or `prosidy_darn.config`. Those
-packages are roadmap task 1.2.1.
+packages are roadmap task 1.3.1.
 
 Do not add the checker, Cyclopts, Rich, or any runtime dependency to
 `pyproject.toml`. hecate must be referenced only through a pinned git URL invoked
 by `uv tool run`, never added to `[project.dependencies]` or
 `[dependency-groups]`. Adding it to the dev group would pull its Cyclopts
 dependency into the project virtual environment, contradicting the very boundary
-this decision enforces, and would do task 1.2.2's dependency-spine work. If
-satisfying 1.1.3 appears to require a `pyproject.toml` dependency change, stop
+this decision enforces, and would do task 1.3.2's dependency-spine work. If
+satisfying 1.2.3 appears to require a `pyproject.toml` dependency change, stop
 and escalate.
 
 Do not wire the checker into `make lint`, `make all`, or any aggregate gate that
 scans real source. The demonstration runs only against the self-contained
 fixture through the new pytest test. Wiring the gate against the real
-`prosidy_darn` tree is roadmap task 1.2.3.
+`prosidy_darn` tree is roadmap task 1.3.3.
 
 Do not run hecate in-process. hecate is not a project dependency; it is an
 isolated CLI tool whose own Cyclopts dependency must stay out of the project
@@ -267,7 +267,7 @@ every table.
 
 The plan must be approved before implementation begins. Silence is not approval.
 
-Do not mark roadmap item 1.1.3 done until the approved implementation has added
+Do not mark roadmap item 1.2.3 done until the approved implementation has added
 the fixture demonstration and contract tests, passed the required gates, cleared
 CodeRabbit concerns, been committed, and been pushed.
 
@@ -382,16 +382,16 @@ checkers, mitigated by code review and the convention that dynamic imports live
 in `config` or `_runtime`.
 
 Risk: Fixture pollutes the real run later. A fixture placed inside the real
-package namespace would be swept into the production hecate run after 1.2.1.
+package namespace would be swept into the production hecate run after 1.3.1.
 Severity: medium. Likelihood: low. Mitigation: keep the fixture under
 `tests/fixtures/import_boundary/` with its own `--config` file, outside the
 `prosidy_darn` import surface.
 
 Risk: Demonstration proves tool capability, not production-config correctness.
-Because the real packages do not exist until 1.2.1, a green fixture says nothing
+Because the real packages do not exist until 1.3.1, a green fixture says nothing
 about whether the production `[tool.hecate]` groups are right. Severity: medium.
 Likelihood: high if unstated. Mitigation: the ADR states this limitation
-explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
+explicitly and assigns the real-tree proof to task 1.3.3's success criterion.
 
 ## Progress
 
@@ -428,7 +428,7 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
   guide, and `docs/contents.md`.
 - [ ] Correct `.github/workflows/ci.yml` and `.github/workflows/release.yml`
   Python pins from `3.13` to `3.14`.
-- [ ] Mark roadmap item 1.1.3 done.
+- [ ] Mark roadmap item 1.2.3 done.
 - [ ] Run the local gates sequentially and capture logs under `/tmp`.
 - [ ] Run `coderabbit review --agent` and clear in-scope concerns.
 - [ ] Commit with a file-based message, push, and open the draft pull request.
@@ -469,11 +469,11 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
 
 ## Decision log
 
-- Decision: Treat 1.1.3 as a decision-finalization task that also adds a durable
+- Decision: Treat 1.2.3 as a decision-finalization task that also adds a durable
   demonstration, not documentation only. Rationale: the roadmap success criterion
   ("can fail a boundary violation in a minimal fixture") is executable, and
   ADR-006 already scopes import-boundary checks into Phase 1 tests. Documentation
-  only would push the sole proof of tool selection to 1.2.3. Date/Author:
+  only would push the sole proof of tool selection to 1.3.3. Date/Author:
   2026-06-09 / Claude (planning).
 - Decision: Select `leynos/hecate` as the v1 primary import-boundary fitness
   function, with `import-linter` 2.11 named as the vetted fallback. Rationale: the
@@ -487,7 +487,7 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
 - Decision: Install hecate out-of-process via a pinned git reference invoked by
   `uv tool run`, not as a `pyproject.toml` dependency. Rationale: adding it to the
   dev group would pull Cyclopts into the project virtual environment
-  (contradicting the boundary) and would do task 1.2.2's dependency work; the
+  (contradicting the boundary) and would do task 1.3.2's dependency work; the
   established `pylint-pypy-shim` pattern keeps such tools isolated. Date/Author:
   2026-06-09 / Claude (planning).
 - Decision: Run hecate only as an isolated `uv tool run --python 3.14`
@@ -514,9 +514,9 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
   identifiers are determinism-safe. Date/Author: 2026-06-09 / Claude (planning).
 - Decision: Ratify a stable `check-imports` seam name and the
   `HECATE_REF`/`HECATE_SPEC`/`HECATE` Makefile variable surface in the ADR and the
-  developers' guide now, but leave the real gate wiring to 1.2.3. Rationale:
+  developers' guide now, but leave the real gate wiring to 1.3.3. Rationale:
   declaring the seam makes the tool swappable by construction without doing
-  1.2.3's work. Date/Author: 2026-06-09 / Claude (planning).
+  1.3.3's work. Date/Author: 2026-06-09 / Claude (planning).
 - Decision: Use `pytest` documentation-contract tests plus one subprocess fixture
   test, not `pytest-bdd`, `syrupy`, Hypothesis, CrossHair, or Verus. Rationale:
   ADR-006 scopes Phase 1 to documentation, link, and import-boundary checks; no
@@ -528,7 +528,7 @@ explicitly and assigns the real-tree proof to task 1.2.3's success criterion.
 To be completed at implementation. The plan is accepted as delivered when
 ADR-004 is accepted naming hecate primary and import-linter fallback, the
 fixture demonstration proves exit 1 on a violation and exit 0 on a clean tree,
-the contract tests lock the policy, roadmap item 1.1.3 is marked done, all local
+the contract tests lock the policy, roadmap item 1.2.3 is marked done, all local
 gates pass, CodeRabbit reports no unresolved in-scope concerns, and the draft
 pull request is open.
 
@@ -549,14 +549,14 @@ dependency rule true. This task selects that check.
 
 The current repository is at scaffold stage. `prosidy_darn/` holds only
 `__init__.py`, `_runtime.py`, and `pure.py`. The real `domain`, `application`,
-`ports`, `adapters`, and `config` packages do not exist yet; roadmap task 1.2.1
+`ports`, `adapters`, and `config` packages do not exist yet; roadmap task 1.3.1
 creates them. Consequently this task cannot run the checker against the real
 tree. It records the decision, documents the production configuration shape for
-1.2.3 to commit, and proves the checker works against a throwaway fixture.
+1.3.3 to commit, and proves the checker works against a throwaway fixture.
 
 The key files for this task are:
 
-- `docs/roadmap.md`: item 1.1.3 and the sibling tasks 1.2.1, 1.2.2, and 1.2.3.
+- `docs/roadmap.md`: item 1.2.3 and the sibling tasks 1.3.1, 1.3.2, and 1.3.3.
 - `docs/adr-004-import-boundary-fitness-check.md`: the stub to finalize.
 - `docs/adr-001-markdown-parser-boundary.md` and
   `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`: accepted-ADR templates.
@@ -568,7 +568,7 @@ The key files for this task are:
   and 18 (the open decision to close).
 - `docs/developers-guide.md`: where the `HECATE_REF` pin, the `check-imports`
   seam, and the pin-update discipline are documented.
-- `docs/contents.md`: the documentation index; add the 1.1.3 execplan entry.
+- `docs/contents.md`: the documentation index; add the 1.2.3 execplan entry.
 - `tests/test_developer_docs.py`: the documentation-contract test pattern.
 - `Makefile`: the `PYLINT_PYPY_SHIM_REF` pin pattern to mirror.
 
@@ -599,7 +599,7 @@ the technical design sections named above, the developers' guide, the
 documentation-contract tests, and the Makefile.
 
 Milestone 2 adds failing documentation-contract tests first. Extend
-`tests/test_developer_docs.py` with tests that prove roadmap item 1.1.3 cannot be
+`tests/test_developer_docs.py` with tests that prove roadmap item 1.2.3 cannot be
 closed unless ADR-004 is accepted and states the chosen policy. The tests should
 check for these observable facts:
 
@@ -616,7 +616,7 @@ check for these observable facts:
   package, renderers, or delivery code, while `config` may.
 - ADR-004 records hecate's exit-code contract (0 clean, 1 violations, 2
   configuration or input error), distinct from the application CLI taxonomy.
-- The roadmap item for 1.1.3 is marked done only when ADR-004 is accepted.
+- The roadmap item for 1.2.3 is marked done only when ADR-004 is accepted.
 
 Run the focused test and confirm it fails for the expected reason before editing
 the ADR.
@@ -653,7 +653,7 @@ and `HECATE` (`$(UV_ENV) uv tool run --python 3.14 --from '$(HECATE_SPEC)'
 hecate`) near the `PYLINT_PYPY_SHIM_REF` block, with a comment warning that
 hecate is git-ref-only and must never be referenced by bare name. Export
 `HECATE_REF` to the `test` target so the fixture test can read it. Do not add a
-`check-imports` target to `lint` or `all`; the real gate is task 1.2.3. Run the
+`check-imports` target to `lint` or `all`; the real gate is task 1.3.3. Run the
 fixture test through `make test` and confirm it now passes (or skips only on
 confirmed unavailability).
 
@@ -669,7 +669,7 @@ block; goals and non-goals; a migration plan; known risks and limitations
 static-`ast` blind spot, the `TYPE_CHECKING`-import policy determined against a
 fixture during implementation, and the fixture-proves-capability-not-production-
 correctness caveat); and the architectural rationale. State that the seam is
-`make check-imports` and that wiring against the real tree is task 1.2.3, and
+`make check-imports` and that wiring against the real tree is task 1.3.3, and
 that import-linter is the reversible escape hatch. Capture the one-shot
 demonstration command and its exit-1 output in the Artefacts section of this
 plan.
@@ -681,7 +681,7 @@ ADR-001 and ADR-002. Update `docs/developers-guide.md` to document the
 `HECATE_REF` pin and its update discipline (a reviewed change like
 `PYLINT_PYPY_SHIM_REF`), the future `check-imports` seam, the bare-name
 prohibition, and that the architecture-fitness check is a distinct third gate
-that must not be folded into `make lint`. Add the 1.1.3 execplan entry to
+that must not be folded into `make lint`. Add the 1.2.3 execplan entry to
 `docs/contents.md`. Touch `docs/users-guide.md` only if a user-visible statement
 needs correcting.
 
@@ -692,9 +692,9 @@ both to `'3.14'` so CI and release workflows exercise the supported interpreter.
 This is an unambiguous correctness fix surfaced during review; keep it to the two
 one-line pin changes and do not otherwise alter the workflows.
 
-Milestone 7 updates task tracking. Mark item 1.1.3 in `docs/roadmap.md` done only
+Milestone 7 updates task tracking. Mark item 1.2.3 in `docs/roadmap.md` done only
 after ADR-004 is accepted, the fixture demonstration passes, and the contract
-tests pass. Do not mark 1.2.1, 1.2.2, or 1.2.3 done.
+tests pass. Do not mark 1.3.1, 1.3.2, or 1.3.3 done.
 
 Milestone 8 validates the change. Run formatting checks, Markdown linting,
 Mermaid validation, type checking, linting, and tests sequentially with `tee`
@@ -708,7 +708,7 @@ concern in the Decision Log and escalate instead of expanding scope.
 
 Milestone 10 commits and opens the draft pull request. Use the `commit-message`
 skill's file-based workflow. Push the branch with upstream tracking. Open a draft
-pull request whose title includes `(1.1.3)`, whose summary mentions this
+pull request whose title includes `(1.2.3)`, whose summary mentions this
 ExecPlan, and whose `## References` section includes the Lody session URL derived
 from `echo ${LODY_SESSION_ID}`.
 
@@ -800,7 +800,7 @@ domain-to-external import (exit 1) and passes a clean fixture (exit 0).
 
 Add documentation-contract tests, document the production five-group
 config, record the HECATE_REF pin discipline, and close roadmap item
-1.1.3.
+1.2.3.
 ENDOFMSG
 git commit -F "$COMMIT_MSG_DIR/COMMIT_MSG.md"
 rm -rf "$COMMIT_MSG_DIR"
@@ -813,7 +813,7 @@ Capture the Lody session and open the draft pull request:
 echo ${LODY_SESSION_ID}
 ```
 
-The pull-request title must contain `(1.1.3)`, the body must mention this
+The pull-request title must contain `(1.2.3)`, the body must mention this
 ExecPlan, and the final `## References` section must include
 `https://lody.ai/leynos/sessions/${LODY_SESSION_ID}`.
 
@@ -835,7 +835,7 @@ The approved implementation is accepted when all of these are true:
   a captioned comparison table), Decision outcome, the documented production
   `[tool.hecate]` config, Goals and non-goals, Migration plan, Known risks and
   limitations, and Architectural rationale.
-- `docs/roadmap.md` marks item 1.1.3 done only after ADR-004 is accepted and the
+- `docs/roadmap.md` marks item 1.2.3 done only after ADR-004 is accepted and the
   tests pass.
 - `docs/prosidy-darn-technical-design.md` section 18, `docs/developers-guide.md`,
   and `docs/contents.md` are aligned with the accepted decision, and no document
@@ -850,7 +850,7 @@ The approved implementation is accepted when all of these are true:
   `make lint`, and `make test` all pass.
 - `coderabbit review --agent` reports no unresolved in-scope concerns.
 - The branch is pushed and has a draft pull request whose title includes
-  `(1.1.3)` and whose body links this ExecPlan and the Lody session.
+  `(1.2.3)` and whose body links this ExecPlan and the Lody session.
 
 Record the Red-Green evidence for the test-first work. Red: the contract tests
 and the fixture test fail (or the fixture test skips with an explanatory message)
@@ -894,7 +894,7 @@ pushing.
 ## Artefacts and notes
 
 The production `[tool.hecate]` configuration that ADR-004 documents (for task
-1.2.3 to commit against the real tree; the exact external import names are
+1.3.3 to commit against the real tree; the exact external import names are
 verified during implementation) is:
 
 ```toml
@@ -990,7 +990,7 @@ Firecrawl research evidence:
 
 This task introduces no runtime interface and no Python dependency. It adds a
 pinned tool reference (consumed only by the demonstration test and, later, by
-task 1.2.3's gate) and documents the future port and package boundary the
+task 1.3.3's gate) and documents the future port and package boundary the
 technical design already describes.
 
 The checker contract that later tasks rely on is:
@@ -1016,7 +1016,7 @@ Initial draft created on 2026-06-09. It captures the repository findings, the
 Firecrawl-backed tooling research, the six-member Logisphere community-of-experts
 review, the approval gate, the test-first milestones (documentation-contract
 tests and a subprocess fixture demonstration), the validation commands, and the
-pull-request requirements for roadmap item 1.1.3. Implementation must not start
+pull-request requirements for roadmap item 1.2.3. Implementation must not start
 until the user explicitly approves the plan.
 
 Revised on 2026-06-09 after review feedback that the project targets Python

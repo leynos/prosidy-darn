@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed. The decision is pending and is owned by roadmap task 1.1.3.
+Proposed. The decision is pending and is owned by roadmap task 1.2.3.
 
 ## Date
 
@@ -35,8 +35,8 @@ a stable review path.
 
 ## Decision outcome / proposed direction
 
-Pending. Roadmap task 1.1.3 must choose the import-boundary fitness check
-before task 1.2.3 wires enforcement into the local gate.
+Pending. Roadmap task 1.2.3 must choose the import-boundary fitness check
+before task 1.3.3 wires enforcement into the local gate.
 
 ## Consequences while pending
 

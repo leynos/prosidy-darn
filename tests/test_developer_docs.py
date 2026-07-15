@@ -89,7 +89,7 @@ def test_phase_one_quality_gates_are_documented() -> None:
 
 
 def test_markdown_parser_boundary_adr_is_accepted() -> None:
-    """Ensure roadmap item 1.1.1 has a settled parser-boundary decision."""
+    """Ensure roadmap item 1.2.1 has a settled parser-boundary decision."""
     markdown_parser_adr = read_document(MARKDOWN_PARSER_ADR)
 
     assert "## Status" in markdown_parser_adr
@@ -125,16 +125,16 @@ def test_markdown_parser_boundary_adr_defines_v1_adapter_order() -> None:
 
 
 def test_markdown_parser_boundary_roadmap_item_is_closed() -> None:
-    """Mark roadmap item 1.1.1 done only once ADR-001 is accepted."""
+    """Mark roadmap item 1.2.1 done only once ADR-001 is accepted."""
     roadmap = read_document(ROADMAP)
     markdown_parser_adr = read_document(MARKDOWN_PARSER_ADR)
 
     assert "Accepted on" in markdown_parser_adr
-    assert "- [x] 1.1.1. Record the Markdown parser boundary as an ADR." in roadmap
+    assert "- [x] 1.2.1. Record the Markdown parser boundary as an ADR." in roadmap
 
 
 def test_tokenizer_policy_adr_is_accepted() -> None:
-    """Ensure roadmap item 1.1.2 has a settled tokenizer-and-scoring decision."""
+    """Ensure roadmap item 1.2.2 has a settled tokenizer-and-scoring decision."""
     tokenizer_policy_adr = read_document(TOKENIZER_POLICY_ADR)
 
     assert "## Status" in tokenizer_policy_adr
@@ -187,12 +187,12 @@ def test_tokenizer_policy_adr_defines_v1_adapter_policy() -> None:
 
 
 def test_tokenizer_policy_roadmap_item_is_closed() -> None:
-    """Mark roadmap item 1.1.2 done only once ADR-002 is accepted."""
+    """Mark roadmap item 1.2.2 done only once ADR-002 is accepted."""
     roadmap = read_document(ROADMAP)
     tokenizer_policy_adr = read_document(TOKENIZER_POLICY_ADR)
 
     assert "Accepted on" in tokenizer_policy_adr
     assert (
-        "- [x] 1.1.2. Record the token-limit and semantic-scoring dependency "
+        "- [x] 1.2.2. Record the token-limit and semantic-scoring dependency "
         "policy." in roadmap
     )

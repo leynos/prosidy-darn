@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed. The decision is pending and is owned by roadmap task 1.1.4.
+Proposed. The decision is pending and is owned by roadmap task 1.2.4.
 
 ## Date
 
@@ -32,7 +32,7 @@ accidentally create an expression-language contract.
 
 ## Decision outcome / proposed direction
 
-Pending. Roadmap task 1.1.4 must decide the profile rule-expression policy
+Pending. Roadmap task 1.2.4 must decide the profile rule-expression policy
 before Phase 2 starts.
 
 ## Consequences while pending

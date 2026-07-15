@@ -53,7 +53,7 @@
 - [Roadmap](roadmap.md) - Track phased delivery work, dependencies, and
   completion criteria.
 - [Execution plans](execplans/) - Follow task-specific implementation plans:
-  - [1.0.1 baseline developer docs and initial ADR files](execplans/1-0-1-baseline-developer-docs-and-initial-adr-files.md)
-  - [1.1.1 Markdown parser boundary ADR](execplans/1-1-1-markdown-parser-boundary-adr.md)
+  - [1.1.1 baseline developer docs and initial ADR files](execplans/1-0-1-baseline-developer-docs-and-initial-adr-files.md)
+  - [1.2.1 Markdown parser boundary ADR](execplans/1-1-1-markdown-parser-boundary-adr.md)
   - [Resolve Prosidy Darn Logisphere design-stage review](execplans/resolve-prosidy-darn-logisphere-design-stage-review.md)
-  - [1.2.4 Update maturin and PyO3 validation](execplans/test-maturin-pyo3-test-upgrade.md)
+  - [1.3.4 Update maturin and PyO3 validation](execplans/test-maturin-pyo3-test-upgrade.md)
