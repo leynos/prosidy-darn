@@ -20,7 +20,7 @@ expression-language decision in the segmenter".
 The repository already contains a stub
 `docs/adr-003-profile-rule-expression-policy.md` whose status is "Proposed" and
 whose decision outcome is "Pending". This plan therefore treats 1.1.4 as a
-decision-finalisation and closure task. After this plan is approved and
+decision-finalization and closure task. After this plan is approved and
 implemented, a maintainer can observe success by reading the accepted ADR-003,
 seeing roadmap item 1.1.4 marked done, running the documentation and Python
 quality gates without failures, and confirming that no profile parser,
@@ -31,7 +31,7 @@ profile vocabulary registry, a `TTSProfile` value object, or any segmenter
 scoring code. It records, validates, and closes the policy that later
 configuration and adapter work (tasks 1.2.x, 2.3.1, and 3.2.x) must follow.
 
-This is the decision the plan finalises: v1 profiles carry only named rule
+This is the decision the plan finalizes: v1 profiles carry only named rule
 weights drawn from a closed, documented vocabulary; the segmenter's shaped
 scoring rules stay domain-owned and fixed; and the profile loader never
 interprets configuration strings as code. A future expression need, if it ever
@@ -358,7 +358,7 @@ the accepted policy.
 - [ ] Add failing documentation-contract tests for ADR-003 acceptance and the
   locked policy commitments.
 - [ ] Confirm the new tests fail for the expected reason before editing the ADR.
-- [ ] Finalise ADR-003 from "Proposed" to "Accepted on", adding the required
+- [ ] Finalize ADR-003 from "Proposed" to "Accepted on", adding the required
   style-guide sections and the policy commitments.
 - [ ] Align surrounding documentation (design §18, and §8 or the developers'
   guide only where wording would otherwise contradict the policy).
@@ -371,7 +371,7 @@ the accepted policy.
 
 - Observation: ADR-003 already exists but is "Proposed" with a "Pending"
   outcome. Evidence: `docs/adr-003-profile-rule-expression-policy.md` lines 3-5
-  and 33-36. Impact: Implementation finalises the existing ADR rather than
+  and 33-36. Impact: Implementation finalizes the existing ADR rather than
   creating a new file.
 - Observation: The technical design already commits to named, enum-and-numeric
   profile knobs in §8, so "named weights only" is the consistent reading; the
@@ -399,7 +399,7 @@ the accepted policy.
 
 ## Decision log
 
-- Decision: Treat 1.1.4 as a documentation finalisation and closure task, not an
+- Decision: Treat 1.1.4 as a documentation finalization and closure task, not an
   adapter implementation slice. Rationale: ADR-003 already exists in "Proposed"
   status, the roadmap checkbox remains open, and the missing work is policy
   specification, contract tests, and task closure. Date/Author: 2026-06-18 /
@@ -551,7 +551,7 @@ Run the focused test after adding it and confirm it fails for the expected
 reason before changing the ADR. If a subset already passes because the ADR stub
 satisfies it, document that in `Surprises & Discoveries` and continue.
 
-Milestone 3 finalises ADR-003. Replace the "Pending" decision outcome with
+Milestone 3 finalizes ADR-003. Replace the "Pending" decision outcome with
 "Accepted on `YYYY-MM-DD`" plus the chosen policy. Add the sections required by
 the documentation style guide and absent from the stub: options considered (with
 a captioned comparison table), decision outcome, goals and non-goals, migration
@@ -780,7 +780,7 @@ remote state with `git fetch origin`, `git status --short --branch`, and
 If the draft pull request already exists, update its title and body rather than
 opening a duplicate.
 
-## Artifacts and notes
+## Artefacts and notes
 
 Community-of-experts review evidence gathered during planning (folded into the
 ADR commitments above): the proposed "named weights only" direction is sound,
