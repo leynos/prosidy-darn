@@ -184,9 +184,9 @@ Firecrawl during planning:
 Do not implement profile or configuration runtime code in this task. The
 approved implementation may change documentation and documentation-contract
 tests, but it must not create `prosidy_darn.config`, a profile loader, a
-`ProfileVocabulary` registry, a `TTSProfile` value object, `prosidy_darn.domain.
-scoring`, or any Cyclopts configuration wiring. It must not add a `[profile.*]`
-parsing path or any TOML profile-reading code.
+`ProfileVocabulary` registry, a `TTSProfile` value object,
+`prosidy_darn.domain.scoring`, or any Cyclopts configuration wiring. It must
+not add a `[profile.*]` parsing path or any TOML profile-reading code.
 
 Preserve the hexagonal dependency rule. The decision must keep the named-weight
 vocabulary domain-owned and the profile loader an outbound config adapter.
@@ -351,8 +351,10 @@ the accepted policy.
   passed after fixing a Markdown lint issue in this execplan.
 - [x] (2026-06-24) Committed and pushed the implementation-start execplan
   update as `995d0ef`.
-- [x] (2026-06-24) Updated `docs/roadmap.md` to record that roadmap item 1.1.4
-  is in progress, without marking it complete.
+- [x] (2026-07-19) Reviewed the published plan text and applied the requested
+  documentation corrections without changing scope or runtime intent.
+- [x] (2026-07-19) Used Scrutineer to run `make markdownlint`, `make nixie`,
+  and `coderabbit review --agent`; all passed with no findings.
 - [ ] Add failing documentation-contract tests for ADR-003 acceptance and the
   locked policy commitments.
 - [ ] Confirm the new tests fail for the expected reason before editing the ADR.
@@ -390,6 +392,10 @@ the accepted policy.
   implementation must not carry unrelated formatter churn; use the deterministic
   Markdown gates for changed files and escalate before editing the 1.1.3 plan
   unless explicitly authorized.
+- Observation: The validation snippets in this plan need `pipefail` protection
+  around each `tee` pipeline so logs do not mask failures. Evidence: the
+  2026-07-19 review pass. Impact: keep each shell snippet self-contained and
+  failure-sensitive.
 
 ## Decision log
 
@@ -435,6 +441,11 @@ the accepted policy.
   success criterion still depends on ADR-003 acceptance, documentation-contract
   tests, CodeRabbit review, and final quality gates. Date/Author: 2026-06-24 /
   Codex (implementation).
+- Decision: Omit the standalone `make fmt` gate from this plan because the
+  project-wide formatter still fails on pre-existing out-of-scope Markdown
+  errors in another execplan. Rationale: the plan should keep only executable
+  validation steps that apply to the approved path. Date/Author: 2026-07-19 /
+  Codex (documentation review).
 
 ## Outcomes & retrospective
 
@@ -645,31 +656,34 @@ sed -n '136,198p' tests/test_developer_docs.py
 After adding tests, run the focused check:
 
 ```bash
+set -o pipefail
 UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools uv run pytest \
   tests/test_developer_docs.py -v \
   | tee /tmp/pytest-developer-docs-$(basename "$(pwd)")-$(git branch --show-current).out
 ```
 
-After ADR edits, run Markdown formatting if needed:
-
-```bash
-make fmt | tee /tmp/fmt-$(basename "$(pwd)")-$(git branch --show-current).out
-```
-
 Then run the required gates sequentially:
 
 ```bash
-make check-fmt | tee /tmp/check-fmt-$(basename "$(pwd)")-$(git branch --show-current).out
-make markdownlint | tee /tmp/markdownlint-$(basename "$(pwd)")-$(git branch --show-current).out
-make nixie | tee /tmp/nixie-$(basename "$(pwd)")-$(git branch --show-current).out
-make typecheck | tee /tmp/typecheck-$(basename "$(pwd)")-$(git branch --show-current).out
-make lint | tee /tmp/lint-$(basename "$(pwd)")-$(git branch --show-current).out
-make test | tee /tmp/test-$(basename "$(pwd)")-$(git branch --show-current).out
+set -o pipefail
+make check-fmt \
+  | tee /tmp/check-fmt-$(basename "$(pwd)")-$(git branch --show-current).out
+make markdownlint \
+  | tee /tmp/markdownlint-$(basename "$(pwd)")-$(git branch --show-current).out
+make nixie \
+  | tee /tmp/nixie-$(basename "$(pwd)")-$(git branch --show-current).out
+make typecheck \
+  | tee /tmp/typecheck-$(basename "$(pwd)")-$(git branch --show-current).out
+make lint \
+  | tee /tmp/lint-$(basename "$(pwd)")-$(git branch --show-current).out
+make test \
+  | tee /tmp/test-$(basename "$(pwd)")-$(git branch --show-current).out
 ```
 
 Run CodeRabbit after local gates pass:
 
 ```bash
+set -o pipefail
 coderabbit review --agent \
   | tee /tmp/coderabbit-$(basename "$(pwd)")-$(git branch --show-current).out
 ```
@@ -737,14 +751,15 @@ The approved implementation is accepted when all of these are true:
   includes `(1.1.4)` and whose body links this ExecPlan and the Lody session.
 
 No `pytest-bdd` behavioural scenario is required for this item because the
-approved implementation adds no user interaction behaviour. No `syrupy` snapshot
-is required because no output format is introduced or changed. No Hypothesis or
-CrossHair property test is required because no parser or scoring invariant over
-arbitrary inputs is implemented in this task. No Verus proof is required because
-this task introduces no Rust extension and no new contractual business logic.
-These tools become relevant in Phase 2 and Phase 3 when the profile loader, the
-vocabulary registry, and the scoring rules are implemented; this ADR specifies
-the contract they will then verify.
+approved implementation adds no user interaction behaviour. No `syrupy`
+snapshot is required because no output format is introduced or changed. No
+Hypothesis or CrossHair property test is required because no parser or scoring
+invariant over arbitrary inputs is implemented in this task. Later work on the
+profile loader, vocabulary registry, and scoring rules should use
+property-based tests for numeric and cross-field invariants. Reserve proof
+tooling for a substantive lemma or proof-worthy assumption. No Verus proof is
+required because this task introduces no Rust extension and no new contractual
+business logic.
 
 ## Idempotence and recovery
 
