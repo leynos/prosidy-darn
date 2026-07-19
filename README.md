@@ -1,5 +1,8 @@
 # Prosidy Darn
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](
+https://deepwiki.com/leynos/prosidy-darn)
+
 *Prepare Markdown and narrative prose for directable text-to-speech cues.*
 
 Prosidy Darn is a design-first Python package for splitting source text into
