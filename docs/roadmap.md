@@ -101,9 +101,6 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
     fixture branch.
 - [ ] 1.1.4. Record the profile rule-expression policy.
   - Requires 1.0.1 and 1.1.2.
-  - Status: implementation is in progress; ADR-003 acceptance,
-    documentation-contract tests, CodeRabbit review, and final quality gates
-    remain open.
   - Decide whether profile files allow arbitrary custom rule expressions or only
     named rule weights before Phase 2 starts.
   - Write `docs/adr-003-profile-rule-expression-policy.md`.
