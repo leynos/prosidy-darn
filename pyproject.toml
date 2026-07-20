@@ -16,7 +16,7 @@ dev = [
     "pyright",
     "pytest-timeout",
     "pytest-xdist",
-    "syrupy==5.5.2",
+    "syrupy==5.5.3",
 ]
 
 [tool.ruff]
