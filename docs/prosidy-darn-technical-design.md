@@ -32,8 +32,8 @@ stable enough shape.
 Speech Synthesis Markup Language (SSML) is the first renderer target, not the
 source of truth. W3C SSML defines document structure, pronunciation, prosody,
 voice, pause, and marker elements, and its synthesis process explicitly allows
-processors to infer structure and normalization when markup does not provide it.
-[^4] SSML also notes that processor behaviour can vary by synthesis engine.
+processors to infer structure and normalization when markup does not provide
+it.[^4] SSML also notes that processor behaviour can vary by synthesis engine.
 Prosidy Darn therefore keeps an engine-neutral cue intermediate representation
 (IR) and compiles it to SSML or vendor-specific payloads.
 

@@ -28,8 +28,8 @@ the maturin version synchronized across `pyproject.toml`,
 `.github/actions/build-wheels/action.yml`; `tests/test_maturin_build.py` checks
 that contract. Keep the PyO3 version in `rust/prosidy-darn-rs/Cargo.toml`
 aligned with `rust/Cargo.lock`; the same test module checks that lockfile
-contract and builds a native wheel when the local toolchain supports it.
-When bumping maturin or PyO3, regenerate the wheel metadata snapshot with:
+contract and builds a native wheel when the local toolchain supports it. When
+bumping maturin or PyO3, regenerate the wheel metadata snapshot with:
 
 ```bash
 uv run pytest tests/test_maturin_build.py::test_maturin_wheel_build_summary \
@@ -141,9 +141,9 @@ only parses, refreshes, merges and renders spelling policy. Harvesting, Typos
 execution, phrase enforcement and Mermaid validation remain consumer-owned.
 
 The phrase checker rejects punctuation-sensitive shared corrections such as
-`hand-written` in tracked UTF-8 text. Repository exceptions belong in the
-local overlay as narrow exact or full-line patterns; do not add bare accepted
-words for machine interfaces or formal names.
+`hand-written` in tracked UTF-8 text. Repository exceptions belong in the local
+overlay as narrow exact or full-line patterns; do not add bare accepted words
+for machine interfaces or formal names.
 
 ## Two-tier linting
 

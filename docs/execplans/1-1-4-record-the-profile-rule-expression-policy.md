@@ -26,8 +26,8 @@ seeing roadmap item 1.1.4 marked done, running the documentation and Python
 quality gates without failures, and confirming that no profile parser,
 `ProfileVocabulary`, `TTSProfile`, or scoring code has been added yet.
 
-The implementation carried out from this plan must not build a profile loader, a
-profile vocabulary registry, a `TTSProfile` value object, or any segmenter
+The implementation carried out from this plan must not build a profile loader,
+a profile vocabulary registry, a `TTSProfile` value object, or any segmenter
 scoring code. It records, validates, and closes the policy that later
 configuration and adapter work (tasks 1.2.x, 2.3.1, and 3.2.x) must follow.
 
@@ -40,14 +40,14 @@ non-Turing-complete evaluator — never Python `eval`.
 
 ## Context and citations
 
-`docs/roadmap.md` defines roadmap item 1.1.4 under "Ratify the v1 decisions that
-block implementation" (lines 102-109). The item requires
+`docs/roadmap.md` defines roadmap item 1.1.4 under "Ratify the v1 decisions
+that block implementation" (lines 102-109). The item requires
 `docs/adr-003-profile-rule-expression-policy.md`, lists 1.0.1 and 1.1.2 as
 prerequisites, and declares success as: "profile configuration can be
-implemented without adding a new expression-language decision in the segmenter".
-Both prerequisites are complete: item 1.0.1 (baseline developer docs and ADR
-locations) and item 1.1.2 (token-limit and semantic-scoring dependency policy)
-are both marked done.
+implemented without adding a new expression-language decision in the
+segmenter". Both prerequisites are complete: item 1.0.1 (baseline developer
+docs and ADR locations) and item 1.1.2 (token-limit and semantic-scoring
+dependency policy) are both marked done.
 
 `docs/prosidy-darn-technical-design.md` is the architectural source of truth.
 The directly relevant sections are:
@@ -58,8 +58,9 @@ The directly relevant sections are:
 - Section 7.3 (boundary punishment, lines 451-489) defines the default
   punishment table and, crucially, the **shaped rules**: inverse-triangular
   paragraph-internal punishment, decaying heading-adjacent punishment,
-  profile-specific quote-attribution separation, and semantic-break rewards that
-  scale with local cohesion drop but never override hard structural illegality.
+  profile-specific quote-attribution separation, and semantic-break rewards
+  that scale with local cohesion drop but never override hard structural
+  illegality.
 - Section 7.4 (unit punishment, lines 491-543) shows the duration model dividing
   by `words_per_second`, which a profile value must never be allowed to set to
   zero.
@@ -97,17 +98,17 @@ rationale, and was locked by documentation-contract tests. Mirror its shape.
 (roadmap 1.1.3); it remains "Proposed" and is owned by a separate task. This
 task must not change it.
 
-`docs/adr-006-test-matrix-phase-scope.md` scopes Phase 1 tests to import-boundary
-checks, public import tests, developer-doc checks, and ADR link validation. It
-deliberately defers `pytest-bdd`, `syrupy`, Hypothesis, CrossHair, and Verus
-until the product surfaces they validate exist. This task therefore uses
-`pytest` documentation-contract tests only; see "Validation and acceptance" for
-the explicit justification.
+`docs/adr-006-test-matrix-phase-scope.md` scopes Phase 1 tests to
+import-boundary checks, public import tests, developer-doc checks, and ADR link
+validation. It deliberately defers `pytest-bdd`, `syrupy`, Hypothesis,
+CrossHair, and Verus until the product surfaces they validate exist. This task
+therefore uses `pytest` documentation-contract tests only; see "Validation and
+acceptance" for the explicit justification.
 
-`docs/developers-guide.md` lists ADR-003 as a blocking Phase 1 decision location
-(around line 263) and requires architecture and product decision changes to
-update the relevant design or ADR document in the same change. It defines the
-Phase 1 quality gates.
+`docs/developers-guide.md` lists ADR-003 as a blocking Phase 1 decision
+location (around line 263) and requires architecture and product decision
+changes to update the relevant design or ADR document in the same change. It
+defines the Phase 1 quality gates.
 
 `docs/documentation-style-guide.md` defines ADR naming and required-section
 conventions (lines 355-465): Status, Date, Context and problem statement,
@@ -151,13 +152,14 @@ Firecrawl during planning:
   itself as "Safe: Non-Turing complete, and only accesses data provided by the
   host application" and "ideal for extending declarative configurations"
   (<https://cel.dev/>, <https://github.com/google/cel-go>); JsonLogic is "a
-  small, safe way to delegate one decision", "We never `eval()`", with read-only
-  access to host-provided data (<https://jsonlogic.com/>).
+  small, safe way to delegate one decision", "We never `eval()`", with
+  read-only access to host-provided data (<https://jsonlogic.com/>).
 - Comparable tuning systems expose a fixed, named knob surface rather than an
-  embedded DSL: ESLint sets each rule to a named severity (`off`/`warn`/`error`)
-  plus rule-specific options (<https://eslint.org/docs/latest/use/configure/rules>),
-  and CodeScene tunes code-health scanning via a declarative
-  `code-health-rules.json` of named rule weights and thresholds
+  embedded DSL: ESLint sets each rule to a named severity (`off`/`warn`/
+  `error`) plus rule-specific options
+  (<https://eslint.org/docs/latest/use/configure/rules>), and CodeScene tunes
+  code-health scanning via a declarative `code-health-rules.json` of named rule
+  weights and thresholds
   (<https://codescene.io/docs/guides/technical/code-health.html>).
 - Configuration guidance holds that config should store declarative values, not
   developer-only logic; logic hidden in config has crossed into code
@@ -167,8 +169,8 @@ Firecrawl during planning:
 
 - `leta`, for semantic workspace navigation when symbols must be inspected.
 - `hexagonal-architecture`, to preserve the ADR's port-and-adapter boundary so
-  the named-weight vocabulary stays domain-owned and the profile loader stays an
-  outbound config adapter.
+  the named-weight vocabulary stays domain-owned and the profile loader stays
+  an outbound config adapter.
 - `python-router` and its testing branch, for the documentation-contract test
   shape if the assertions grow.
 - `execplans`, which defines this document's approval gate before
@@ -196,14 +198,14 @@ import the adapter, Cyclopts, or any framework type. The composition root
 Cyclopts.
 
 Do not contradict the technical design. The accepted policy must remain
-consistent with the three published built-in profiles in §8, the shaped rules in
-§7.3, the five-tier configuration precedence in §8, and the exit-code taxonomy
-in §13 and §15 (profile errors are exit code 7).
+consistent with the three published built-in profiles in §8, the shaped rules
+in §7.3, the five-tier configuration precedence in §8, and the exit-code
+taxonomy in §13 and §15 (profile errors are exit code 7).
 
 Do not add runtime or development dependencies for this roadmap item. If
-satisfying 1.1.4 appears to require adding a TOML library, an expression engine,
-or any other dependency, stop and escalate. The standard library `tomllib` is
-already available for any later parsing work and is not added here.
+satisfying 1.1.4 appears to require adding a TOML library, an expression
+engine, or any other dependency, stop and escalate. The standard library
+`tomllib` is already available for any later parsing work and is not added here.
 
 Never adopt arbitrary expression evaluation. The accepted policy must forbid
 Python `eval`, `exec`, `simpleeval`, and `asteval` as profile interpreters
@@ -261,20 +263,20 @@ concerns, revise the plan or docs and rerun the relevant checks.
 
 ## Risks
 
-Risk: The ADR resolves only the narrow "expression vs weight" wording and leaves
-the design's §7.3 shaped-rule requirement dangling, so Phase 2 reopens the
-question. Severity: high. Likelihood: medium. Mitigation: The ADR must state
-explicitly that the shaped rules (inverse-triangular, decaying, cohesion-scaled)
-are domain-owned and fixed in v1, and that profiles select and scale them but
-never define them. This is the sentence that actually closes §18.
+Risk: The ADR resolves only the narrow "expression vs weight" wording and
+leaves the design's §7.3 shaped-rule requirement dangling, so Phase 2 reopens
+the question. Severity: high. Likelihood: medium. Mitigation: The ADR must
+state explicitly that the shaped rules (inverse-triangular, decaying,
+cohesion-scaled) are domain-owned and fixed in v1, and that profiles select and
+scale them but never define them. This is the sentence that actually closes §18.
 
 Risk: The named-weight vocabulary ownership is asserted but not located, so the
 adapter hard-codes a key list that drifts from the domain's. Severity: high.
 Likelihood: medium. Mitigation: The ADR must place the vocabulary (legal keys,
 per-key value shape, and enum-to-number mapping) in the domain scoring layer as
-a pure registry, require the config adapter to import and enforce it, and source
-the "valid set" diagnostic from it. Confirm the dependency arrow permits an
-adapter-to-domain-vocabulary import while still forbidding domain-to-adapter
+a pure registry, require the config adapter to import and enforce it, and
+source the "valid set" diagnostic from it. Confirm the dependency arrow permits
+an adapter-to-domain-vocabulary import while still forbidding domain-to-adapter
 imports.
 
 Risk: Numeric scalar validation is omitted, leaving the larger untrusted
@@ -389,9 +391,9 @@ the accepted policy.
   is outside this plan's approved path list. Evidence: the 2026-06-24
   `/tmp/fmt-*-1-1-4-record-the-profile-rule-expression-policy.out` log reports
   MD013 failures on lines 242 and 650 of that 1.1.3 execplan. Impact:
-  implementation must not carry unrelated formatter churn; use the deterministic
-  Markdown gates for changed files and escalate before editing the 1.1.3 plan
-  unless explicitly authorized.
+  implementation must not carry unrelated formatter churn; use the
+  deterministic Markdown gates for changed files and escalate before editing
+  the 1.1.3 plan unless explicitly authorized.
 - Observation: The validation snippets in this plan need `pipefail` protection
   around each `tee` pipeline so logs do not mask failures. Evidence: the
   2026-07-19 review pass. Impact: keep each shell snippet self-contained and
@@ -412,8 +414,8 @@ the accepted policy.
   expression-language decision to the segmenter. Date/Author: 2026-06-18 /
   Claude (planning).
 - Decision: State that the §7.3 shaped rules are domain-owned and fixed in v1,
-  and that profiles select and scale them but never define them. Rationale: This
-  is the precise sentence that closes §18; without it the policy answers a
+  and that profiles select and scale them but never define them. Rationale:
+  This is the precise sentence that closes §18; without it the policy answers a
   narrower question than the open decision poses. Date/Author: 2026-06-18 /
   Claude (planning, from community-of-experts review).
 - Decision: Locate the named-weight vocabulary in the domain scoring layer as a
@@ -427,8 +429,8 @@ the accepted policy.
   future vocabulary addition a forward-compatibility break. Date/Author:
   2026-06-18 / Claude (planning, from community-of-experts review).
 - Decision: Do not pre-select CEL or JsonLogic; require a future ADR to assess
-  engines. Rationale: Naming an engine in an ADR that defers the decision invites
-  premature adoption; the firm commitment is only the prohibition on
+  engines. Rationale: Naming an engine in an ADR that defers the decision
+  invites premature adoption; the firm commitment is only the prohibition on
   `eval`-class evaluation. Date/Author: 2026-06-18 / Claude (planning, from
   community-of-experts review).
 - Decision: Use `pytest` documentation-contract tests, not `pytest-bdd`,
@@ -461,8 +463,9 @@ Prosidy Darn is planned as a Python package using hexagonal architecture.
 "Hexagonal architecture" means the domain owns business concepts and ports,
 while adapters connect the outside world to those ports. For this task the
 important boundary is between the domain scoring layer, which owns the
-punishment rules and the named-weight vocabulary, and the configuration adapter,
-which reads profile files and maps named weights onto a domain profile value.
+punishment rules and the named-weight vocabulary, and the configuration
+adapter, which reads profile files and maps named weights onto a domain profile
+value.
 
 The key files are:
 
@@ -513,12 +516,12 @@ Important terms:
 Milestone 1 prepares the branch and confirms the baseline. Confirm the current
 branch is `1-1-4-record-the-profile-rule-expression-policy`. Read the roadmap,
 ADR-002 and ADR-003, ADR-006, the technical design sections listed above, the
-developers' guide, the users' guide, the documentation style guide, the existing
-documentation-contract tests, the Makefile, and `pyproject.toml`.
+developers' guide, the users' guide, the documentation style guide, the
+existing documentation-contract tests, the Makefile, and `pyproject.toml`.
 
 Milestone 2 adds failing documentation-contract tests first. Extend
-`tests/test_developer_docs.py` with tests that prove roadmap item 1.1.4 cannot be
-closed unless ADR-003 is accepted and states the chosen policy. Mirror the
+`tests/test_developer_docs.py` with tests that prove roadmap item 1.1.4 cannot
+be closed unless ADR-003 is accepted and states the chosen policy. Mirror the
 ADR-002 assertions. The tests should check for these observable facts:
 
 - ADR-003 exists and is accepted (status section contains "## Status" and
@@ -553,11 +556,11 @@ satisfies it, document that in `Surprises & Discoveries` and continue.
 
 Milestone 3 finalizes ADR-003. Replace the "Pending" decision outcome with
 "Accepted on `YYYY-MM-DD`" plus the chosen policy. Add the sections required by
-the documentation style guide and absent from the stub: options considered (with
-a captioned comparison table), decision outcome, goals and non-goals, migration
-plan, known risks and limitations, and architectural rationale. The ADR must
-follow the shape of ADR-002 and must clearly state every commitment that the
-Milestone 2 tests assert, including:
+the documentation style guide and absent from the stub: options considered
+(with a captioned comparison table), decision outcome, goals and non-goals,
+migration plan, known risks and limitations, and architectural rationale. The
+ADR must follow the shape of ADR-002 and must clearly state every commitment
+that the Milestone 2 tests assert, including:
 
 - v1 profiles allow only named rule weights from a closed, documented
   vocabulary; arbitrary custom rule expressions are not permitted;
@@ -573,8 +576,8 @@ Milestone 2 tests assert, including:
   boolean flag, or closed-set categorical level enum); mixed-shape keys are
   prohibited;
 - the rejection contract uses exit code 7, rejects before processing input,
-  enumerates the valid set, names the offending profile source, and collects all
-  errors rather than failing on the first;
+  enumerates the valid set, names the offending profile source, and collects
+  all errors rather than failing on the first;
 - numeric invariants hold, including `hard_max_seconds` greater than zero,
   `words_per_second` greater than zero, `ideal_seconds` a two-element ascending
   pair, and `ideal_min <= ideal_max <= hard_max_seconds`;
@@ -595,11 +598,11 @@ Milestone 2 tests assert, including:
   scoring code; tasks 1.2.x, 2.3.1, and 3.2.x own that implementation.
 
 Milestone 4 aligns surrounding documentation. Check
-`docs/prosidy-darn-technical-design.md` §18 and add the accepted ADR-003 outcome
-alongside ADR-001 and ADR-002. Review §8 and the developers' guide for wording
-that would contradict the accepted policy and adjust only where necessary; avoid
-duplicating the full ADR text elsewhere. `docs/users-guide.md` changes only if a
-user-visible statement must be corrected.
+`docs/prosidy-darn-technical-design.md` §18 and add the accepted ADR-003
+outcome alongside ADR-001 and ADR-002. Review §8 and the developers' guide for
+wording that would contradict the accepted policy and adjust only where
+necessary; avoid duplicating the full ADR text elsewhere. `docs/users-guide.md`
+changes only if a user-visible statement must be corrected.
 
 Milestone 5 updates task tracking. Mark item 1.1.4 in `docs/roadmap.md` done
 only after the ADR and tests agree. Do not mark later configuration or adapter
@@ -738,8 +741,8 @@ The approved implementation is accepted when all of these are true:
   contract tests pass.
 - `docs/adr-003-profile-rule-expression-policy.md` is accepted and carries
   Status, Date, Context and problem statement, Decision drivers, Options
-  considered, Decision outcome, Goals and non-goals, Migration plan, Known risks
-  and limitations, and Architectural rationale sections.
+  considered, Decision outcome, Goals and non-goals, Migration plan, Known
+  risks and limitations, and Architectural rationale sections.
 - The technical design §18 records the ADR-003 outcome, and no other document
   contradicts the accepted policy.
 - No profile parser, vocabulary registry, value object, configuration adapter,
@@ -763,15 +766,16 @@ business logic.
 
 ## Idempotence and recovery
 
-All read and validation commands are safe to rerun. Re-running tests and quality
-gates should not change the worktree, except for caches ignored by the
+All read and validation commands are safe to rerun. Re-running tests and
+quality gates should not change the worktree, except for caches ignored by the
 repository.
 
 If `make fmt` changes unrelated files, inspect `git diff` immediately. Restore
 unrelated formatting churn unless the user approves keeping it.
 
-If a validation command fails, inspect its `/tmp` log, make the smallest related
-fix, and rerun only the failed gate before rerunning the full gate sequence.
+If a validation command fails, inspect its `/tmp` log, make the smallest
+related fix, and rerun only the failed gate before rerunning the full gate
+sequence.
 
 If the branch push fails because the remote branch already exists, inspect the
 remote state with `git fetch origin`, `git status --short --branch`, and
@@ -801,9 +805,9 @@ source URLs and the 2026-06-18 access date.
 
 Implementation resumed on 2026-06-24 after explicit user approval. The branch
 already had the required task name; the local branch now tracks the matching
-remote branch, the pull request title is `Profile rule-expression policy
-(1.1.4)`, and the Lody session title and pull request session reference match
-the active implementation session.
+remote branch, the pull request title is
+`Profile rule-expression policy (1.1.4)`, and the Lody session title and pull
+request session reference match the active implementation session.
 
 The first implementation-status update was committed and pushed as `995d0ef`
 after `make markdownlint nixie` passed. The roadmap now records item 1.1.4 as
@@ -835,18 +839,19 @@ def load_profile(raw: Mapping[str, object], vocab: ProfileVocabulary) -> TTSProf
 ```
 
 The final accepted policy that later work must honour is the named-weight-only
-policy described in Milestone 3: a closed, domain-owned vocabulary with a single
-value shape per key; fixed, domain-owned shaped rules that profiles scale but do
-not define; an exit-code-7 rejection contract with numeric invariants; sparse
-overlays validated on the merged Cyclopts result; a `schema_version` evolution
-rule; the named-weight discipline applied to scoring, renderer, and semantic
-knobs alike; and a hard prohibition on `eval`-class evaluation, with any future
-expression capability deferred to a new ADR.
+policy described in Milestone 3: a closed, domain-owned vocabulary with a
+single value shape per key; fixed, domain-owned shaped rules that profiles
+scale but do not define; an exit-code-7 rejection contract with numeric
+invariants; sparse overlays validated on the merged Cyclopts result; a
+`schema_version` evolution rule; the named-weight discipline applied to
+scoring, renderer, and semantic knobs alike; and a hard prohibition on
+`eval`-class evaluation, with any future expression capability deferred to a
+new ADR.
 
 ## Revision note
 
-Initial draft created on 2026-06-18. It captures repository findings,
-Firecrawl prior-art research, a community-of-experts design review and its
-P0-P2 revisions, the approval gate, implementation milestones, validation
-commands, and pull-request requirements for roadmap item 1.1.4. Implementation
-must not start until the user explicitly approves the plan.
+Initial draft created on 2026-06-18. It captures repository findings, Firecrawl
+prior-art research, a community-of-experts design review and its P0-P2
+revisions, the approval gate, implementation milestones, validation commands,
+and pull-request requirements for roadmap item 1.1.4. Implementation must not
+start until the user explicitly approves the plan.
