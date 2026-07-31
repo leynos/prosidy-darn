@@ -9,7 +9,7 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-    "maturin==1.13.3",
+    "maturin==1.14.1",
     "pip==26.1.2",
     "pytest",
     "ruff==0.16.0",
@@ -318,5 +318,5 @@ module-name = "prosidy_darn._prosidy_darn_rs"
 python-source = "."
 
 [build-system]
-requires = ["maturin==1.13.3"]
+requires = ["maturin==1.14.1"]
 build-backend = "maturin"
