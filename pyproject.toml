@@ -10,7 +10,7 @@ dependencies = []
 [dependency-groups]
 dev = [
     "maturin==1.13.3",
-    "pip==26.1.2",
+    "pip==26.2",
     "pytest",
     "ruff==0.16.0",
     "pyright",
