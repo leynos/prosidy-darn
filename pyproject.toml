@@ -12,7 +12,7 @@ dev = [
     "maturin==1.13.3",
     "pip==26.2",
     "pytest",
-    "ruff==0.16.0",
+    "ruff==0.16.1",
     "pyright",
     "pytest-timeout",
     "pytest-xdist",
