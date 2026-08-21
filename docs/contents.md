@@ -47,6 +47,8 @@
 - [ADR 008: Two-tier linting architecture](adr-008-two-tier-linting-architecture.md)
   - Preserve the accepted linting
   architecture decision.
+- [ADR 009: Skylos dead-code detection](adr-009-skylos-dead-code-detection.md)
+  - Preserve the accepted dead-code detection decision.
 
 ## Planning
 
