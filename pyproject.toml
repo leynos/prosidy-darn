@@ -311,6 +311,14 @@ timeout = 30
 [tool.uv]
 package = true
 
+[tool.skylos.gate]
+strict = true
+
+[tool.skylos.whitelist]
+names = []
+
+[tool.skylos.whitelist.documented]
+
 [tool.maturin]
 bindings = "pyo3"
 manifest-path = "rust/prosidy-darn-rs/Cargo.toml"

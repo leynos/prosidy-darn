@@ -43,7 +43,7 @@ jobs:
       - name: Enforce en-GB-oxendict spelling
         run: make spelling
 
-      - name: Run ruff
+      - name: Run Python lint and dead-code detection
         run: make lint
 
       - name: Cache Whitaker installer

@@ -106,7 +106,7 @@ make
 For code changes, run the relevant gates before committing:
 
 - `make check-fmt`: verify Python and Markdown-adjacent formatting.
-- `make lint`: run the two-tier Python lint gate.
+- `make lint`: run Ruff, Pylint, and blocking Skylos dead-code detection.
 - `make typecheck`: run `ty check`.
 - `make test`: run the pytest suite.
 
@@ -145,13 +145,15 @@ The phrase checker rejects punctuation-sensitive shared corrections such as
 overlay as narrow exact or full-line patterns; do not add bare accepted words
 for machine interfaces or formal names.
 
-## Two-tier linting
+## Linting and dead-code detection
 
-`make lint` uses two tiers:
+`make lint` runs these checks in order:
 
 1. Ruff runs first with the repository's broad lint profile.
 2. Pylint runs second through the PyPy-backed
    [`pylint-pypy-shim`](https://github.com/leynos/pylint-pypy-shim) wrapper.
+3. Skylos scans only `prosidy_darn` for dead code and fails the gate for every
+   unexplained finding.
 
 Run the lint gate with:
 
@@ -170,8 +172,29 @@ focuses on logging interpolation, structural pattern matching hazards,
 control-flow simplification, resource handling, deprecated standard-library
 usage, mutable-iteration hazards, and selected design limits.
 
-The lint architecture is recorded in
-[ADR 008: Two-tier linting architecture](adr-008-two-tier-linting-architecture.md).
+Skylos is separately provisioned at the exact Makefile pin, not added to the
+project environment. Its production-only graph excludes tests so test-only
+references cannot mask a dead production symbol. The command disables uploads,
+provenance collection, and grep verification; it performs no cloud or Large
+Language Model (LLM) analysis and never modifies source files.
+
+Treat every finding as dead code until a runtime caller has been verified.
+Remove genuine dead code. Record a verified false positive with:
+
+```shell
+make skylos-allow NAME=registered_handler \
+  REASON="Loaded by the plugin registry; verified in the registry contract test"
+```
+
+The target rejects empty names and reasons, then records the explanation under
+`[tool.skylos.whitelist.documented]`. Do not add bulk or unexplained
+exceptions. Remove an allow-list entry when its dynamic boundary no longer
+exists.
+
+The lint architecture and dead-code decision are recorded in
+[ADR 008: Two-tier linting architecture](adr-008-two-tier-linting-architecture.md)
+and
+[ADR 009: Skylos dead-code detection](adr-009-skylos-dead-code-detection.md).
 
 ## Makefile lint variables
 
@@ -191,6 +214,10 @@ The lint target is controlled by these Makefile variables:
 - `PYLINT_PYPY_SHIM`: the `git+https` package URL assembled from the pinned
   shim reference.
 - `PYLINT`: the complete `uv tool run` command that invokes `pylint-pypy`.
+- `SKYLOS_VERSION`: the exact externally provisioned Skylos release.
+- `SKYLOS`: the complete Skylos command with the reviewed project configuration.
+- `SKYLOS_PRODUCTION_TARGETS`: the production source paths scanned for dead
+  code. Tests remain excluded so they cannot change source liveness.
 
 Override `PYLINT_TARGETS` only for local diagnosis. Committed changes should
 extend `PYLINT_PACKAGE_TARGETS`, `PYLINT_TEST_TARGETS`, or
@@ -201,8 +228,8 @@ second lint tier.
 
 Prosidy Darn imports its lint policy from
 [`leynos/episodic`](https://github.com/leynos/episodic). That policy keeps Ruff
-as the primary lint gate and uses a pinned PyPy-backed Pylint shim as a second
-tier.
+as the primary lint gate, uses a pinned PyPy-backed Pylint shim as a second
+tier, and separately provisions Skylos for blocking dead-code detection.
 
 The imported policy has these local adaptations:
 
@@ -213,13 +240,16 @@ The imported policy has these local adaptations:
 - Ruff's Python target is set to Python 3.14.
 - Test files ignore selected argument-count and self-use checks that are noisy
   for pytest-style test methods.
+- Skylos analyses only `prosidy_darn`, which is this repository's production
+  source tree.
 
 When `episodic` changes its lint policy, update Prosidy Darn deliberately:
 
-1. Compare the `Makefile` lint target and Pylint shim pin.
+1. Compare the `Makefile` lint target, Pylint shim pin, and Skylos pin.
 2. Compare `[tool.ruff]`, `[tool.ruff.lint]`, and nested Ruff lint sections.
 3. Compare `[tool.pylint.*]` sections and message allow-lists.
-4. Run the full local quality gates before committing.
+4. Compare `[tool.skylos.*]` rules and every documented allow-list exception.
+5. Run the full local quality gates before committing.
 
 ## `pyproject.toml` lint configuration
 
@@ -242,6 +272,9 @@ The lint configuration lives in these `pyproject.toml` sections:
 - `[tool.pylint.design]`: Pylint design thresholds for arguments, locals,
   statements, and positional arguments.
 - `[tool.pylint."messages control"]`: the focused Pylint allow-list.
+- `[tool.skylos.gate]`: strict blocking behaviour for dead-code detection.
+- `[tool.skylos.whitelist]`: named false-positive exceptions, each recorded
+  with a verified runtime caller under `documented`.
 
 Keep comments in the lint sections close to the rule or threshold they explain.
 This makes future imports from `episodic` easier to review and keeps policy
