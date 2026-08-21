@@ -29,9 +29,13 @@ PYLINT_TEST_TARGETS ?= tests
 PYLINT_EXTRA_TARGETS ?=
 PYLINT_TARGETS ?= $(PYLINT_PACKAGE_TARGETS) $(PYLINT_TEST_TARGETS) $(PYLINT_EXTRA_TARGETS)
 PYLINT = $(UV_ENV) uv tool run --managed-python --python $(PYLINT_PYTHON) --from 'pylint==$(PYLINT_VERSION)' pylint
+SKYLOS_VERSION ?= 4.33.2
+SKYLOS = $(UV_ENV) $(UV) tool run --from 'skylos==$(SKYLOS_VERSION)' skylos \
+	--config-file pyproject.toml
+SKYLOS_PRODUCTION_TARGETS ?= prosidy_darn
 
 .PHONY: help all clean build build-release lint lint-clippy lint-rust fmt check-fmt \
-        markdownlint nixie spelling test typecheck $(TOOLS) $(VENV_TOOLS)
+        markdownlint nixie spelling skylos-allow test typecheck $(TOOLS) $(VENV_TOOLS)
 
 .DEFAULT_GOAL := all
 
@@ -89,9 +93,24 @@ check-fmt: uv ## Verify formatting
 	$(RUFF) format --check
 	$(MDTABLEFIX) --check $(MDTABLEFIX_SELECT) $(MDTABLEFIX_RULES)
 
-lint: uv ## Run linters (Ruff, Pylint, then Clippy)
+lint: uv ## Run linters (Ruff, Pylint, Skylos, then Clippy)
 	$(RUFF) check
 	$(PYLINT) $(PYLINT_TARGETS)
+	$(SKYLOS) $(SKYLOS_PRODUCTION_TARGETS) --category dead_code --gate \
+		--format concise --no-upload --no-provenance --no-grep-verify
+
+skylos-allow: export SKYLOS_NAME = $(value NAME)
+skylos-allow: export SKYLOS_REASON = $(value REASON)
+skylos-allow: ## Document one named Skylos exception, not an entry point
+	@test -n "$${SKYLOS_NAME}" || { \
+		printf "Error: NAME is required for a named whitelist exception\\n" >&2; \
+		exit 2; \
+	}
+	@test -n "$${SKYLOS_REASON}" || { \
+		printf "Error: REASON is required for a named whitelist exception\\n" >&2; \
+		exit 2; \
+	}
+	$(SKYLOS) whitelist "$${SKYLOS_NAME}" --reason "$${SKYLOS_REASON}"
 	$(MAKE) lint-clippy
 
 lint-clippy: ## Run Clippy over the Rust workspace (denies missing_docs)
