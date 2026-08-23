@@ -121,3 +121,23 @@ guards the common style, correctness, and maintainability rules quickly. Pylint
 adds a smaller set of complementary checks after Ruff has already filtered the
 codebase. Keeping both tiers behind `make lint` preserves one developer command
 while making the architecture explicit and reproducible.
+
+## Addendum — 2026-08-23: Skylos fourth Python quality tier
+
+The original two-tier decision remains the foundation for Ruff and the
+PyPy-backed Pylint checks. The effective Python quality architecture now has
+four complementary tiers:
+
+1. Ruff — fast, broad lint rules and docstring style.
+2. PyPy-backed Pylint — focused selected diagnostics.
+3. `ty` — static type analysis through the separate `make typecheck` gate.
+4. Skylos — strict production dead-code detection.
+
+Skylos is the fourth independent Python quality tier, although `make lint`
+executes its production scan after Ruff and Pylint and `make typecheck` remains
+its own gate. It scans `prosidy_darn`, excludes tests from the liveness graph,
+and uses strict gate configuration from `pyproject.toml`. The command-only
+Skylos invocation is pinned to Python 3.14 because Skylos parses source with
+its runtime abstract syntax tree (AST); the pin prevents phantom findings on
+newer Python syntax. This addendum supersedes statements that describe the
+current lint architecture as only two or three tiers.
