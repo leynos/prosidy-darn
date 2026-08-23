@@ -72,9 +72,11 @@
   - **Testing:** Passes all relevant unit and behavioural tests (`make test`).
   - **Linting:** Passes Ruff, PyPy-backed Pylint, and the blocking Skylos
     dead-code scan (`make lint`). Investigate every Skylos finding and remove
-    genuine dead code. After verifying a false positive, record its name and
-    verified runtime caller in the Skylos allow list with
-    `make skylos-allow NAME=handler REASON="Loaded by plugin registry"`.
+    genuine dead code. Prefer a typed `[tool.skylos.dead_code.entrypoints]`
+    rule for an implicit runtime caller. Only when that rule cannot model the
+    boundary, record a verified false positive and caller in the Skylos allow
+    list with `make skylos-allow SYMBOL=handler REASON="Loaded by plugin
+    registry"`.
   - **Formatting:** Adheres to formatting standards (`make check-fmt`; use
     `make fmt` to apply fixes).
   - **Typechecking:** Passes type checking (`make typecheck`).

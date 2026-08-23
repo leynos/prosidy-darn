@@ -44,9 +44,9 @@
   Preserve the accepted phased test matrix decision.
 - [ADR 007: CLI observability scope](adr-007-cli-observability-scope.md) -
   Preserve the accepted command-line observability decision.
-- [ADR 008: Two-tier linting architecture](adr-008-two-tier-linting-architecture.md)
-  - Preserve the accepted linting
-  architecture decision.
+- [ADR 008: Linting architecture](adr-008-two-tier-linting-architecture.md) -
+  Preserve the accepted two-tier decision and its fourth Python quality-tier
+  addendum.
 - [ADR 009: Skylos dead-code detection](adr-009-skylos-dead-code-detection.md)
   - Preserve the accepted dead-code detection decision.
 
