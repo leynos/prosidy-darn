@@ -49,13 +49,17 @@ Choose Option B.
 
 `make lint` runs Skylos after Ruff and Pylint with `--category dead_code`,
 `--gate`, `--no-upload`, `--no-provenance`, and `--no-grep-verify`. CI runs the
-same target. The Makefile provisionally installs exactly Skylos 4.33.2 through
-`uv tool run`, so Skylos remains outwith the project development dependencies.
+same target. The Makefile provisions exactly Skylos 4.33.2 with Python 3.14
+through `uv tool run`, so Skylos remains outwith the project development
+dependencies. Skylos parses source with its runtime abstract syntax tree (AST),
+and the Python 3.14 pin prevents phantom findings on newer syntax.
 
 `pyproject.toml` enables strict gate handling and contains the allow-list
-configuration. A genuine finding must be removed. A verified false positive
-must be added only through `make skylos-allow`, with its name and a reason that
-names the verified runtime caller. The allow-list starts empty.
+configuration. A genuine finding must be removed. Prefer a typed
+`[tool.skylos.dead_code.entrypoints]` rule for an implicit runtime caller. A
+verified false positive may be added only when that rule cannot model the
+boundary, through `make skylos-allow SYMBOL=symbol REASON="reason"`. The
+allow-list starts empty.
 
 ## Consequences
 
