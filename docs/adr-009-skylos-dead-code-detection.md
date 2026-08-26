@@ -54,6 +54,10 @@ through `uv tool run`, so Skylos remains outwith the project development
 dependencies. Skylos parses source with its runtime abstract syntax tree (AST),
 and the Python 3.14 pin prevents phantom findings on newer syntax.
 
+`make skylos-allow` reserves `SYMBOL` rather than `NAME`, which WSL supplies as
+a hostname. It rejects missing and whitespace-only `SYMBOL` and `REASON` values
+before invoking Skylos.
+
 `pyproject.toml` enables strict gate handling and contains the allow-list
 configuration. A genuine finding must be removed. Prefer a typed
 `[tool.skylos.dead_code.entrypoints]` rule for an implicit runtime caller. A
