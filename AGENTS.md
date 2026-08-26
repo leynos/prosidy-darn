@@ -76,7 +76,8 @@
     rule for an implicit runtime caller. Only when that rule cannot model the
     boundary, record a verified false positive and caller in the Skylos allow
     list with `make skylos-allow SYMBOL=handler REASON="Loaded by plugin
-    registry"`.
+    registry"`. The helper rejects missing and whitespace-only values for both
+    `SYMBOL` and `REASON`.
   - **Formatting:** Adheres to formatting standards (`make check-fmt`; use
     `make fmt` to apply fixes).
   - **Typechecking:** Passes type checking (`make typecheck`).

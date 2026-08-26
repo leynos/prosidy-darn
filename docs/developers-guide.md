@@ -189,8 +189,8 @@ make skylos-allow SYMBOL=registered_handler \
   REASON="Loaded by the plugin registry; verified in the registry contract test"
 ```
 
-`SYMBOL` avoids WSL's injected `NAME` hostname variable. The target rejects an
-empty symbol or reason, then records the explanation under
+`SYMBOL` avoids WSL's injected `NAME` hostname variable. The target rejects a
+missing or whitespace-only symbol or reason, then records the explanation under
 `[tool.skylos.whitelist.documented]`. Prefer a typed
 `[tool.skylos.dead_code.entrypoints]` rule for implicit runtime callers. Use a
 documented allow-list exception only when an entry-point rule cannot model that

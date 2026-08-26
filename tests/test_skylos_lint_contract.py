@@ -13,11 +13,15 @@ import json
 import os
 import shlex
 import shutil
+import string
 import subprocess  # noqa: S404 - contract tests invoke fixed local commands.
 import tomllib
 import typing as typ
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
+import hypothesis as hyp
+import hypothesis.strategies as st
 import yaml
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -43,6 +47,13 @@ _MAKEUTIL_INSTALL_TOKENS: typ.Final = (
     "--force",
     "makeutil",
 )
+_MAKE_EXECUTABLE: typ.Final[str] = typ.cast("str", shutil.which("make"))
+assert _MAKE_EXECUTABLE is not None, "Skylos contract tests require Make on PATH."
+_SHELL_ARGUMENT_TEXT: typ.Final = st.text(
+    alphabet=string.ascii_letters + string.digits + " \t_$;|&'\"()[]{}*?!\\\\`",
+    min_size=1,
+    max_size=30,
+).filter(str.strip)
 
 
 def _makefile_report() -> dict[str, object]:
@@ -155,26 +166,25 @@ def _sole_workflow_step(
     return matches[0]
 
 
-def _run_skylos_allow(*arguments: str) -> subprocess.CompletedProcess[str]:
+def _run_skylos_allow(
+    *, symbol: str | None = None, reason: str | None = None
+) -> subprocess.CompletedProcess[str]:
     """Run the whitelist boundary without invoking Skylos on invalid input."""
     environment = {**os.environ, "NAME": "wsl-hostname"}
     environment.pop("REASON", None)
     environment.pop("SYMBOL", None)
+    if symbol is not None:
+        environment["SYMBOL"] = symbol
+    if reason is not None:
+        environment["REASON"] = reason
     return subprocess.run(  # noqa: S603 - fixed Make executable and target.
-        (_make_executable(), "skylos-allow", *arguments),
+        (_MAKE_EXECUTABLE, "skylos-allow"),
         capture_output=True,
         check=False,
         cwd=REPOSITORY_ROOT,
         env=environment,
         text=True,
     )
-
-
-def _make_executable() -> str:
-    """Return the absolute Make executable path required by boundary tests."""
-    make_executable = shutil.which("make")
-    assert make_executable is not None, "Expected Make to be available for the test."
-    return make_executable
 
 
 def _assert_makeutil_installation(command: object, *, contract: str) -> None:
@@ -187,22 +197,18 @@ def _assert_makeutil_installation(command: object, *, contract: str) -> None:
     ), f"{contract} must pin the Makeutil installation command."
 
 
-def test_skylos_is_a_pinned_external_tool() -> None:
-    """Keep Skylos out of the project environment and pin its tool release."""
-    with (REPOSITORY_ROOT / "pyproject.toml").open("rb") as configuration_file:
-        config = typ.cast("dict[str, object]", tomllib.load(configuration_file))
-
-    dependency_groups = _mapping(config.get("dependency-groups"), subject="groups")
-    development_dependencies = _text_sequence(
-        dependency_groups.get("dev"), subject="development dependencies"
-    )
-    assert not any(
-        dependency.startswith("skylos") for dependency in development_dependencies
-    ), "Skylos must remain separately provisioned from development dependencies."
-
-
 def test_lint_recipe_runs_the_production_dead_code_gate() -> None:
     """`make lint` must scan production code with Skylos's strict gate."""
+    with (REPOSITORY_ROOT / "pyproject.toml").open("rb") as configuration_file:
+        config = typ.cast("dict[str, object]", tomllib.load(configuration_file))
+    dependencies = _text_sequence(
+        _mapping(config.get("dependency-groups"), subject="groups").get("dev"),
+        subject="development dependencies",
+    )
+    assert "hypothesis>=6.165.10,<7.0" in dependencies, "Pin bounded Hypothesis."
+    assert not any(dependency.startswith("skylos") for dependency in dependencies), (
+        "Skylos must remain separately provisioned from development dependencies."
+    )
     assert _variable_tokens("SKYLOS_VERSION") == ("4.33.2",), (
         "Skylos version contract must pin 4.33.2."
     )
@@ -270,14 +276,11 @@ def test_whitelist_target_uses_skylos_subcommand_contract() -> None:
 
 def test_skylos_allow_requires_symbol_and_reason() -> None:
     """The whitelist target must reject incomplete input without running Skylos."""
-    for arguments, expected_error in (
-        ((), "Error: SYMBOL is required for a named whitelist exception"),
-        (
-            ("SYMBOL=handler",),
-            "Error: REASON is required for a named whitelist exception",
-        ),
+    for symbol, reason, expected_error in (
+        (None, None, "Error: SYMBOL is required for a named whitelist exception"),
+        ("handler", None, "Error: REASON is required for a named whitelist exception"),
     ):
-        completed = _run_skylos_allow(*arguments)
+        completed = _run_skylos_allow(symbol=symbol, reason=reason)
 
         assert completed.returncode == 2, (
             "Skylos whitelist boundary must reject missing required arguments."
@@ -287,70 +290,70 @@ def test_skylos_allow_requires_symbol_and_reason() -> None:
         )
 
 
-def test_skylos_allow_dry_run_preserves_whitelist_argument_order() -> None:
-    """A valid dry run must reveal the command without writing an exception."""
-    completed = subprocess.run(  # noqa: S603 - fixed Make executable and arguments.
-        (
-            _make_executable(),
-            "--dry-run",
-            "skylos-allow",
-            "SYMBOL=handler",
-            "REASON=Loaded by plugin registry",
-        ),
-        capture_output=True,
-        check=False,
-        cwd=REPOSITORY_ROOT,
-        text=True,
+@hyp.settings(max_examples=25, deadline=None)
+@hyp.given(value=st.text(alphabet=" \t", min_size=1, max_size=8))
+def test_skylos_allow_rejects_whitespace_only_values(value: str) -> None:
+    """Whitespace-only arguments must fail despite WSL's injected `NAME`."""
+    for symbol, reason, expected_error in (
+        (value, "Loaded by plugin registry", "Error: SYMBOL is required"),
+        ("handler", value, "Error: REASON is required"),
+    ):
+        completed = _run_skylos_allow(symbol=symbol, reason=reason)
+        assert completed.returncode == 2, (
+            "Skylos whitelist boundary must reject whitespace-only values."
+        )
+        assert expected_error in completed.stderr, (
+            "Skylos whitelist boundary must name the whitespace-only argument."
+        )
+
+
+@hyp.settings(max_examples=25, deadline=None)
+@hyp.example(symbol=" $(handler);* ", reason=' Loaded "$plugin" | registry ')
+@hyp.given(symbol=_SHELL_ARGUMENT_TEXT, reason=_SHELL_ARGUMENT_TEXT)
+def test_skylos_allow_forwards_exact_arguments(symbol: str, reason: str) -> None:
+    """Forward environment values as exact Skylos whitelist arguments."""
+    pyproject_path = REPOSITORY_ROOT / "pyproject.toml"
+    original_pyproject = pyproject_path.read_bytes()
+    with TemporaryDirectory() as temporary_directory:
+        temporary_path = Path(temporary_directory)
+        recorder = temporary_path / "skylos-recorder"
+        capture = temporary_path / "arguments.json"
+        recorder.write_text(
+            "#!/usr/bin/env python3\n"
+            "import json, os, sys\n"
+            "with open(os.environ['SKYLOS_CAPTURE'], 'w', "
+            "encoding='utf-8') as output:\n"
+            "    json.dump(sys.argv[1:], output)\n",
+            encoding="utf-8",
+        )
+        recorder.chmod(0o755)
+        completed = subprocess.run(  # noqa: S603 - local recorder tests exact argv.
+            (
+                _MAKE_EXECUTABLE,
+                "--no-print-directory",
+                f"SKYLOS_CLI={recorder}",
+                "skylos-allow",
+            ),
+            capture_output=True,
+            check=False,
+            cwd=REPOSITORY_ROOT,
+            env={
+                **os.environ,
+                "NAME": "wsl-hostname",
+                "REASON": reason,
+                "SKYLOS_CAPTURE": str(capture),
+                "SYMBOL": symbol,
+            },
+            text=True,
+        )
+        received_arguments = json.loads(capture.read_text(encoding="utf-8"))
+    assert completed.returncode == 0, "Skylos recorder must accept complete input."
+    assert received_arguments == ["whitelist", symbol, "--reason", reason], (
+        "Skylos whitelist must receive the unmodified SYMBOL and REASON arguments."
     )
-
-    assert completed.returncode == 0, (
-        "Skylos whitelist dry-run contract must accept complete input."
+    assert pyproject_path.read_bytes() == original_pyproject, (
+        "A valid Skylos whitelist command must not modify pyproject.toml."
     )
-    assert (
-        'skylos whitelist "${SKYLOS_SYMBOL}" --reason "${SKYLOS_REASON}"'
-        in completed.stdout
-    ), "Skylos whitelist dry-run contract must preserve subcommand argument order."
-
-
-def test_skylos_allow_preserves_metacharacters_as_arguments(tmp_path: Path) -> None:
-    """Keep untrusted allow-list values within their original arguments."""
-    recorder = tmp_path / "skylos-recorder"
-    capture = tmp_path / "arguments.txt"
-    marker = tmp_path / "injected-command"
-    recorder.write_text(
-        '#!/bin/sh\nprintf \'%s\\n\' "$@" > "$SKYLOS_CAPTURE"\n',
-        encoding="utf-8",
-    )
-    recorder.chmod(0o755)
-    symbol = f'registered"; touch {marker}; printf "'
-    reason = f"loaded by `touch {marker}` and $(touch {marker})"
-    make_executable = shutil.which("make")
-    assert make_executable is not None, "Expected Make to be available for the test."
-
-    result = subprocess.run(  # noqa: S603 - arguments exercise shell injection safely.
-        [
-            make_executable,
-            "--no-print-directory",
-            "skylos-allow",
-            f"SYMBOL={symbol}",
-            f"REASON={reason}",
-            f"SKYLOS_CLI={recorder}",
-        ],
-        cwd=REPOSITORY_ROOT,
-        env={**os.environ, "SKYLOS_CAPTURE": str(capture)},
-        check=False,
-        capture_output=True,
-        text=True,
-    )
-
-    assert result.returncode == 0, "Expected quoted metacharacters to reach Skylos."
-    assert capture.read_text(encoding="utf-8").splitlines() == [
-        "whitelist",
-        symbol,
-        "--reason",
-        reason,
-    ], "Expected SYMBOL and REASON to remain single whitelist arguments."
-    assert not marker.exists(), "Expected no injected shell command to execute."
 
 
 def test_skylos_configuration_requires_strict_explained_exceptions() -> None:

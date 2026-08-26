@@ -9,6 +9,7 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "hypothesis>=6.165.10,<7.0",
     "maturin==1.13.3",
     "pip==26.2.1",
     "pytest",
@@ -111,6 +112,9 @@ datetime = "dt"
 "unittest.mock" = "mock"
 "msgspec.json" = "msjson"
 typing = "typ"
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-decorators = ["hypothesis.given"]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "typing.AbstractSet".msg = "Use collections.abc.Set instead of deprecated typing generics."
