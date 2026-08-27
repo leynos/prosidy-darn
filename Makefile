@@ -21,7 +21,7 @@ SPELLING_HELPER_PYTEST = PYTHONPATH=scripts $(UV_ENV) $(UV) run --no-project \
 	--python 3.14 --with pathspec==$(PATHSPEC_VERSION) --with pytest==9.0.2 \
 	--with pytest-cov==7.0.0 python -m pytest
 RUFF = $(UV_ENV) uv tool run --from ruff==$(RUFF_VERSION) ruff
-TOOLS = $(MDFORMAT_ALL) ty $(MDLINT) uv
+TOOLS = $(MDFORMAT_ALL) ty $(MDLINT) uv makeutil
 VENV_TOOLS = pytest
 UV_ENV = UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools
 PYLINT_PYTHON ?= pypy
@@ -34,10 +34,18 @@ PYLINT_TARGETS ?= $(PYLINT_PACKAGE_TARGETS) $(PYLINT_TEST_TARGETS) $(PYLINT_EXTR
 PYLINT_PYPY_SHIM_REF ?= 726d09f968b4d729ee4b29c71fc732e744854f3b
 PYLINT_PYPY_SHIM = git+https://github.com/leynos/pylint-pypy-shim.git@$(PYLINT_PYPY_SHIM_REF)
 PYLINT = $(UV_ENV) uv tool run --python $(PYLINT_PYTHON) --from '$(PYLINT_PYPY_SHIM)' pylint-pypy
+SKYLOS_VERSION ?= 4.33.2
+# Skylos parses source using its own Python AST, so Python 3.14 prevents
+# phantom dead-code findings from syntax older tool runtimes cannot parse.
+SKYLOS_CLI = $(UV_ENV) $(UV) tool run --python 3.14 --from 'skylos==$(SKYLOS_VERSION)' skylos
+SKYLOS = $(SKYLOS_CLI) --config-file pyproject.toml
+SKYLOS_PRODUCTION_TARGETS ?= prosidy_darn
+SKYLOS_EXCLUDE_FOLDERS ?= tests
+SKYLOS_WHITELIST_LOCK ?= .skylos-whitelist.lock
 
 .PHONY: help all clean build build-release lint lint-rust fmt check-fmt \
         markdownlint nixie spelling spelling-config spelling-config-write \
-        spelling-phrase-check spelling-helper-test test typecheck \
+        spelling-phrase-check spelling-helper-test skylos-allow test typecheck \
         $(TOOLS) $(VENV_TOOLS)
 
 .DEFAULT_GOAL := all
@@ -98,6 +106,17 @@ check-fmt: uv ## Verify formatting
 lint: uv ## Run linters
 	$(RUFF) check $(PROJECT_PY_EXCLUDES)
 	$(PYLINT) $(PYLINT_TARGETS)
+	$(SKYLOS) $(SKYLOS_PRODUCTION_TARGETS) --exclude $(SKYLOS_EXCLUDE_FOLDERS) --category dead_code --gate \
+		--format concise --no-upload --no-provenance --no-grep-verify
+
+skylos-allow: export SKYLOS_SYMBOL = $(value SYMBOL)
+skylos-allow: export SKYLOS_REASON = $(value REASON)
+skylos-allow: ## Document one named Skylos exception, not an entry point
+	@case "$${SKYLOS_SYMBOL}" in *[![:space:]]*) ;; *) \
+		printf "Error: SYMBOL is required for a named whitelist exception\\n" >&2; exit 2;; esac
+	@case "$${SKYLOS_REASON}" in *[![:space:]]*) ;; *) \
+		printf "Error: REASON is required for a named whitelist exception\\n" >&2; exit 2;; esac
+	flock "$(SKYLOS_WHITELIST_LOCK)" env $(SKYLOS_CLI) whitelist "$${SKYLOS_SYMBOL}" --reason "$${SKYLOS_REASON}"
 
 lint-rust: ## Lint the Rust workspace (Clippy and Whitaker)
 	$(CARGO) clippy --manifest-path rust/Cargo.toml --all-targets --all-features -- -D warnings
@@ -133,7 +152,7 @@ nixie: ## Validate Mermaid diagrams
 	$(call ensure_tool,nixie)
 	$(NIXIE) --no-sandbox
 
-test: build uv $(VENV_TOOLS) ## Run tests
+test: build uv $(VENV_TOOLS) makeutil ## Run tests
 	$(UV_ENV) uv run pytest -v -n auto $(PROJECT_PYTEST_EXCLUDES)
 
 help: ## Show available targets

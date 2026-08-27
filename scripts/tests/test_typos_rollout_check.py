@@ -30,8 +30,8 @@ def initialize(path: Path, files: dict[str, str]) -> None:
     subprocess.run(["git", "add", "."], cwd=path, check=True)
 
 
-def policy_files(*, local_phrase: str = "") -> dict[str, str]:
-    """Return minimal generated, shared, and local policy documents."""
+def policy_files() -> dict[str, str]:
+    """Return minimal generated and shared policy with the committed overlay."""
     return {
         "typos.toml": (
             f"# Policy for {PROHIBITED} corrections.\n"
@@ -41,7 +41,7 @@ def policy_files(*, local_phrase: str = "") -> dict[str, str]:
         ".typos-oxendict-base.toml": (
             f'[phrases.corrections]\n"{PROHIBITED}" = "handwritten"\n'
         ),
-        "typos.local.toml": local_phrase,
+        "typos.local.toml": (SCRIPTS.parent / "typos.local.toml").read_text(),
     }
 
 
@@ -52,17 +52,13 @@ class TestPhrasePolicyChecker:
         self, checker: types.ModuleType, tmp_path: Path
     ) -> None:
         """Load shared phrases and generated scan settings."""
-        files = policy_files(
-            local_phrase='[phrases.corrections]\n"fit-for-purpose" = "suitable"\n'
-        )
-        initialize(tmp_path, files)
+        initialize(tmp_path, policy_files())
 
         policy = checker.load_policy(tmp_path)
 
-        assert policy.phrase_corrections == (
-            ("fit-for-purpose", "suitable"),
-            (PROHIBITED, "handwritten"),
-        ), "shared and local phrase corrections were not combined"
+        assert policy.phrase_corrections == ((PROHIBITED, "handwritten"),), (
+            "shared phrase corrections were not loaded with the committed local policy"
+        )
         assert policy.ignore_patterns == (r"`[^`\n]+`",), (
             "generated ignore patterns were not loaded"
         )

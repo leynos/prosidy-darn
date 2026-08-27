@@ -9,11 +9,13 @@ dependencies = []
 
 [dependency-groups]
 dev = [
+    "hypothesis>=6.165.10,<7.0",
     "maturin==1.13.3",
     "pip==26.2.1",
     "pytest",
     "ruff==0.16.3",
     "pyright",
+    "PyYAML==6.0.3",
     "pytest-timeout",
     "pytest-xdist",
     "syrupy==5.5.3",
@@ -110,6 +112,9 @@ datetime = "dt"
 "unittest.mock" = "mock"
 "msgspec.json" = "msjson"
 typing = "typ"
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-decorators = ["hypothesis.given"]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "typing.AbstractSet".msg = "Use collections.abc.Set instead of deprecated typing generics."
@@ -310,6 +315,14 @@ timeout = 30
 
 [tool.uv]
 package = true
+
+[tool.skylos.gate]
+strict = true
+
+[tool.skylos.whitelist]
+names = []
+
+[tool.skylos.whitelist.documented]
 
 [tool.maturin]
 bindings = "pyo3"
