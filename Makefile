@@ -17,7 +17,7 @@ TYPOS_CONFIG_BUILDER = $(UV_ENV) $(UV) tool run --python 3.14 --from \
 	"git+https://github.com/leynos/typos-config-builder.git@$(TYPOS_CONFIG_BUILDER_VERSION)" \
 	typos-config-builder
 RUFF = $(UV_ENV) uv tool run --from ruff==$(RUFF_VERSION) ruff
-TOOLS = ty $(MDLINT) uv
+TOOLS = ty $(MDLINT) uv makeutil
 VENV_TOOLS = pytest
 UV_ENV = UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools
 PYLINT_PYTHON ?= pypy@3.12
@@ -36,6 +36,7 @@ SKYLOS_CLI = $(UV_ENV) $(UV) tool run --python 3.14 --from 'skylos==$(SKYLOS_VER
 SKYLOS = $(SKYLOS_CLI) --config-file pyproject.toml
 SKYLOS_PRODUCTION_TARGETS ?= prosidy_darn
 SKYLOS_EXCLUDE_FOLDERS ?= tests
+SKYLOS_WHITELIST_LOCK ?= .skylos-whitelist.lock
 
 .PHONY: help all clean build build-release lint lint-rust fmt check-fmt \
         markdownlint nixie spelling skylos-allow test typecheck \
@@ -110,7 +111,7 @@ skylos-allow: ## Document one named Skylos exception, not an entry point
 		printf "Error: SYMBOL is required for a named whitelist exception\\n" >&2; exit 2;; esac
 	@case "$${SKYLOS_REASON}" in *[![:space:]]*) ;; *) \
 		printf "Error: REASON is required for a named whitelist exception\\n" >&2; exit 2;; esac
-	$(SKYLOS_CLI) whitelist "$${SKYLOS_SYMBOL}" --reason "$${SKYLOS_REASON}"
+	flock "$(SKYLOS_WHITELIST_LOCK)" env $(SKYLOS_CLI) whitelist "$${SKYLOS_SYMBOL}" --reason "$${SKYLOS_REASON}"
 
 lint-rust: ## Lint the Rust workspace (Clippy and Whitaker)
 	$(CARGO) clippy --manifest-path rust/Cargo.toml --all-targets --all-features -- -D warnings
@@ -134,7 +135,7 @@ nixie: ## Validate Mermaid diagrams
 	$(call ensure_tool,nixie)
 	$(NIXIE) --no-sandbox
 
-test: build uv $(VENV_TOOLS) ## Run tests
+test: build uv $(VENV_TOOLS) makeutil ## Run tests
 	$(UV_ENV) uv run pytest -v -n auto
 
 help: ## Show available targets

@@ -104,6 +104,7 @@ ipython_config.py
 .uv-cache/
 .uv-tools/
 .skylos/
+.skylos-whitelist.lock
 
 # poetry
 #   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
