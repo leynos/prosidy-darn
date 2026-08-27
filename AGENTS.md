@@ -77,7 +77,8 @@
     boundary, record a verified false positive and caller in the Skylos allow
     list with `make skylos-allow SYMBOL=handler REASON="Loaded by plugin
     registry"`. The helper rejects missing and whitespace-only values for both
-    `SYMBOL` and `REASON`.
+    `SYMBOL` and `REASON`, and serializes documented allow-list writes with
+    `flock` on a repository-local lock file.
   - **Formatting:** Adheres to formatting standards (`make check-fmt`; use
     `make fmt` to apply fixes).
   - **Typechecking:** Passes type checking (`make typecheck`).

@@ -195,7 +195,9 @@ missing or whitespace-only symbol or reason, then records the explanation under
 `[tool.skylos.dead_code.entrypoints]` rule for implicit runtime callers. Use a
 documented allow-list exception only when an entry-point rule cannot model that
 boundary. Do not add bulk or unexplained exceptions, and remove an allow-list
-entry when its dynamic boundary no longer exists.
+entry when its dynamic boundary no longer exists. `skylos-allow` uses `flock`
+with the repository-local `.skylos-whitelist.lock` file, so concurrent
+documented updates cannot discard one another.
 
 The lint architecture and dead-code decision are recorded in
 [ADR 008: Two-tier linting architecture](adr-008-two-tier-linting-architecture.md)
@@ -227,6 +229,8 @@ The lint target is controlled by these Makefile variables:
   code. Tests remain excluded so they cannot change source liveness.
 - `SKYLOS_EXCLUDE_FOLDERS`: paths explicitly excluded from the Skylos graph;
   the default is `tests`.
+- `SKYLOS_WHITELIST_LOCK`: the repository-local lock file used to serialize
+  `skylos-allow` updates.
 
 Override `PYLINT_TARGETS` only for local diagnosis. Committed changes should
 extend `PYLINT_PACKAGE_TARGETS`, `PYLINT_TEST_TARGETS`, or
@@ -292,8 +296,9 @@ changes auditable.
 ## Makefile contract-test bootstrap
 
 `tests/test_skylos_lint_contract.py` parses the Makefile with the independently
-installed `makeutil` executable. Before running the full local test suite,
-install the same pinned parser used in CI:
+installed `makeutil` executable. `make test` checks that binary before pytest,
+so install the same pinned parser used in CI before running the full local test
+suite:
 
 ```bash
 rustup toolchain install nightly-2026-05-28 --profile minimal
