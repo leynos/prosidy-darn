@@ -56,7 +56,9 @@ and the Python 3.14 pin prevents phantom findings on newer syntax.
 
 `make skylos-allow` reserves `SYMBOL` rather than `NAME`, which WSL supplies as
 a hostname. It rejects missing and whitespace-only `SYMBOL` and `REASON` values
-before invoking Skylos.
+before invoking Skylos. Its documented allow-list update holds the ignored,
+repository-local `.skylos-whitelist.lock` with `flock`, preventing concurrent
+writes from losing verified exceptions.
 
 `pyproject.toml` enables strict gate handling and contains the allow-list
 configuration. A genuine finding must be removed. Prefer a typed
