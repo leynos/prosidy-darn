@@ -1,6 +1,13 @@
 MDLINT ?= markdownlint-cli2
+# `make fmt` and `make check-fmt` call mdtablefix directly. `--git` selects the
+# Markdown files Git tracks and `--include-untracked` adds the untracked files
+# Git does not ignore, so a new document is formatted before it is staged.
+# Both modes need mdtablefix 0.6.0 or later; CI pins the version at the
+# install-mdtablefix step.
+MDTABLEFIX ?= mdtablefix
+MDTABLEFIX_SELECT = --git --include-untracked
+MDTABLEFIX_RULES = --wrap --renumber --breaks --ellipsis --fences
 NIXIE ?= nixie
-MDFORMAT_ALL ?= mdformat-all
 CARGO ?= cargo
 WHITAKER ?= whitaker
 UV ?= uv
@@ -21,7 +28,7 @@ SPELLING_HELPER_PYTEST = PYTHONPATH=scripts $(UV_ENV) $(UV) run --no-project \
 	--python 3.14 --with pathspec==$(PATHSPEC_VERSION) --with pytest==9.0.2 \
 	--with pytest-cov==7.0.0 python -m pytest
 RUFF = $(UV_ENV) uv tool run --from ruff==$(RUFF_VERSION) ruff
-TOOLS = $(MDFORMAT_ALL) ty $(MDLINT) uv
+TOOLS = ty $(MDLINT) uv
 VENV_TOOLS = pytest
 UV_ENV = UV_CACHE_DIR=.uv-cache UV_TOOL_DIR=.uv-tools
 PYLINT_PYTHON ?= pypy
@@ -86,14 +93,15 @@ $(VENV_TOOLS): ## Verify required CLI tools in venv
 	$(call ensure_tool_venv,$@)
 endif
 
-fmt: uv $(MDFORMAT_ALL) ## Format sources
+fmt: uv ## Format sources
 	$(RUFF) format $(PROJECT_PY_EXCLUDES)
 	$(RUFF) check --select I --fix $(PROJECT_PY_EXCLUDES)
-	$(MDFORMAT_ALL)
+	$(MDTABLEFIX) --in-place $(MDTABLEFIX_SELECT) $(MDTABLEFIX_RULES)
+	@unset FORCE_COLOR; $(MDLINT) --fix "**/*.md"
 
 check-fmt: uv ## Verify formatting
 	$(RUFF) format --check $(PROJECT_PY_EXCLUDES)
-	# mdformat-all doesn't currently do checking
+	$(MDTABLEFIX) --check $(MDTABLEFIX_SELECT) $(MDTABLEFIX_RULES)
 
 lint: uv ## Run linters
 	$(RUFF) check $(PROJECT_PY_EXCLUDES)
