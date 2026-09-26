@@ -45,10 +45,9 @@ Run the local lint gate with:
 make lint
 ```
 
-The lint gate runs Ruff first, then runs a focused Pylint pass through the
-[`pylint-pypy-shim`](https://github.com/leynos/pylint-pypy-shim) wrapper under
-PyPy. The Pylint tier is intentionally allow-listed so it complements Ruff
-without replacing Ruff's broader rule set.
+The lint gate runs Ruff first, then runs a focused Pylint pass under the managed
+`pypy@3.12` interpreter via `uv tool run`. The Pylint tier is intentionally
+allow-listed so it complements Ruff without replacing Ruff's broader rule set.
 
 ## Library usage
 

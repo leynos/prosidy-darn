@@ -150,8 +150,8 @@ for machine interfaces or formal names.
 `make lint` uses two tiers:
 
 1. Ruff runs first with the repository's broad lint profile.
-2. Pylint runs second through the PyPy-backed
-   [`pylint-pypy-shim`](https://github.com/leynos/pylint-pypy-shim) wrapper.
+2. Pylint runs second, invoked through `uv tool run` under the managed
+   `pypy@3.12` interpreter.
 
 Run the lint gate with:
 
@@ -178,7 +178,10 @@ The lint architecture is recorded in
 The lint target is controlled by these Makefile variables:
 
 - `PYLINT_PYTHON`: the interpreter used by `uv tool run` for Pylint. The
-  default is `pypy`.
+  default is `pypy@3.12`, pinned to a specific PyPy minor version so a new PyPy
+  release cannot change the parsed grammar without a commit.
+- `PYLINT_VERSION`: the pinned Pylint release installed by
+  `uv tool run --from`. The default is `4.0.9`.
 - `PYLINT_PACKAGE_TARGETS`: package paths passed to Pylint. The default is
   `prosidy_darn`.
 - `PYLINT_TEST_TARGETS`: test paths passed to Pylint. The default is `tests`.
@@ -186,11 +189,8 @@ The lint target is controlled by these Makefile variables:
   should enter the PyPy-backed Pylint tier as the repository grows.
 - `PYLINT_TARGETS`: the complete path list passed to Pylint. By default, this
   combines package, test, and extra targets.
-- `PYLINT_PYPY_SHIM_REF`: the pinned commit of the
-  `leynos/pylint-pypy-shim` repository.
-- `PYLINT_PYPY_SHIM`: the `git+https` package URL assembled from the pinned
-  shim reference.
-- `PYLINT`: the complete `uv tool run` command that invokes `pylint-pypy`.
+- `PYLINT`: the complete `uv tool run` command that invokes Pylint under
+  `PYLINT_PYTHON` at `PYLINT_VERSION`.
 
 Override `PYLINT_TARGETS` only for local diagnosis. Committed changes should
 extend `PYLINT_PACKAGE_TARGETS`, `PYLINT_TEST_TARGETS`, or
@@ -201,8 +201,8 @@ second lint tier.
 
 Prosidy Darn imports its lint policy from
 [`leynos/episodic`](https://github.com/leynos/episodic). That policy keeps Ruff
-as the primary lint gate and uses a pinned PyPy-backed Pylint shim as a second
-tier.
+as the primary lint gate and runs Pylint directly under a managed PyPy
+interpreter as a second tier.
 
 The imported policy has these local adaptations:
 
@@ -216,7 +216,8 @@ The imported policy has these local adaptations:
 
 When `episodic` changes its lint policy, update Prosidy Darn deliberately:
 
-1. Compare the `Makefile` lint target and Pylint shim pin.
+1. Compare the `Makefile` lint target and the `PYLINT_PYTHON`/`PYLINT_VERSION`
+   pins.
 2. Compare `[tool.ruff]`, `[tool.ruff.lint]`, and nested Ruff lint sections.
 3. Compare `[tool.pylint.*]` sections and message allow-lists.
 4. Run the full local quality gates before committing.

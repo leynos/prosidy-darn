@@ -3,8 +3,9 @@
 ## Status
 
 Accepted on 2026-05-15. Prosidy Darn uses Ruff as the primary lint tier and a
-focused Pylint pass through the pinned `pylint-pypy-shim` wrapper as the second
-tier.
+focused Pylint pass as the second tier. The Pylint pass originally ran through
+the pinned `pylint-pypy-shim` wrapper; see the amendment below for the current
+runner.
 
 ## Date
 
@@ -67,19 +68,20 @@ _Table 1: Linting architecture options._
 
 Choose Option B.
 
-`make lint` runs `ruff check` first. If Ruff passes, it runs `pylint-pypy`
-through `uv tool run --python pypy` using the pinned `leynos/pylint-pypy-shim`
-repository reference.
+`make lint` runs `ruff check` first. If Ruff passes, it runs Pylint through
+`uv tool run --managed-python --python $(PYLINT_PYTHON)` with
+`--from 'pylint==$(PYLINT_VERSION)' pylint`, where `PYLINT_PYTHON` defaults to
+the managed `pypy@3.12` interpreter. See the amendment below for the reason
+this replaced the pinned `leynos/pylint-pypy-shim` repository reference.
 
 The Makefile keeps the Pylint invocation configurable through:
 
 - `PYLINT_PYTHON`;
+- `PYLINT_VERSION`;
 - `PYLINT_PACKAGE_TARGETS`;
 - `PYLINT_TEST_TARGETS`;
 - `PYLINT_EXTRA_TARGETS`;
 - `PYLINT_TARGETS`;
-- `PYLINT_PYPY_SHIM_REF`;
-- `PYLINT_PYPY_SHIM`;
 - `PYLINT`.
 
 The default package and test targets are `prosidy_darn` and `tests`, which
@@ -106,11 +108,11 @@ only the selected diagnostics imported from `episodic`.
 
 ## Known risks and limitations
 
-- The managed PyPy runtime may lag the repository's Python target. The Pylint
-  pass disables `syntax-error` so the shim remains useful on files PyPy can
-  parse.
-- The Pylint shim pin must be updated deliberately when upstream compatibility
-  work changes.
+- The managed PyPy runtime may lag the repository's Python target. This was
+  the original rationale for disabling `syntax-error`; see the amendment below
+  for the current position.
+- The Pylint interpreter and version pins must be updated deliberately when
+  upstream compatibility work changes.
 - `episodic` may evolve its lint policy. Prosidy Darn should compare changes
   before importing them rather than applying them mechanically.
 
@@ -121,3 +123,20 @@ guards the common style, correctness, and maintainability rules quickly. Pylint
 adds a smaller set of complementary checks after Ruff has already filtered the
 codebase. Keeping both tiers behind `make lint` preserves one developer command
 while making the architecture explicit and reproducible.
+
+## Amendment (2026-09-25): plain Pylint on PyPy 3.12
+
+PyPy 8 implements Python 3.12, and uv 0.12.19 (2026-09-25) ships it as a
+managed interpreter. Pylint now runs on that managed interpreter without the
+shim's object-build patch, so the `pylint-pypy-shim` wrapper, and the
+`PYLINT_PYPY_SHIM_REF` and `PYLINT_PYPY_SHIM` Makefile variables, are removed.
+`PYLINT_PYTHON` now defaults to `pypy@3.12`, pinned to a specific PyPy minor
+version rather than bare `pypy`, so a new PyPy release cannot change the parsed
+grammar without a commit. A new `PYLINT_VERSION` variable (default `4.0.9`)
+pins the Pylint release installed by `uv tool run --from`.
+
+`pyproject.toml` no longer disables `syntax-error`. While disabled, any module
+the PyPy runtime could not parse produced no Pylint messages at all and the
+lint passed without linting it. No modules were silently skipped on PyPy 3.11
+in this repository at the time of this amendment, but the change removes that
+failure mode: a parse failure now fails the lint instead of passing silently.
