@@ -12,16 +12,12 @@ accepted = []
 
 [patterns]
 ignore = [
-  # Official documentation and product names.
-  'Azure Architecture\s+Center\s+\|\s+Microsoft Learn',
-  'GitHub\s+Flavored\s+Markdown',
+  # Inline code spans, which this repository's spelling check has always
+  # masked; preserved through the migration to the shared gate.
+  '`[^`\n]+`',
   # Valid compounds whose components must remain visible elsewhere.
   '\bMis-modelled\b',
   '\bpre-empted\b',
-  # Composite-action inputs and expressions are machine interfaces.
-  '(?m)^          artifact-name: wheels-\$\{\{ matrix\.os \}\}-\$\{\{ matrix\.arch \}\}$',
-  '(?m)^        name: \$\{\{ inputs\.artifact-name \}\}$',
-  '(?m)^  artifact-name:$',
   # Existing trace messages are diagnostic contracts.
   '(?m)^        "build_native_wheel_artifact: completed; output dir contains %s",$',
   '(?m)^    _logger\.debug\("build_native_wheel_artifact: running %s", command\)$',
