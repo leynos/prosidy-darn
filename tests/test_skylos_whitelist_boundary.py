@@ -84,7 +84,7 @@ def _run_required_argument_check(
     *, symbol: str | None = None, reason: str | None = None
 ) -> subprocess.CompletedProcess[str]:
     """Run an invalid request without reaching the lock or Skylos executable."""
-    environment = {**os.environ, "NAME": "wsl-hostname"}
+    environment: dict[str, str] = {**os.environ, "NAME": "wsl-hostname"}
     environment.pop("REASON", None)
     environment.pop("SYMBOL", None)
     if symbol is not None:
@@ -92,7 +92,7 @@ def _run_required_argument_check(
     if reason is not None:
         environment["REASON"] = reason
     return subprocess.run(  # noqa: S603 - fixed Make target.
-        (_make_executable(), "skylos-allow"),
+        [_make_executable(), "skylos-allow"],
         capture_output=True,
         check=False,
         cwd=REPOSITORY_ROOT,
