@@ -28,7 +28,7 @@ runs:
       uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7
     - name: Set up QEMU for Linux cross-architecture builds
       if: runner.os == 'Linux' && inputs.cibw-arch != 'x86_64'
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@v4
       with:
         platforms: arm64
     - name: Build wheels
