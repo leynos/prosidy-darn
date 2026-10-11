@@ -89,9 +89,10 @@ check-fmt: uv ## Verify formatting
 	$(RUFF) format --check
 	$(MDTABLEFIX) --check $(MDTABLEFIX_SELECT) $(MDTABLEFIX_RULES)
 
-lint: uv lint-clippy ## Run linters (Ruff, Pylint and Clippy)
+lint: uv ## Run linters (Ruff, Pylint, then Clippy)
 	$(RUFF) check
 	$(PYLINT) $(PYLINT_TARGETS)
+	$(MAKE) lint-clippy
 
 lint-clippy: ## Run Clippy over the Rust workspace (denies missing_docs)
 	$(CARGO) clippy --manifest-path rust/Cargo.toml --all-targets --all-features -- -D warnings
