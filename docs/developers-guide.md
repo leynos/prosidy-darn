@@ -106,7 +106,9 @@ make
 For code changes, run the relevant gates before committing:
 
 - `make check-fmt`: verify Python and Markdown-adjacent formatting.
-- `make lint`: run the two-tier Python lint gate.
+- `make lint`: run the two-tier Python lint gate and Clippy over the Rust
+  workspace (`make lint-clippy`). The Rust workspace denies `missing_docs`, so
+  every public item in the extension needs a doc comment.
 - `make typecheck`: run `ty check`.
 - `make test`: run the pytest suite.
 
@@ -114,7 +116,7 @@ For Rust extension changes, also run:
 
 - `cargo fmt --manifest-path rust/Cargo.toml --check`: verify Rust formatting.
 - `cargo check --manifest-path rust/Cargo.toml`: typecheck the Rust workspace.
-- `make lint-rust`: run Clippy and the
+- `make lint-rust`: run Clippy (as above) and the
   [Whitaker Dylint suite](https://github.com/leynos/whitaker) over the Rust
   workspace with warnings denied. The `whitaker` wrapper must be on `PATH`;
   install it with

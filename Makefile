@@ -30,7 +30,7 @@ PYLINT_EXTRA_TARGETS ?=
 PYLINT_TARGETS ?= $(PYLINT_PACKAGE_TARGETS) $(PYLINT_TEST_TARGETS) $(PYLINT_EXTRA_TARGETS)
 PYLINT = $(UV_ENV) uv tool run --managed-python --python $(PYLINT_PYTHON) --from 'pylint==$(PYLINT_VERSION)' pylint
 
-.PHONY: help all clean build build-release lint lint-rust fmt check-fmt \
+.PHONY: help all clean build build-release lint lint-clippy lint-rust fmt check-fmt \
         markdownlint nixie spelling test typecheck $(TOOLS) $(VENV_TOOLS)
 
 .DEFAULT_GOAL := all
@@ -89,12 +89,15 @@ check-fmt: uv ## Verify formatting
 	$(RUFF) format --check
 	$(MDTABLEFIX) --check $(MDTABLEFIX_SELECT) $(MDTABLEFIX_RULES)
 
-lint: uv ## Run linters
+lint: uv ## Run linters (Ruff, Pylint, then Clippy)
 	$(RUFF) check
 	$(PYLINT) $(PYLINT_TARGETS)
+	$(MAKE) lint-clippy
 
-lint-rust: ## Lint the Rust workspace (Clippy and Whitaker)
+lint-clippy: ## Run Clippy over the Rust workspace (denies missing_docs)
 	$(CARGO) clippy --manifest-path rust/Cargo.toml --all-targets --all-features -- -D warnings
+
+lint-rust: lint-clippy ## Lint the Rust workspace (Clippy and Whitaker)
 	cd rust && RUSTFLAGS="-D warnings" $(WHITAKER) --all -- --all-targets --all-features
 
 typecheck: build ty ## Run typechecking
