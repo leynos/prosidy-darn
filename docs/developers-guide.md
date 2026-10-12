@@ -116,9 +116,8 @@ For code changes, run the relevant gates before committing:
 
 - `make check-fmt`: verify Python and Markdown-adjacent formatting.
 - `make lint`: run Ruff, Pylint, and blocking Skylos dead-code detection, then
-  Clippy over the Rust workspace (`make lint-clippy`). The Rust workspace
-  denies `missing_docs`, so every public item in the extension needs a doc
-  comment.
+  Clippy over the Rust workspace (`make lint-clippy`). The Rust workspace denies
+  `missing_docs`, so every public item in the extension needs a doc comment.
 - `make typecheck`: run `ty check`.
 - `make test`: run the pytest suite.
 
