@@ -82,6 +82,13 @@ _SKYLOS_WHITELIST_TOKENS: typ.Final = (
 )
 _EXPECTED_DOCUMENTED_WHITELIST_NAMES: typ.Final = frozenset()
 _EXPECTED_ENTRYPOINT_NAMES: typ.Final = frozenset()
+_ENTRYPOINT_NAME_SELECTOR_KEYS: typ.Final = ("name", "full_name")
+_ENTRYPOINT_SELECTOR_SCALAR: typ.Final = "create"
+_ENTRYPOINT_SELECTOR_VALUES: typ.Final = ("Owner.create", "Owner.update")
+_EXPECTED_SELECTOR_NAMES: typ.Final = frozenset({
+    _ENTRYPOINT_SELECTOR_SCALAR,
+    *_ENTRYPOINT_SELECTOR_VALUES,
+})
 _FULL_SUITE_WORKFLOW_JOBS: typ.Final = ((".github/workflows/ci.yml", "lint-test"),)
 
 
@@ -121,6 +128,26 @@ def _text_sequence(value: object, *, subject: str) -> tuple[str, ...]:
         f"Expected {subject} to contain only JSON strings."
     )
     return tuple(typ.cast("list[str]", value))
+
+
+def _selector_values(value: object, *, subject: str) -> tuple[str, ...]:
+    """Normalize a Skylos selector accepted as one string or a string list."""
+    if isinstance(value, str):
+        return (value,)
+    return _text_sequence(value, subject=subject)
+
+
+def _entrypoint_selector_names(entry_points: list[dict[str, object]]) -> frozenset[str]:
+    """Collect configured Skylos `name` and `full_name` selector values."""
+    return frozenset(
+        name
+        for entry_point in entry_points
+        for selector_name in _ENTRYPOINT_NAME_SELECTOR_KEYS
+        for name in _selector_values(
+            entry_point.get(selector_name, []),
+            subject=f"entry-point {selector_name} selectors",
+        )
+    )
 
 
 def _sole_variable(name: str) -> dict[str, object]:
@@ -308,15 +335,9 @@ def test_skylos_configuration_pins_verified_runtime_boundaries() -> None:
     entry_points = _objects(
         dead_code.get("entrypoints", []), subject="Skylos entry points"
     )
-    entry_point_names = frozenset(
-        name
-        for entry_point in entry_points
-        for name in _text_sequence(
-            entry_point.get("full_name"), subject="entry-point names"
-        )
-    )
+    entry_point_names = _entrypoint_selector_names(entry_points)
     assert entry_point_names == _EXPECTED_ENTRYPOINT_NAMES, (
-        "Skylos entry-point names must match verified implicit runtime callers."
+        "Skylos name and full_name selectors must match verified implicit callers."
     )
     assert all(
         isinstance(entry_point.get("type"), str)
@@ -324,6 +345,17 @@ def test_skylos_configuration_pins_verified_runtime_boundaries() -> None:
         and entry_point_reason.strip()
         for entry_point in entry_points
     ), "Every Skylos entry point must be typed and have a verified reason."
+
+
+def test_entrypoint_name_selectors_accept_scalar_and_sequence_values() -> None:
+    """Skylos permits scalar or list values for name selectors."""
+    entry_points: list[dict[str, object]] = [
+        {"name": _ENTRYPOINT_SELECTOR_SCALAR},
+        {"full_name": list(_ENTRYPOINT_SELECTOR_VALUES)},
+    ]
+    assert _entrypoint_selector_names(entry_points) == _EXPECTED_SELECTOR_NAMES, (
+        "Skylos entry-point names must accept scalar name and list full_name selectors."
+    )
 
 
 def test_ci_runs_lint_and_installs_makeutil_for_full_suite_jobs() -> None:
