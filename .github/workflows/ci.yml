@@ -40,7 +40,7 @@ jobs:
       - name: Install mdtablefix
         # `make check-fmt` runs `mdtablefix --check --git`; 0.6.0 is the
         # first release with `--check` and `--git`.
-        uses: leynos/shared-actions/.github/actions/install-mdtablefix@2ddf19b3fd52c0f1089db0d57b015f859b80ab67
+        uses: leynos/shared-actions/.github/actions/install-mdtablefix@aea9c14c24b73042e99f0be8245a4f171b67c31a
         with:
           version: "0.6.1"
 
@@ -65,7 +65,7 @@ jobs:
 
 
       - name: Install Whitaker
-        uses: leynos/shared-actions/.github/actions/install-whitaker@2ddf19b3fd52c0f1089db0d57b015f859b80ab67
+        uses: leynos/shared-actions/.github/actions/install-whitaker@aea9c14c24b73042e99f0be8245a4f171b67c31a
 
       - name: Run Rust lint
         run: make lint-rust
