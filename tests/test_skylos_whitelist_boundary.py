@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import operator
 import os
 import shutil
 import string
@@ -26,6 +27,17 @@ _SHELL_SENSITIVE_TEXT = st.builds(
         max_size=24,
     ),
     st.text(alphabet=" \t", max_size=4),
+)
+_TOML_BARE_KEY_CHARACTERS = string.ascii_letters + string.digits + "_-"
+_TOML_STRING_CHARACTERS = string.ascii_letters + string.digits + " _-."
+_CONCURRENT_WHITELIST_REQUESTS = st.lists(
+    st.tuples(
+        st.text(alphabet=_TOML_BARE_KEY_CHARACTERS, min_size=1, max_size=12),
+        st.text(alphabet=_TOML_STRING_CHARACTERS, min_size=1, max_size=24),
+    ),
+    min_size=2,
+    max_size=4,
+    unique_by=operator.itemgetter(0),
 )
 
 
@@ -162,13 +174,27 @@ def test_whitelist_forwards_exact_arguments(symbol: str, reason: str) -> None:
     )
 
 
-def test_whitelist_lock_preserves_concurrent_documented_entries(tmp_path: Path) -> None:
+@hyp.settings(max_examples=6, deadline=None)
+@hyp.given(requests=_CONCURRENT_WHITELIST_REQUESTS)
+def test_whitelist_lock_preserves_concurrent_documented_entries(
+    requests: list[tuple[str, str]],
+) -> None:
     """The lock must prevent concurrent documented updates from losing entries."""
+    with TemporaryDirectory() as temporary_directory:
+        tmp_path = Path(temporary_directory)
+        _assert_concurrent_whitelist_entries_are_preserved(tmp_path, requests)
+
+
+def _assert_concurrent_whitelist_entries_are_preserved(
+    tmp_path: Path, requests: list[tuple[str, str]]
+) -> None:
+    """Run real helper processes in isolation and check every serialized update."""
     configuration = tmp_path / "pyproject.toml"
     configuration.write_text("[tool.skylos.whitelist.documented]\n", encoding="utf-8")
     writer = tmp_path / "write_whitelist_entry.py"
     writer.write_text(
         f"#!{sys.executable}\n"
+        "import json\n"
         "from pathlib import Path\n"
         "import sys\n"
         "import time\n"
@@ -177,11 +203,12 @@ def test_whitelist_lock_preserves_concurrent_documented_entries(tmp_path: Path) 
         "path = Path('pyproject.toml')\n"
         "contents = path.read_text(encoding='utf-8')\n"
         "time.sleep(0.2)\n"
-        "path.write_text(contents + f'{symbol} = {reason!r}\\n', encoding='utf-8')\n",
+        "path.write_text(\n"
+        "    contents + f'{symbol} = {json.dumps(reason)}\\n', encoding='utf-8'\n"
+        ")\n",
         encoding="utf-8",
     )
     writer.chmod(0o755)
-    requests = (("first", "first reason"), ("second", "second reason"))
     with ExitStack() as processes:
         running = [
             processes.enter_context(
