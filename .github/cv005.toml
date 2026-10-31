@@ -1,0 +1,5 @@
+repository = "leynos/prosidy-darn"
+
+# What the ratchet baseline measures: the package, not its tests.
+[selection]
+python-source = "./prosidy_darn"
