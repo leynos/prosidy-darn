@@ -10,6 +10,7 @@ an orientation aid for contributors; it is not a complete file manifest.
 ├── .github/                 # GitHub Actions workflows and reusable actions
 ├── .rules/                  # Python style, typing, and language-specific rules
 ├── docs/                    # User, maintainer, design, and planning documents
+│   ├── adrs/                # Architectural decision records
 │   └── execplans/           # Task-specific execution plans
 ├── prosidy_darn/            # Runtime package source code
 ├── rust/                    # Optional PyO3 extension workspace
@@ -25,20 +26,21 @@ _Figure 1: Simplified repository tree for contributor orientation._
 
 ## Path responsibilities
 
-| Path              | Responsibility                                                                                                                                                    |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.github/`        | Holds continuous integration workflows and reusable GitHub automation. Keep repository automation here rather than scattering scripts through source directories. |
-| `.rules/`         | Records detailed Python development rules that complement `AGENTS.md`. Update these when language-specific policy changes.                                        |
-| `docs/`           | Contains long-lived documentation, including guides, design material, architectural decision records, and roadmap documents. Use `docs/contents.md` as the index. |
-| `docs/execplans/` | Stores task-specific execution plans. These are living implementation records, not general reference documents.                                                   |
-| `prosidy_darn/`   | Contains the application package. Keep production code grouped by feature and maintain clear module boundaries.                                                   |
-| `rust/`           | Contains the optional PyO3 extension workspace used by maturin native wheel builds. Keep Rust crates small and aligned with Python runtime boundaries.            |
-| `tests/`          | Contains the test suite. Place unit, behavioural, and integration coverage close to the behaviour it validates.                                                   |
-| `AGENTS.md`       | Defines repository-local instructions for automated coding agents. Keep this synchronized with the current agent template when template policy changes.           |
-| `Makefile`        | Provides the canonical command surface for build, lint, format, typecheck, test, and documentation validation. Prefer these targets over direct tool invocation.  |
-| `pyproject.toml`  | Defines package metadata, Python version requirements, dependency groups, and tool configuration.                                                                 |
-| `README.md`       | Introduces the project for readers who start at the repository root. Keep detailed usage in `docs/users-guide.md`.                                                |
-| `uv.lock`         | Pins dependency resolution for reproducible development environments. Regenerate it through the project dependency workflow rather than editing it manually.      |
+| Path              | Responsibility                                                                                                                                                                                                |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/`        | Holds continuous integration workflows and reusable GitHub automation. Keep repository automation here rather than scattering scripts through source directories.                                             |
+| `.rules/`         | Records detailed Python development rules that complement `AGENTS.md`. Update these when language-specific policy changes.                                                                                    |
+| `docs/`           | Contains long-lived documentation, including guides, design material, architectural decision records, and roadmap documents. Use `docs/contents.md` as the index. RFCs, when present, belong in `docs/rfcs/`. |
+| `docs/adrs/`      | Stores architectural decision records named according to the four-digit convention in the documentation style guide.                                                                                          |
+| `docs/execplans/` | Stores task-specific execution plans. These are living implementation records, not general reference documents.                                                                                               |
+| `prosidy_darn/`   | Contains the application package. Keep production code grouped by feature and maintain clear module boundaries.                                                                                               |
+| `rust/`           | Contains the optional PyO3 extension workspace used by maturin native wheel builds. Keep Rust crates small and aligned with Python runtime boundaries.                                                        |
+| `tests/`          | Contains the test suite. Place unit, behavioural, and integration coverage close to the behaviour it validates.                                                                                               |
+| `AGENTS.md`       | Defines repository-local instructions for automated coding agents. Keep this synchronized with the current agent template when template policy changes.                                                       |
+| `Makefile`        | Provides the canonical command surface for build, lint, format, typecheck, test, and documentation validation. Prefer these targets over direct tool invocation.                                              |
+| `pyproject.toml`  | Defines package metadata, Python version requirements, dependency groups, and tool configuration.                                                                                                             |
+| `README.md`       | Introduces the project for readers who start at the repository root. Keep detailed usage in `docs/users-guide.md`.                                                                                            |
+| `uv.lock`         | Pins dependency resolution for reproducible development environments. Regenerate it through the project dependency workflow rather than editing it manually.                                                  |
 
 _Table 1: Repository paths and their responsibilities._
 

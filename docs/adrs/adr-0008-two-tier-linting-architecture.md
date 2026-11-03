@@ -1,4 +1,4 @@
-# Architectural decision record (ADR) 008: Two-tier linting architecture
+# Architectural decision record (ADR) 0008: Two-tier linting architecture
 
 ## Status
 

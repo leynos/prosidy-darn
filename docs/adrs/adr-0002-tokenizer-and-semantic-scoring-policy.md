@@ -1,4 +1,4 @@
-# Architectural decision record (ADR) 002: Tokenizer and semantic-scoring policy
+# Architectural decision record (ADR) 0002: Tokenizer and semantic-scoring policy
 
 ## Status
 
@@ -182,7 +182,7 @@ and embedding packages are outbound adapter details that load only when their
 adapter is selected. PEP 621 extras give end users a standard installation
 surface for those optional adapters, and the default-disabled adapters
 guarantee that omitting any extra leaves the public segmentation API unchanged.
-The policy mirrors the parser-boundary precedent set by ADR-001: pick one
+The policy mirrors the parser-boundary precedent set by ADR-0001: pick one
 concrete first candidate, keep the port open for future alternatives, and fail
 closed with an explicit diagnostic when an optional capability is requested but
 unavailable.

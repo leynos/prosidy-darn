@@ -1230,11 +1230,11 @@ non-trivial adapter lands.
 - Which vendor renderer should be the first non-SSML target.
 - Which import-boundary checker should enforce hexagonal dependency rules.
 
-ADR-001 accepts `mdast` as the initial Markdown-aware parser when its version
+ADR-0001 accepts `mdast` as the initial Markdown-aware parser when its version
 and compatibility probe pass, with PyO3 retained as a contingency rather than a
 concurrent v1 adapter.
 
-ADR-002 accepts `tiktoken` as the first v1 `TokenCounter` candidate behind the
+ADR-0002 accepts `tiktoken` as the first v1 `TokenCounter` candidate behind the
 port, keeps `tokenizers`, `transformers` `AutoTokenizer`, and
 `sentence-transformers` as eligible future adapters behind the same ports,
 declares optional dependencies via PEP 621 `[project.optional-dependencies]`,

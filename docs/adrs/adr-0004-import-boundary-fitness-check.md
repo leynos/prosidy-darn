@@ -1,4 +1,4 @@
-# Architectural decision record (ADR) 004: Import-boundary fitness check
+# Architectural decision record (ADR) 0004: Import-boundary fitness check
 
 ## Status
 
