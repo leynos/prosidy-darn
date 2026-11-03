@@ -1,4 +1,4 @@
-# Architectural decision record (ADR) 001: Markdown parser boundary
+# Architectural decision record (ADR) 0001: Markdown parser boundary
 
 ## Status
 

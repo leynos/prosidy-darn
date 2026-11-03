@@ -8,15 +8,17 @@ import re
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOCS_DIR = REPO_ROOT / "docs"
 DEVELOPERS_GUIDE = DOCS_DIR / "developers-guide.md"
-MARKDOWN_PARSER_ADR = DOCS_DIR / "adr-001-markdown-parser-boundary.md"
-TOKENIZER_POLICY_ADR = DOCS_DIR / "adr-002-tokenizer-and-semantic-scoring-policy.md"
+MARKDOWN_PARSER_ADR = DOCS_DIR / "adrs/adr-0001-markdown-parser-boundary.md"
+TOKENIZER_POLICY_ADR = (
+    DOCS_DIR / "adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md"
+)
 ROADMAP = DOCS_DIR / "roadmap.md"
 
 INITIAL_ADR_PATHS = (
-    "docs/adr-001-markdown-parser-boundary.md",
-    "docs/adr-002-tokenizer-and-semantic-scoring-policy.md",
-    "docs/adr-003-profile-rule-expression-policy.md",
-    "docs/adr-004-import-boundary-fitness-check.md",
+    "docs/adrs/adr-0001-markdown-parser-boundary.md",
+    "docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md",
+    "docs/adrs/adr-0003-profile-rule-expression-policy.md",
+    "docs/adrs/adr-0004-import-boundary-fitness-check.md",
 )
 
 PHASE_ONE_QUALITY_GATES = (
@@ -125,7 +127,7 @@ def test_markdown_parser_boundary_adr_defines_v1_adapter_order() -> None:
 
 
 def test_markdown_parser_boundary_roadmap_item_is_closed() -> None:
-    """Mark roadmap item 1.1.1 done only once ADR-001 is accepted."""
+    """Mark roadmap item 1.1.1 done only once ADR-0001 is accepted."""
     roadmap = read_document(ROADMAP)
     markdown_parser_adr = read_document(MARKDOWN_PARSER_ADR)
 
@@ -142,7 +144,7 @@ def test_tokenizer_policy_adr_is_accepted() -> None:
 
 
 def test_tokenizer_policy_adr_defines_v1_adapter_policy() -> None:
-    """Lock the accepted ADR-002 policy before downstream adapter work."""
+    """Lock the accepted ADR-0002 policy before downstream adapter work."""
     tokenizer_policy_adr = normalize_whitespace(read_document(TOKENIZER_POLICY_ADR))
     required_phrases = (
         "`tiktoken` is the first v1 `TokenCounter` candidate behind the port",
@@ -187,7 +189,7 @@ def test_tokenizer_policy_adr_defines_v1_adapter_policy() -> None:
 
 
 def test_tokenizer_policy_roadmap_item_is_closed() -> None:
-    """Mark roadmap item 1.1.2 done only once ADR-002 is accepted."""
+    """Mark roadmap item 1.1.2 done only once ADR-0002 is accepted."""
     roadmap = read_document(ROADMAP)
     tokenizer_policy_adr = read_document(TOKENIZER_POLICY_ADR)
 

@@ -206,9 +206,9 @@ with the repository-local `.skylos-whitelist.lock` file, so concurrent
 documented updates cannot discard one another.
 
 The lint architecture and dead-code decision are recorded in
-[ADR 008: Two-tier linting architecture](adr-008-two-tier-linting-architecture.md)
+[ADR 0008: Two-tier linting architecture](adrs/adr-0008-two-tier-linting-architecture.md)
 and
-[ADR 009: Skylos dead-code detection](adr-009-skylos-dead-code-detection.md).
+[ADR 0009: Skylos dead-code detection](adrs/adr-0009-skylos-dead-code-detection.md).
 
 ## Makefile lint variables
 
@@ -319,7 +319,7 @@ make test
 
 ## Testing expectations by phase
 
-ADR-006 scopes the test matrix by phase. Phase 1 uses `pytest` for public
+ADR-0006 scopes the test matrix by phase. Phase 1 uses `pytest` for public
 import tests, developer documentation checks, and ADR link validation. Later
 phases add the remaining tools when their product surfaces exist:
 
@@ -352,16 +352,16 @@ Update documentation in the same change that introduces or changes a contract:
 
 Phase 1 decisions use these stable ADR locations:
 
-- [docs/adr-001-markdown-parser-boundary.md](adr-001-markdown-parser-boundary.md)
-- [docs/adr-002-tokenizer-and-semantic-scoring-policy.md](adr-002-tokenizer-and-semantic-scoring-policy.md)
-- [docs/adr-003-profile-rule-expression-policy.md](adr-003-profile-rule-expression-policy.md)
-- [docs/adr-004-import-boundary-fitness-check.md](adr-004-import-boundary-fitness-check.md)
+- [docs/adrs/adr-0001-markdown-parser-boundary.md](adrs/adr-0001-markdown-parser-boundary.md)
+- [docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md](adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md)
+- [docs/adrs/adr-0003-profile-rule-expression-policy.md](adrs/adr-0003-profile-rule-expression-policy.md)
+- [docs/adrs/adr-0004-import-boundary-fitness-check.md](adrs/adr-0004-import-boundary-fitness-check.md)
 
 Accepted scope constraints already exist:
 
-- [docs/adr-006-test-matrix-phase-scope.md](adr-006-test-matrix-phase-scope.md)
-- [docs/adr-007-cli-observability-scope.md](adr-007-cli-observability-scope.md)
-- [docs/adr-008-two-tier-linting-architecture.md](adr-008-two-tier-linting-architecture.md)
+- [docs/adrs/adr-0006-test-matrix-phase-scope.md](adrs/adr-0006-test-matrix-phase-scope.md)
+- [docs/adrs/adr-0007-cli-observability-scope.md](adrs/adr-0007-cli-observability-scope.md)
+- [docs/adrs/adr-0008-two-tier-linting-architecture.md](adrs/adr-0008-two-tier-linting-architecture.md)
 
 ## CodeScene coverage publication
 

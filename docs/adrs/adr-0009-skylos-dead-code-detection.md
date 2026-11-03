@@ -1,4 +1,4 @@
-# Architectural decision record (ADR) 009: Skylos dead-code detection
+# Architectural decision record (ADR) 0009: Skylos dead-code detection
 
 ## Status
 

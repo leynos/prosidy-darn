@@ -1,4 +1,4 @@
-# Architectural decision record (ADR) 003: Profile rule-expression policy
+# Architectural decision record (ADR) 0003: Profile rule-expression policy
 
 ## Status
 

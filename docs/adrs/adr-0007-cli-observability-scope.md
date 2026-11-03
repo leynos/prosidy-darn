@@ -1,4 +1,4 @@
-# Architectural decision record (ADR) 007: CLI observability scope
+# Architectural decision record (ADR) 0007: CLI observability scope
 
 ## Status
 
