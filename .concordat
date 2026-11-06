@@ -1,0 +1,7 @@
+# Rust surfaces governed by the concordat build and dependency rules. The
+# workspace members are read for dependency facts through the workspace root.
+language:
+  rust:
+    surfaces:
+      - path: rust/Cargo.toml
+      - path: rust/prosidy-darn-rs/Cargo.toml
