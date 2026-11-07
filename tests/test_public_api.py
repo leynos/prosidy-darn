@@ -25,6 +25,7 @@ class TestPublicApi:
         original_import_module = importlib.import_module
 
         def fake_import_module(name: str, package: str | None = None) -> object:
+            """Report the Rust module as missing and import everything else normally."""
             if name == runtime.RUST_MODULE_NAME:
                 message = f"No module named {runtime.RUST_MODULE_NAME!r}"
                 raise ModuleNotFoundError(message, name=runtime.RUST_MODULE_NAME)
@@ -50,6 +51,7 @@ class TestPublicApi:
         original_import_module = importlib.import_module
 
         def fake_import_module(name: str, package: str | None = None) -> object:
+            """Make the Rust module fail on a missing inner module."""
             if name == runtime.RUST_MODULE_NAME:
                 message = "No module named 'inner_missing'"
                 raise ModuleNotFoundError(
@@ -80,11 +82,15 @@ class TestPublicApi:
         original_import = builtins.__import__
 
         class FakeRust:
+            """Stand-in for the Rust extension module."""
+
             @staticmethod
             def hello() -> str:
+                """Return the greeting the Rust extension would give."""
                 return "hello from Rust"
 
         def fake_import_module(name: str, package: str | None = None) -> object:
+            """Serve ``FakeRust`` for the Rust module, and import the rest normally."""
             if name == runtime.RUST_MODULE_NAME:
                 return FakeRust()
 
@@ -95,6 +101,7 @@ class TestPublicApi:
             *args: object,
             **kwargs: object,
         ) -> object:
+            """Break the import of the pure-Python fallback and allow all others."""
             if name == "prosidy_darn.pure":
                 message = "broken fallback"
                 raise ModuleNotFoundError(message, name=name)
