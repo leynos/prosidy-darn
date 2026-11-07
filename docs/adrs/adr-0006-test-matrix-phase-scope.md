@@ -1,4 +1,4 @@
-# Architectural decision record (ADR) 006: Test matrix phase scope
+# Architectural decision record (ADR) 0006: Test matrix phase scope
 
 ## Status
 

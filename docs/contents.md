@@ -29,25 +29,25 @@
 
 ## Decision records
 
-- [ADR 001: Markdown parser boundary](adr-001-markdown-parser-boundary.md) -
-  Preserve the accepted parser boundary decision.
-- [ADR 002: Tokenizer and semantic scoring policy](adr-002-tokenizer-and-semantic-scoring-policy.md)
+- [ADR 0001: Markdown parser boundary](adrs/adr-0001-markdown-parser-boundary.md)
+  - Preserve the accepted parser boundary decision.
+- [ADR 0002: Tokenizer and semantic scoring policy](adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md)
   - Preserve the
   accepted tokenization and scoring decision.
-- [ADR 003: Profile rule expression policy](adr-003-profile-rule-expression-policy.md)
+- [ADR 0003: Profile rule expression policy](adrs/adr-0003-profile-rule-expression-policy.md)
   - Preserve the accepted profile
   rule expression decision.
-- [ADR 004: Import boundary fitness check](adr-004-import-boundary-fitness-check.md)
+- [ADR 0004: Import boundary fitness check](adrs/adr-0004-import-boundary-fitness-check.md)
   - Preserve the accepted import
   boundary enforcement decision.
-- [ADR 006: Test matrix phase scope](adr-006-test-matrix-phase-scope.md) -
-  Preserve the accepted phased test matrix decision.
-- [ADR 007: CLI observability scope](adr-007-cli-observability-scope.md) -
-  Preserve the accepted command-line observability decision.
-- [ADR 008: Linting architecture](adr-008-two-tier-linting-architecture.md) -
-  Preserve the accepted two-tier decision and its fourth Python quality-tier
+- [ADR 0006: Test matrix phase scope](adrs/adr-0006-test-matrix-phase-scope.md)
+  - Preserve the accepted phased test matrix decision.
+- [ADR 0007: CLI observability scope](adrs/adr-0007-cli-observability-scope.md)
+  - Preserve the accepted command-line observability decision.
+- [ADR 0008: Linting architecture](adrs/adr-0008-two-tier-linting-architecture.md)
+  - Preserve the accepted two-tier decision and its fourth Python quality-tier
   addendum.
-- [ADR 009: Skylos dead-code detection](adr-009-skylos-dead-code-detection.md)
+- [ADR 0009: Skylos dead-code detection](adrs/adr-0009-skylos-dead-code-detection.md)
   - Preserve the accepted dead-code detection decision.
 
 ## Planning

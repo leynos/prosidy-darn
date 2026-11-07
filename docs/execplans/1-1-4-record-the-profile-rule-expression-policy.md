@@ -18,12 +18,12 @@ plainly: "profile configuration can be implemented without adding a new
 expression-language decision in the segmenter".
 
 The repository already contains a stub
-`docs/adr-003-profile-rule-expression-policy.md` whose status is "Proposed" and
-whose decision outcome is "Pending". This plan therefore treats 1.1.4 as a
-decision-finalization and closure task. After this plan is approved and
-implemented, a maintainer can observe success by reading the accepted ADR-003,
-seeing roadmap item 1.1.4 marked done, running the documentation and Python
-quality gates without failures, and confirming that no profile parser,
+`docs/adrs/adr-0003-profile-rule-expression-policy.md` whose status is
+"Proposed" and whose decision outcome is "Pending". This plan therefore treats
+1.1.4 as a decision-finalization and closure task. After this plan is approved
+and implemented, a maintainer can observe success by reading the accepted
+ADR-0003, seeing roadmap item 1.1.4 marked done, running the documentation and
+Python quality gates without failures, and confirming that no profile parser,
 `ProfileVocabulary`, `TTSProfile`, or scoring code has been added yet.
 
 The implementation carried out from this plan must not build a profile loader,
@@ -42,8 +42,8 @@ non-Turing-complete evaluator — never Python `eval`.
 
 `docs/roadmap.md` defines roadmap item 1.1.4 under "Ratify the v1 decisions
 that block implementation" (lines 102-109). The item requires
-`docs/adr-003-profile-rule-expression-policy.md`, lists 1.0.1 and 1.1.2 as
-prerequisites, and declares success as: "profile configuration can be
+`docs/adrs/adr-0003-profile-rule-expression-policy.md`, lists 1.0.1 and 1.1.2
+as prerequisites, and declares success as: "profile configuration can be
 implemented without adding a new expression-language decision in the
 segmenter". Both prerequisites are complete: item 1.0.1 (baseline developer
 docs and ADR locations) and item 1.1.2 (token-limit and semantic-scoring
@@ -85,27 +85,28 @@ The directly relevant sections are:
 - Section 18 (open decisions, lines 1226-1242) records the open question this
   task resolves: "Whether profile files should allow arbitrary custom rule
   expressions or only named rule weights." It already records the accepted
-  ADR-001 and ADR-002 outcomes, which this task extends with ADR-003.
+  ADR-0001 and ADR-0002 outcomes, which this task extends with ADR-0003.
 
-`docs/adr-001-markdown-parser-boundary.md` and
-`docs/adr-002-tokenizer-and-semantic-scoring-policy.md` are the two accepted
-ADRs. ADR-002 is the closest structural and procedural precedent: it moved from
-"Proposed" to "Accepted on", added Options considered, Decision outcome, Goals
-and non-goals, Migration plan, Known risks and limitations, and Architectural
-rationale, and was locked by documentation-contract tests. Mirror its shape.
+`docs/adrs/adr-0001-markdown-parser-boundary.md` and
+`docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md` are the two
+accepted ADRs. ADR-0002 is the closest structural and procedural precedent: it
+moved from "Proposed" to "Accepted on", added Options considered, Decision
+outcome, Goals and non-goals, Migration plan, Known risks and limitations, and
+Architectural rationale, and was locked by documentation-contract tests. Mirror
+its shape.
 
-`docs/adr-004-import-boundary-fitness-check.md` is the sibling Phase 1 decision
-(roadmap 1.1.3); it remains "Proposed" and is owned by a separate task. This
-task must not change it.
+`docs/adrs/adr-0004-import-boundary-fitness-check.md` is the sibling Phase 1
+decision (roadmap 1.1.3); it remains "Proposed" and is owned by a separate
+task. This task must not change it.
 
-`docs/adr-006-test-matrix-phase-scope.md` scopes Phase 1 tests to
+`docs/adrs/adr-0006-test-matrix-phase-scope.md` scopes Phase 1 tests to
 import-boundary checks, public import tests, developer-doc checks, and ADR link
 validation. It deliberately defers `pytest-bdd`, `syrupy`, Hypothesis,
 CrossHair, and Verus until the product surfaces they validate exist. This task
 therefore uses `pytest` documentation-contract tests only; see "Validation and
 acceptance" for the explicit justification.
 
-`docs/developers-guide.md` lists ADR-003 as a blocking Phase 1 decision
+`docs/developers-guide.md` lists ADR-0003 as a blocking Phase 1 decision
 location (around line 263) and requires architecture and product decision
 changes to update the relevant design or ADR document in the same change. It
 defines the Phase 1 quality gates.
@@ -122,11 +123,11 @@ introduces a user-visible behaviour statement, which it should not; the profile
 file format is not yet a shipped user surface.
 
 `tests/test_developer_docs.py` contains the documentation-contract tests. It
-already lists `docs/adr-003-profile-rule-expression-policy.md` in
+already lists `docs/adrs/adr-0003-profile-rule-expression-policy.md` in
 `INITIAL_ADR_PATHS` (line 18) and verifies it exists and is discoverable from
-the developers' guide and roadmap. The ADR-001 acceptance assertions (lines
-91-133) and ADR-002 acceptance assertions (lines 136-198) are the template for
-new ADR-003 assertions.
+the developers' guide and roadmap. The ADR-0001 acceptance assertions (lines
+91-133) and ADR-0002 acceptance assertions (lines 136-198) are the template for
+new ADR-0003 assertions.
 
 ### External prior art (Firecrawl research, accessed 2026-06-18)
 
@@ -229,7 +230,7 @@ been committed, and been pushed.
 Stop and ask for direction if implementation of the approved plan requires
 changes outside these paths:
 
-- `docs/adr-003-profile-rule-expression-policy.md`
+- `docs/adrs/adr-0003-profile-rule-expression-policy.md`
 - `docs/developers-guide.md`
 - `docs/prosidy-darn-technical-design.md`
 - `docs/roadmap.md`
@@ -309,7 +310,7 @@ semantic — so no future feature smuggles in an expression.
 
 Risk: The broad test-tool requirement (pytest-bdd, syrupy, Hypothesis,
 CrossHair, Verus) is over-applied to this Phase 1 documentation task. Severity:
-medium. Likelihood: medium. Mitigation: Follow ADR-006. Use `pytest`
+medium. Likelihood: medium. Mitigation: Follow ADR-0006. Use `pytest`
 documentation-contract tests for this item, and record why behavioural,
 snapshot, property, and proof tools become relevant only when the corresponding
 parser, output, invariant, or proof surfaces exist.
@@ -318,7 +319,7 @@ Risk: Roadmap closure happens without automated evidence. Severity: medium.
 Likelihood: medium. Mitigation: Add documentation-contract tests in
 `tests/test_developer_docs.py` before marking roadmap item 1.1.4 done.
 
-Risk: The accepted ADR-003 text drifts from `docs/developers-guide.md`,
+Risk: The accepted ADR-0003 text drifts from `docs/developers-guide.md`,
 `docs/prosidy-darn-technical-design.md`, or `docs/users-guide.md`. Severity:
 medium. Likelihood: medium. Mitigation: Cross-check those documents during
 Milestone 4 and update them only where their current wording would contradict
@@ -330,9 +331,9 @@ the accepted policy.
   `hexagonal-architecture`, and `execplans` skills for planning, navigation,
   and the approval gate.
 - [x] (2026-06-18) Created a leta workspace for this repository.
-- [x] (2026-06-18) Inspected the ADR-003 stub, the roadmap and technical design
+- [x] (2026-06-18) Inspected the ADR-0003 stub, the roadmap and technical design
   references (§§4, 7.3, 7.4, 8, 9, 13, 15, 18), the documentation-contract test
-  patterns, ADR-006 scope, ADR-002 as the format precedent, and the Makefile
+  patterns, ADR-0006 scope, ADR-0002 as the format precedent, and the Makefile
   gate targets.
 - [x] (2026-06-18) Used Firecrawl research to survey expression-safety prior art
   (`eval`, `simpleeval`, `asteval`, CEL, JsonLogic) and named-weight precedents
@@ -357,10 +358,10 @@ the accepted policy.
   documentation corrections without changing scope or runtime intent.
 - [x] (2026-07-19) Used Scrutineer to run `make markdownlint`, `make nixie`,
   and `coderabbit review --agent`; all passed with no findings.
-- [ ] Add failing documentation-contract tests for ADR-003 acceptance and the
+- [ ] Add failing documentation-contract tests for ADR-0003 acceptance and the
   locked policy commitments.
 - [ ] Confirm the new tests fail for the expected reason before editing the ADR.
-- [ ] Finalize ADR-003 from "Proposed" to "Accepted on", adding the required
+- [ ] Finalize ADR-0003 from "Proposed" to "Accepted on", adding the required
   style-guide sections and the policy commitments.
 - [ ] Align surrounding documentation (design §18, and §8 or the developers'
   guide only where wording would otherwise contradict the policy).
@@ -371,10 +372,10 @@ the accepted policy.
 
 ## Surprises & discoveries
 
-- Observation: ADR-003 already exists but is "Proposed" with a "Pending"
-  outcome. Evidence: `docs/adr-003-profile-rule-expression-policy.md` lines 3-5
-  and 33-36. Impact: Implementation finalizes the existing ADR rather than
-  creating a new file.
+- Observation: ADR-0003 already exists but is "Proposed" with a "Pending"
+  outcome. Evidence: `docs/adrs/adr-0003-profile-rule-expression-policy.md`
+  lines 3-5 and 33-36. Impact: Implementation finalizes the existing ADR rather
+  than creating a new file.
 - Observation: The technical design already commits to named, enum-and-numeric
   profile knobs in §8, so "named weights only" is the consistent reading; the
   unresolved part is the §7.3 shaped-rule expressiveness, not the key/value
@@ -402,10 +403,10 @@ the accepted policy.
 ## Decision log
 
 - Decision: Treat 1.1.4 as a documentation finalization and closure task, not an
-  adapter implementation slice. Rationale: ADR-003 already exists in "Proposed"
-  status, the roadmap checkbox remains open, and the missing work is policy
-  specification, contract tests, and task closure. Date/Author: 2026-06-18 /
-  Claude (planning).
+  adapter implementation slice. Rationale: ADR-0003 already exists in
+  "Proposed" status, the roadmap checkbox remains open, and the missing work is
+  policy specification, contract tests, and task closure. Date/Author:
+  2026-06-18 / Claude (planning).
 - Decision: Accept "named rule weights only" for v1 profiles and forbid
   arbitrary custom rule expressions. Rationale: The design already models
   profiles as named knobs; "safe eval" libraries disclaim being a security
@@ -434,15 +435,15 @@ the accepted policy.
   `eval`-class evaluation. Date/Author: 2026-06-18 / Claude (planning, from
   community-of-experts review).
 - Decision: Use `pytest` documentation-contract tests, not `pytest-bdd`,
-  `syrupy`, Hypothesis, CrossHair, or Verus, for this item. Rationale: ADR-006
+  `syrupy`, Hypothesis, CrossHair, or Verus, for this item. Rationale: ADR-0006
   scopes Phase 1 tests to documentation and link contracts until parser
   behaviour, output snapshots, input invariants, or proof-worthy logic exist.
   Date/Author: 2026-06-18 / Claude (planning).
 - Decision: Keep roadmap item 1.1.4 open while recording it as in progress.
   Rationale: branch and pull-request housekeeping are complete, but the roadmap
-  success criterion still depends on ADR-003 acceptance, documentation-contract
-  tests, CodeRabbit review, and final quality gates. Date/Author: 2026-06-24 /
-  Codex (implementation).
+  success criterion still depends on ADR-0003 acceptance,
+  documentation-contract tests, CodeRabbit review, and final quality gates.
+  Date/Author: 2026-06-24 / Codex (implementation).
 - Decision: Omit the standalone `make fmt` gate from this plan because the
   project-wide formatter still fails on pre-existing out-of-scope Markdown
   errors in another execplan. Rationale: the plan should keep only executable
@@ -452,10 +453,10 @@ the accepted policy.
 ## Outcomes & retrospective
 
 To be completed when the approved implementation finishes. It must compare the
-result against this purpose: ADR-003 accepted with the named-weight-only policy
-and the shaped-rule clarification, contract tests locking the policy, roadmap
-item 1.1.4 marked done, all local gates passing, CodeRabbit clear, and no
-profile parser, vocabulary registry, value object, or scoring code added.
+result against this purpose: ADR-0003 accepted with the named-weight-only
+policy and the shaped-rule clarification, contract tests locking the policy,
+roadmap item 1.1.4 marked done, all local gates passing, CodeRabbit clear, and
+no profile parser, vocabulary registry, value object, or scoring code added.
 
 ## Context and orientation
 
@@ -471,10 +472,10 @@ The key files are:
 
 - `docs/roadmap.md`: the ordered implementation roadmap. Item 1.1.4 is the
   profile rule-expression policy task.
-- `docs/adr-003-profile-rule-expression-policy.md`: the ADR whose status this
-  task moves from "Proposed" to "Accepted".
-- `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`: the accepted ADR to
-  use as a structural and procedural template.
+- `docs/adrs/adr-0003-profile-rule-expression-policy.md`: the ADR whose status
+  this task moves from "Proposed" to "Accepted".
+- `docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md`: the accepted
+  ADR to use as a structural and procedural template.
 - `docs/prosidy-darn-technical-design.md`: the authoritative technical design.
   Sections 4, 7.3, 7.4, 8, 9, 13, 15, and 18 are directly relevant.
 - `docs/developers-guide.md`: maintainer-facing guidance, the Phase 1 ADR list,
@@ -482,8 +483,8 @@ The key files are:
 - `docs/users-guide.md`: user-facing behaviour. It changes only if a
   user-visible statement must be corrected, which this task should not require.
 - `docs/documentation-style-guide.md`: ADR naming and required-section rules.
-- `tests/test_developer_docs.py`: the documentation-contract tests. The ADR-002
-  assertions on lines 136-198 are the template for the new ADR-003 assertions.
+- `tests/test_developer_docs.py`: the documentation-contract tests. The ADR-0002
+  assertions on lines 136-198 are the template for the new ADR-0003 assertions.
 - `pyproject.toml`: current dependencies. This task must not modify it.
 - `Makefile`: local quality gates (`check-fmt`, `markdownlint`, `nixie`,
   `typecheck`, `lint`, `test`). Prefer its targets over direct tool invocation.
@@ -515,37 +516,37 @@ Important terms:
 
 Milestone 1 prepares the branch and confirms the baseline. Confirm the current
 branch is `1-1-4-record-the-profile-rule-expression-policy`. Read the roadmap,
-ADR-002 and ADR-003, ADR-006, the technical design sections listed above, the
-developers' guide, the users' guide, the documentation style guide, the
+ADR-0002 and ADR-0003, ADR-0006, the technical design sections listed above,
+the developers' guide, the users' guide, the documentation style guide, the
 existing documentation-contract tests, the Makefile, and `pyproject.toml`.
 
 Milestone 2 adds failing documentation-contract tests first. Extend
 `tests/test_developer_docs.py` with tests that prove roadmap item 1.1.4 cannot
-be closed unless ADR-003 is accepted and states the chosen policy. Mirror the
-ADR-002 assertions. The tests should check for these observable facts:
+be closed unless ADR-0003 is accepted and states the chosen policy. Mirror the
+ADR-0002 assertions. The tests should check for these observable facts:
 
-- ADR-003 exists and is accepted (status section contains "## Status" and
+- ADR-0003 exists and is accepted (status section contains "## Status" and
   "Accepted on").
-- ADR-003 states that v1 profiles allow only named rule weights from a closed,
+- ADR-0003 states that v1 profiles allow only named rule weights from a closed,
   documented vocabulary and that arbitrary custom rule expressions are not
   permitted.
-- ADR-003 states that the profile loader never evaluates configuration strings
+- ADR-0003 states that the profile loader never evaluates configuration strings
   as code and never uses `eval`, `exec`, `simpleeval`, or `asteval`.
-- ADR-003 states that the segmenter's shaped scoring rules are domain-owned and
+- ADR-0003 states that the segmenter's shaped scoring rules are domain-owned and
   fixed in v1, and that profiles select and scale them but never define them.
-- ADR-003 states that the named-weight vocabulary is owned by the domain scoring
-  layer and enforced by the configuration adapter.
-- ADR-003 states that each named-weight key has exactly one declared value shape
-  and that mixed-shape keys are prohibited.
-- ADR-003 states the rejection contract: unknown keys, out-of-vocabulary enum
+- ADR-0003 states that the named-weight vocabulary is owned by the domain
+  scoring layer and enforced by the configuration adapter.
+- ADR-0003 states that each named-weight key has exactly one declared value
+  shape and that mixed-shape keys are prohibited.
+- ADR-0003 states the rejection contract: unknown keys, out-of-vocabulary enum
   values, and out-of-range or malformed numeric scalars are rejected before
   processing input with exit code 7, enumerating the valid set.
-- ADR-003 states the numeric invariants, including `words_per_second` greater
+- ADR-0003 states the numeric invariants, including `words_per_second` greater
   than zero and `ideal_min <= ideal_max <= hard_max_seconds`.
-- ADR-003 states that profiles are sparse overlays carrying a `schema_version`,
+- ADR-0003 states that profiles are sparse overlays carrying a `schema_version`,
   that additive vocabulary changes are backward-compatible, and that removing,
   renaming, or narrowing requires a new ADR.
-- ADR-003 states that any future expression capability requires a new ADR
+- ADR-0003 states that any future expression capability requires a new ADR
   adopting a sandboxed, non-Turing-complete evaluator, without pre-selecting an
   engine.
 - The roadmap item for 1.1.4 is marked done.
@@ -554,12 +555,12 @@ Run the focused test after adding it and confirm it fails for the expected
 reason before changing the ADR. If a subset already passes because the ADR stub
 satisfies it, document that in `Surprises & Discoveries` and continue.
 
-Milestone 3 finalizes ADR-003. Replace the "Pending" decision outcome with
+Milestone 3 finalizes ADR-0003. Replace the "Pending" decision outcome with
 "Accepted on `YYYY-MM-DD`" plus the chosen policy. Add the sections required by
 the documentation style guide and absent from the stub: options considered
 (with a captioned comparison table), decision outcome, goals and non-goals,
 migration plan, known risks and limitations, and architectural rationale. The
-ADR must follow the shape of ADR-002 and must clearly state every commitment
+ADR must follow the shape of ADR-0002 and must clearly state every commitment
 that the Milestone 2 tests assert, including:
 
 - v1 profiles allow only named rule weights from a closed, documented
@@ -598,9 +599,9 @@ that the Milestone 2 tests assert, including:
   scoring code; tasks 1.2.x, 2.3.1, and 3.2.x own that implementation.
 
 Milestone 4 aligns surrounding documentation. Check
-`docs/prosidy-darn-technical-design.md` §18 and add the accepted ADR-003
-outcome alongside ADR-001 and ADR-002. Review §8 and the developers' guide for
-wording that would contradict the accepted policy and adjust only where
+`docs/prosidy-darn-technical-design.md` §18 and add the accepted ADR-0003
+outcome alongside ADR-0001 and ADR-0002. Review §8 and the developers' guide
+for wording that would contradict the accepted policy and adjust only where
 necessary; avoid duplicating the full ADR text elsewhere. `docs/users-guide.md`
 changes only if a user-visible statement must be corrected.
 
@@ -647,8 +648,8 @@ Read the local context:
 
 ```bash
 sed -n '102,109p' docs/roadmap.md
-sed -n '1,60p' docs/adr-003-profile-rule-expression-policy.md
-sed -n '1,80p' docs/adr-002-tokenizer-and-semantic-scoring-policy.md
+sed -n '1,60p' docs/adrs/adr-0003-profile-rule-expression-policy.md
+sed -n '1,80p' docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md
 sed -n '451,489p' docs/prosidy-darn-technical-design.md
 sed -n '590,656p' docs/prosidy-darn-technical-design.md
 sed -n '950,966p' docs/prosidy-darn-technical-design.md
@@ -700,7 +701,7 @@ COMMIT_MSG_DIR=$(mktemp -d)
 cat > "$COMMIT_MSG_DIR/COMMIT_MSG.md" << 'ENDOFMSG'
 Ratify profile rule-expression policy
 
-Accept ADR-003 with named rule weights only: a closed, domain-owned
+Accept ADR-0003 with named rule weights only: a closed, domain-owned
 vocabulary of numeric, boolean, and enum knobs, no arbitrary expressions,
 no eval-class evaluation, and shaped scoring rules kept domain-owned and
 fixed so profiles select and scale them rather than define them.
@@ -731,19 +732,19 @@ https://lody.ai/leynos/sessions/${LODY_SESSION_ID}
 
 The approved implementation is accepted when all of these are true:
 
-- `tests/test_developer_docs.py` verifies that ADR-003 is accepted and states
+- `tests/test_developer_docs.py` verifies that ADR-0003 is accepted and states
   the named-weight-only policy, the no-`eval` prohibition, the domain-owned
   shaped-rule clarification, the vocabulary ownership, the single-shape-per-key
   rule, the exit-code-7 rejection contract, the numeric invariants, the
   sparse-overlay and `schema_version` evolution rule, and the deferral of any
   future expression engine to a new ADR.
-- `docs/roadmap.md` marks item 1.1.4 done only after ADR-003 is accepted and the
-  contract tests pass.
-- `docs/adr-003-profile-rule-expression-policy.md` is accepted and carries
+- `docs/roadmap.md` marks item 1.1.4 done only after ADR-0003 is accepted and
+  the contract tests pass.
+- `docs/adrs/adr-0003-profile-rule-expression-policy.md` is accepted and carries
   Status, Date, Context and problem statement, Decision drivers, Options
   considered, Decision outcome, Goals and non-goals, Migration plan, Known
   risks and limitations, and Architectural rationale sections.
-- The technical design §18 records the ADR-003 outcome, and no other document
+- The technical design §18 records the ADR-0003 outcome, and no other document
   contradicts the accepted policy.
 - No profile parser, vocabulary registry, value object, configuration adapter,
   CLI behaviour, or user-facing API is added by this task.

@@ -26,11 +26,12 @@ Dependency Rule): all source dependencies point inward, so the pure domain and
 the application layer never name an adapter, a framework, or a vendor library.
 
 The repository already contains a stub
-`docs/adr-004-import-boundary-fitness-check.md` whose status is "Proposed" and
-whose decision outcome is "Pending". This plan therefore finalizes and closes
-an existing decision rather than creating a new ADR file. The chosen tool is
-`leynos/hecate`, a purpose-built df12 hexagonal-architecture checker, with the
-mature PyPI package `import-linter` named as the pre-vetted fallback.
+`docs/adrs/adr-0004-import-boundary-fitness-check.md` whose status is
+"Proposed" and whose decision outcome is "Pending". This plan therefore
+finalizes and closes an existing decision rather than creating a new ADR file.
+The chosen tool is `leynos/hecate`, a purpose-built df12 hexagonal-architecture
+checker, with the mature PyPI package `import-linter` named as the pre-vetted
+fallback.
 
 Unlike roadmap tasks 1.1.1 and 1.1.2, which were documentation-only, task 1.1.3
 carries an executable success criterion: "the chosen check can fail a boundary
@@ -39,14 +40,14 @@ whose verb is "fail". This plan therefore also adds a durable, re-runnable
 demonstration: a self-contained architecture fixture plus a pytest test that
 runs the selected checker and proves it reports a violation (exit status 1) on
 a dirty fixture and passes (exit status 0) on a clean one.
-`docs/adr-006-test- matrix-phase-scope.md` already scopes "import-boundary
+`docs/adrs/adr-0006-test-matrix-phase-scope.md` already scopes "import-boundary
 checks" into Phase 1 tests, so this demonstration is in already-accepted scope.
 
 After this plan is approved and implemented, a maintainer can observe success
-by reading the accepted ADR-004, seeing roadmap item 1.1.3 marked done, running
-the documentation and Python quality gates without failures, and watching the
-new fixture test prove that the selected checker fails a deliberate
-domain-to-adapter import while passing a clean fixture.
+by reading the accepted ADR-0004, seeing roadmap item 1.1.3 marked done,
+running the documentation and Python quality gates without failures, and
+watching the new fixture test prove that the selected checker fails a
+deliberate domain-to-adapter import while passing a clean fixture.
 
 The implementation carried out from this plan must not create the real
 `prosidy_darn.domain`, `prosidy_darn.application`, `prosidy_darn.ports`,
@@ -59,7 +60,7 @@ distinct jobs of roadmap tasks 1.2.1, 1.2.2, and 1.2.3 respectively.
 
 `docs/roadmap.md` defines roadmap item 1.1.3 under "Ratify the v1 decisions
 that block implementation". The item requires
-`docs/adr-004-import-boundary-fitness-check.md`, lists 1.0.1 and 1.1.1 as
+`docs/adrs/adr-0004-import-boundary-fitness-check.md`, lists 1.0.1 and 1.1.1 as
 prerequisites (both already done), and declares success as: "the chosen check
 can fail a boundary violation in a minimal fixture branch". The roadmap also
 points to `https://github.com/leynos/hecate` for hexagonal-architecture
@@ -83,29 +84,30 @@ defines the one architecture fitness function: "`prosidy_darn.domain` and
 Cyclopts. The CI gate should include an import-boundary check before the first
 non-trivial adapter lands." Section 18 lists the open decision "Which
 import-boundary checker should enforce hexagonal dependency rules" and records
-the already-accepted ADR-001 and ADR-002 outcomes; this task must record the
-ADR-004 outcome there and remove the open-decision bullet.
+the already-accepted ADR-0001 and ADR-0002 outcomes; this task must record the
+ADR-0004 outcome there and remove the open-decision bullet.
 
-`docs/adr-001-markdown-parser-boundary.md` and
-`docs/adr-002-tokenizer-and-semantic-scoring-policy.md` are the accepted ADRs
-to use as structural templates: status acceptance, decision drivers, options
-table with a caption, decision outcome, goals and non-goals, migration plan,
-known risks and limitations, and architectural rationale.
+`docs/adrs/adr-0001-markdown-parser-boundary.md` and
+`docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md` are the accepted
+ADRs to use as structural templates: status acceptance, decision drivers,
+options table with a caption, decision outcome, goals and non-goals, migration
+plan, known risks and limitations, and architectural rationale.
 
-`docs/adr-006-test-matrix-phase-scope.md` scopes Phase 1 tests to
+`docs/adrs/adr-0006-test-matrix-phase-scope.md` scopes Phase 1 tests to
 import-boundary checks, public import tests, developer-documentation checks,
 and ADR link validation, and defers `pytest-bdd`, `syrupy`, Hypothesis,
 CrossHair, and Verus until the product surfaces they validate exist. The line
 that scopes "import-boundary checks" into Phase 1 is the warrant for adding a
 fixture test in this task.
 
-`docs/adr-008-two-tier-linting-architecture.md` is the precedent for adopting a
-pinned, off-PyPI, git-referenced internal tool (`leynos/pylint-pypy-shim`)
-through `uv tool run`, and for keeping such a tool out of the project virtual
-environment. ADR-004 composes with ADR-008: the import-boundary check is a
-distinct third gate, separate from the two lint tiers, and must not be folded
-into `make lint` because the Pylint tier runs under PyPy (per ADR-008), whose
-managed interpreter lags the project's Python 3.14 target and cannot run hecate.
+`docs/adrs/adr-0008-two-tier-linting-architecture.md` is the precedent for
+adopting a pinned, off-PyPI, git-referenced internal tool
+(`leynos/pylint-pypy-shim`) through `uv tool run`, and for keeping such a tool
+out of the project virtual environment. ADR-0004 composes with ADR-0008: the
+import-boundary check is a distinct third gate, separate from the two lint
+tiers, and must not be folded into `make lint` because the Pylint tier runs
+under PyPy (per ADR-0008), whose managed interpreter lags the project's Python
+3.14 target and cannot run hecate.
 
 `docs/developers-guide.md` documents the hexagonal package layout, the two-tier
 lint architecture, the Makefile lint variables (including
@@ -118,10 +120,10 @@ British English with Oxford spelling, 80-column prose wrapping, 120-column code
 wrapping, language identifiers on fenced blocks, and captions on every table.
 
 `tests/test_developer_docs.py` contains the documentation-contract tests for
-ADR-001 and ADR-002. New ADR-004 contract tests must mirror that pattern:
+ADR-0001 and ADR-0002. New ADR-0004 contract tests must mirror that pattern:
 status-acceptance assertions, required-phrase assertions over the policy text,
 and roadmap closure linked to ADR acceptance. The constants `INITIAL_ADR_PATHS`
-and `PHASE_ONE_QUALITY_GATES` already include ADR-004 and the gate commands.
+and `PHASE_ONE_QUALITY_GATES` already include ADR-0004 and the gate commands.
 
 `tests/test_public_api.py` exercises the current scaffold package
 (`prosidy_darn/__init__.py`, `_runtime.py`, `pure.py`). The new fixture test
@@ -171,7 +173,7 @@ decision. They are recorded so the implementer need not re-research them.
   domain/application/adapters layering. Its companion `grimp` builds the import
   graph (Rust core) and catches indirect chains. Its CLI is `lint-imports`; it
   exits non-zero on a broken contract; it has no documented machine-readable
-  output format. It is the named fallback for ADR-004.
+  output format. It is the named fallback for ADR-0004.
 - `tach` (gauge-sh, Rust-backed, ~2.7k stars, PyPI, supports the project's
   Python 3.14 target) enforces first-party module boundaries via `tach.toml`
   and can check external dependencies, but its model is module-graph-centric
@@ -285,7 +287,7 @@ cleared CodeRabbit concerns, been committed, and been pushed.
 Stop and ask for direction if implementation of the approved plan requires
 changes outside these paths:
 
-- `docs/adr-004-import-boundary-fitness-check.md`
+- `docs/adrs/adr-0004-import-boundary-fitness-check.md`
 - `docs/roadmap.md`
 - `docs/prosidy-darn-technical-design.md`
 - `docs/developers-guide.md`
@@ -352,7 +354,7 @@ medium. Likelihood: high (already present). Mitigation: correct both workflows
 to `3.14` as part of this task. Independently, hecate runs only as an isolated
 `uv tool run --python 3.14` subprocess (never imported), so it is unaffected by
 the interpreter that runs `pytest`, and the Pylint tier's managed PyPy
-(ADR-008) remains a deliberate, separate exception.
+(ADR-0008) remains a deliberate, separate exception.
 
 Risk: False green (silent no-op). A mistyped prefix, an omitted external
 package, a barrel re-export, or an unknown-key-ignored config could make the
@@ -410,7 +412,7 @@ criterion.
   `hexagonal-architecture` skills and the `execplans` skill, and created a leta
   workspace for this repository.
 - [x] (2026-06-09) Read the roadmap, the technical design (sections 4, 5, 9, 16,
-  and 18), ADR-001, ADR-002, ADR-006, ADR-008, the ADR-004 stub, the
+  and 18), ADR-0001, ADR-0002, ADR-0006, ADR-0008, the ADR-0004 stub, the
   developers' guide, the documentation style guide, the documentation-contract
   tests, the Makefile, and `pyproject.toml`.
 - [x] (2026-06-09) Inspected `leynos/hecate` (README, configuration schema, and
@@ -427,14 +429,14 @@ criterion.
 - [ ] Rename the branch to
   `1-1-3-record-import-boundary-enforcement-decision` and track the matching
   remote.
-- [ ] Add the failing documentation-contract tests for ADR-004 acceptance and
+- [ ] Add the failing documentation-contract tests for ADR-0004 acceptance and
   confirm they fail for the expected reason.
 - [ ] Add the failing fixture demonstration test
   (`tests/test_import_boundary_fitness.py`) and fixture trees, and confirm the
   test fails before the Makefile pin and fixture config exist.
 - [ ] Add the `HECATE_REF`, `HECATE_SPEC`, and `HECATE` Makefile variables and
   export `HECATE_REF` to the `test` target; pin a full hecate commit SHA.
-- [ ] Finalize ADR-004 (status, options table, decision, production config,
+- [ ] Finalize ADR-0004 (status, options table, decision, production config,
   limitations, fallback) and capture the one-shot demonstration evidence.
 - [ ] Align `docs/prosidy-darn-technical-design.md` section 18, the developers'
   guide, and `docs/contents.md`.
@@ -447,10 +449,11 @@ criterion.
 
 ## Surprises & discoveries
 
-- Observation: ADR-004 already exists as a "Proposed" stub with a pending
-  outcome. Evidence: `docs/adr-004-import-boundary-fitness-check.md` lines 3-9.
-  Impact: the implementation finalizes the existing file in place rather than
-  creating a new one, preserving the stable review path the stub promises.
+- Observation: ADR-0004 already exists as a "Proposed" stub with a pending
+  outcome. Evidence: `docs/adrs/adr-0004-import-boundary-fitness-check.md`
+  lines 3-9. Impact: the implementation finalizes the existing file in place
+  rather than creating a new one, preserving the stable review path the stub
+  promises.
 - Observation: the PyPI distribution `hecate` is unrelated to `leynos/hecate`.
   Evidence: `https://pypi.org/pypi/hecate/json` returns David MacIver's ncurses
   CLI tester. Impact: hecate must be referenced only by pinned git URL;
@@ -461,12 +464,12 @@ criterion.
   `requires-python = ">=3.14"` versus the two workflow pins. Impact: both
   workflows must be corrected to `3.14` so CI exercises the supported
   interpreter; this is folded into the task. (The `pyproject.toml` comment
-  about managed PyPy is the deliberate ADR-008 Pylint-tier exception, not an
+  about managed PyPy is the deliberate ADR-0008 Pylint-tier exception, not an
   error.)
 - Observation: hecate requires Python >=3.14 and imports Cyclopts. Evidence:
   hecate's `pyproject.toml`. Impact: hecate must run out-of-process as an
   isolated `uv tool run --python 3.14` subprocess and must not be folded into
-  `make lint` (whose Pylint tier runs under PyPy per ADR-008).
+  `make lint` (whose Pylint tier runs under PyPy per ADR-0008).
 - Observation: the technical design treats `prosidy_darn.ports` as a distinct
   package (section 9) that domain and application import, even though section 4
   says ports "belong to the domain or application layer". Evidence: design
@@ -485,7 +488,7 @@ criterion.
 - Decision: Treat 1.1.3 as a decision-finalization task that also adds a durable
   demonstration, not documentation only. Rationale: the roadmap success
   criterion ("can fail a boundary violation in a minimal fixture") is
-  executable, and ADR-006 already scopes import-boundary checks into Phase 1
+  executable, and ADR-0006 already scopes import-boundary checks into Phase 1
   tests. Documentation only would push the sole proof of tool selection to
   1.2.3. Date/Author: 2026-06-09 / Claude (planning).
 - Decision: Select `leynos/hecate` as the v1 primary import-boundary fitness
@@ -508,7 +511,7 @@ criterion.
   to 3.14. Rationale: the project targets Python >=3.14, so the 3.13 CI pins
   are defects; hecate is not a project dependency and imports Cyclopts, so it
   must run isolated to keep Cyclopts out of the project environment. The Pylint
-  tier's managed PyPy (ADR-008) is a separate, deliberate exception.
+  tier's managed PyPy (ADR-0008) is a separate, deliberate exception.
   Date/Author: 2026-06-09 / Claude (planning).
 - Decision: Model five groups (`domain`, `ports`, `application`, `adapters`,
   `config`) with explicit `allowed` lists, and place external prefixes in the
@@ -532,14 +535,15 @@ criterion.
   without doing 1.2.3's work. Date/Author: 2026-06-09 / Claude (planning).
 - Decision: Use `pytest` documentation-contract tests plus one subprocess
   fixture test, not `pytest-bdd`, `syrupy`, Hypothesis, CrossHair, or Verus.
-  Rationale: ADR-006 scopes Phase 1 to documentation, link, and import-boundary
-  checks; no user behaviour, output snapshot, input invariant, or proof-worthy
-  logic is introduced. Date/Author: 2026-06-09 / Claude (planning).
+  Rationale: ADR-0006 scopes Phase 1 to documentation, link, and
+  import-boundary checks; no user behaviour, output snapshot, input invariant,
+  or proof-worthy logic is introduced. Date/Author: 2026-06-09 / Claude
+  (planning).
 
 ## Outcomes & retrospective
 
 To be completed at implementation. The plan is accepted as delivered when
-ADR-004 is accepted naming hecate primary and import-linter fallback, the
+ADR-0004 is accepted naming hecate primary and import-linter fallback, the
 fixture demonstration proves exit 1 on a violation and exit 0 on a clean tree,
 the contract tests lock the policy, roadmap item 1.1.3 is marked done, all
 local gates pass, CodeRabbit reports no unresolved in-scope concerns, and the
@@ -570,13 +574,13 @@ tree. It records the decision, documents the production configuration shape for
 The key files for this task are:
 
 - `docs/roadmap.md`: item 1.1.3 and the sibling tasks 1.2.1, 1.2.2, and 1.2.3.
-- `docs/adr-004-import-boundary-fitness-check.md`: the stub to finalize.
-- `docs/adr-001-markdown-parser-boundary.md` and
-  `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`: accepted-ADR
+- `docs/adrs/adr-0004-import-boundary-fitness-check.md`: the stub to finalize.
+- `docs/adrs/adr-0001-markdown-parser-boundary.md` and
+  `docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md`: accepted-ADR
   templates.
-- `docs/adr-006-test-matrix-phase-scope.md`: the warrant for a Phase 1
+- `docs/adrs/adr-0006-test-matrix-phase-scope.md`: the warrant for a Phase 1
   import-boundary fixture test.
-- `docs/adr-008-two-tier-linting-architecture.md`: the pinned-git-ref tool
+- `docs/adrs/adr-0008-two-tier-linting-architecture.md`: the pinned-git-ref tool
   precedent and the reason the check is a distinct third gate.
 - `docs/prosidy-darn-technical-design.md`: sections 4, 5, 9, and 16 (the rule)
   and 18 (the open decision to close).
@@ -608,30 +612,30 @@ branch and, if it is not already
 `1-1-3-record-import-boundary-enforcement-decision`, rename it with
 `git branch -m`. Re-resolve hecate's HEAD commit SHA with
 `git ls-remote https://github.com/leynos/hecate.git HEAD` and record the full
-SHA to pin. Read the roadmap, the ADR-004 stub, ADR-001, ADR-002, ADR-006,
-ADR-008, the technical design sections named above, the developers' guide, the
+SHA to pin. Read the roadmap, the ADR-0004 stub, ADR-0001, ADR-0002, ADR-0006,
+ADR-0008, the technical design sections named above, the developers' guide, the
 documentation-contract tests, and the Makefile.
 
 Milestone 2 adds failing documentation-contract tests first. Extend
 `tests/test_developer_docs.py` with tests that prove roadmap item 1.1.3 cannot
-be closed unless ADR-004 is accepted and states the chosen policy. The tests
+be closed unless ADR-0004 is accepted and states the chosen policy. The tests
 should check for these observable facts:
 
-- ADR-004 exists and is accepted (status section contains "## Status" and
+- ADR-0004 exists and is accepted (status section contains "## Status" and
   "Accepted on ").
-- ADR-004 names hecate as the v1 import-boundary fitness function, installed via
-  a pinned git reference and run out-of-process through `uv tool run`.
-- ADR-004 names `import-linter` as the vetted fallback behind a stable
+- ADR-0004 names hecate as the v1 import-boundary fitness function, installed
+  via a pinned git reference and run out-of-process through `uv tool run`.
+- ADR-0004 names `import-linter` as the vetted fallback behind a stable
   `check-imports` seam.
-- ADR-004 states that the checker is never added to `pyproject.toml` and is
+- ADR-0004 states that the checker is never added to `pyproject.toml` and is
   never referenced by bare name because the PyPI `hecate` is an unrelated
   package.
-- ADR-004 states the five-group production model and that `domain`,
+- ADR-0004 states the five-group production model and that `domain`,
   `application`, and `ports` may not import adapters, Cyclopts, Rich, the
   parser package, renderers, or delivery code, while `config` may.
-- ADR-004 records hecate's exit-code contract (0 clean, 1 violations, 2
+- ADR-0004 records hecate's exit-code contract (0 clean, 1 violations, 2
   configuration or input error), distinct from the application CLI taxonomy.
-- The roadmap item for 1.1.3 is marked done only when ADR-004 is accepted.
+- The roadmap item for 1.1.3 is marked done only when ADR-0004 is accepted.
 
 Run the focused test and confirm it fails for the expected reason before
 editing the ADR.
@@ -678,7 +682,7 @@ target to `lint` or `all`; the real gate is task 1.2.3. Run the fixture test
 through `make test` and confirm it now passes (or skips only on confirmed
 unavailability).
 
-Milestone 5 finalizes ADR-004. Replace the "Pending" outcome with "Accepted on
+Milestone 5 finalizes ADR-0004. Replace the "Pending" outcome with "Accepted on
 `YYYY-MM-DD`". Keep the existing context and decision-driver material and add
 the sections the style guide requires: a decided options table comparing
 hecate, import-linter, tach, PyTestArch or custom `ast`, and Ruff `banned-api`
@@ -697,8 +701,8 @@ exit-1 output in the Artefacts section of this plan.
 
 Milestone 6 aligns surrounding documentation. Update
 `docs/prosidy-darn-technical-design.md` section 18 to remove the
-import-boundary open-decision bullet and record the ADR-004 outcome alongside
-ADR-001 and ADR-002. Update `docs/developers-guide.md` to document the
+import-boundary open-decision bullet and record the ADR-0004 outcome alongside
+ADR-0001 and ADR-0002. Update `docs/developers-guide.md` to document the
 `HECATE_REF` pin and its update discipline (a reviewed change like
 `PYLINT_PYPY_SHIM_REF`), the future `check-imports` seam, the bare-name
 prohibition, and that the architecture-fitness check is a distinct third gate
@@ -715,7 +719,7 @@ keep it to the two one-line pin changes and do not otherwise alter the
 workflows.
 
 Milestone 7 updates task tracking. Mark item 1.1.3 in `docs/roadmap.md` done
-only after ADR-004 is accepted, the fixture demonstration passes, and the
+only after ADR-0004 is accepted, the fixture demonstration passes, and the
 contract tests pass. Do not mark 1.2.1, 1.2.2, or 1.2.3 done.
 
 Milestone 8 validates the change. Run formatting checks, Markdown linting,
@@ -756,8 +760,8 @@ Read the local context:
 
 ```bash
 sed -n '94,136p' docs/roadmap.md
-sed -n '1,46p' docs/adr-004-import-boundary-fitness-check.md
-sed -n '1,140p' docs/adr-001-markdown-parser-boundary.md
+sed -n '1,46p' docs/adrs/adr-0004-import-boundary-fitness-check.md
+sed -n '1,140p' docs/adrs/adr-0001-markdown-parser-boundary.md
 sed -n '109,226p' docs/prosidy-darn-technical-design.md
 sed -n '1117,1190p' docs/prosidy-darn-technical-design.md
 sed -n '1226,1243p' docs/prosidy-darn-technical-design.md
@@ -809,9 +813,9 @@ git diff -- docs tests Makefile .github/workflows/ci.yml .github/workflows/relea
 git add docs tests Makefile .github/workflows/ci.yml .github/workflows/release.yml
 COMMIT_MSG_DIR=$(mktemp -d)
 cat > "$COMMIT_MSG_DIR/COMMIT_MSG.md" << 'ENDOFMSG'
-Record import-boundary fitness check decision (ADR-004)
+Record import-boundary fitness check decision (ADR-0004)
 
-Accept ADR-004 selecting leynos/hecate as the v1 import-boundary fitness
+Accept ADR-0004 selecting leynos/hecate as the v1 import-boundary fitness
 function, installed out-of-process via a pinned git reference and run on
 Python 3.14, with import-linter named as the vetted fallback behind a
 stable check-imports seam.
@@ -843,7 +847,7 @@ ExecPlan, and the final `## References` section must include
 
 The approved implementation is accepted when all of these are true:
 
-- `tests/test_developer_docs.py` verifies that ADR-004 is accepted and states
+- `tests/test_developer_docs.py` verifies that ADR-0004 is accepted and states
   the hecate-primary and import-linter-fallback decision, the pinned-git-ref
   out-of-process install, the bare-name prohibition, the five-group production
   model, and the exit-code contract.
@@ -852,22 +856,22 @@ The approved implementation is accepted when all of these are true:
   exit 1 naming the offending edges on the dirty fixture, treating exit 2 as a
   harness failure. The test is collected by `make test` and skips only on
   confirmed tool unavailability with a clear reason.
-- `docs/adr-004-import-boundary-fitness-check.md` is accepted and carries
+- `docs/adrs/adr-0004-import-boundary-fitness-check.md` is accepted and carries
   Status, Date, Context and problem statement, Decision drivers, Options
   considered (with a captioned comparison table), Decision outcome, the
   documented production `[tool.hecate]` config, Goals and non-goals, Migration
   plan, Known risks and limitations, and Architectural rationale.
-- `docs/roadmap.md` marks item 1.1.3 done only after ADR-004 is accepted and the
-  tests pass.
+- `docs/roadmap.md` marks item 1.1.3 done only after ADR-0004 is accepted and
+  the tests pass.
 - `docs/prosidy-darn-technical-design.md` section 18,
   `docs/developers-guide.md`, and `docs/contents.md` are aligned with the
-  accepted decision, and no document contradicts ADR-004.
+  accepted decision, and no document contradicts ADR-0004.
 - No real `prosidy_darn` domain, application, ports, adapters, or config package
   is created; no `pyproject.toml` dependency is added; no gate over real source
   is wired.
 - `.github/workflows/ci.yml` and `.github/workflows/release.yml` pin
   `python-version: '3.14'`, with no remaining reference to an earlier
-  interpreter outside the deliberate ADR-008 PyPy Pylint tier.
+  interpreter outside the deliberate ADR-0008 PyPy Pylint tier.
 - `make check-fmt`, `make markdownlint`, `make nixie`, `make typecheck`,
   `make lint`, and `make test` all pass.
 - `coderabbit review --agent` reports no unresolved in-scope concerns.
@@ -915,7 +919,7 @@ renaming locally and pushing.
 
 ## Artefacts and notes
 
-The production `[tool.hecate]` configuration that ADR-004 documents (for task
+The production `[tool.hecate]` configuration that ADR-0004 documents (for task
 1.2.3 to commit against the real tree; the exact external import names are
 verified during implementation) is:
 
@@ -1043,8 +1047,8 @@ Implementation must not start until the user explicitly approves the plan.
 
 Revised on 2026-06-09 after review feedback that the project targets Python
 >=3.14 and any reference to an earlier interpreter is an error. Reframed the
-out-of-process hecate rationale around tool isolation and the ADR-008 PyPy tier
-rather than the CI interpreter version; recorded that
+out-of-process hecate rationale around tool isolation and the ADR-0008 PyPy
+tier rather than the CI interpreter version; recorded that
 `.github/workflows/ci.yml` and `.github/workflows/release.yml` erroneously pin
 Python 3.13; and folded correcting both pins to 3.14 into the task scope,
 progress, tolerances, validation, and Milestone 6a. This does not change the
