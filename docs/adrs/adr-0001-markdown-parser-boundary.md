@@ -17,7 +17,7 @@ extractor is a contingency, not a concurrent v1 adapter.
 
 ## Date
 
-2026-11-12.
+2026-05-09.
 
 ## Context and problem statement
 

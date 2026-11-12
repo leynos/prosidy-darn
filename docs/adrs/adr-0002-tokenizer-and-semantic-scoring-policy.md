@@ -19,7 +19,7 @@ raise an explicit `ImportError` when their optional extra is missing.
 
 ## Date
 
-2026-11-12.
+2026-05-26.
 
 ## Context and problem statement
 

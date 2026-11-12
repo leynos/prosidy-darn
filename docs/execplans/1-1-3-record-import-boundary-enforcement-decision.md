@@ -1056,10 +1056,9 @@ import-boundary decision or the demonstration design.
 
 ## Addendum — 2026-11-12: Canonical ADR references
 
-This closed plan preserves its implementation scope, milestone status,
-progress, and outcomes. The references in the plan were mechanically updated to
-the canonical four-digit ADR paths; the mappings below record the names used
-when the work was completed.
+This plan preserves its original text. Historical ADR paths and identifiers
+remain as recorded when the plan was written; the mappings below identify their
+canonical references after the naming migration.
 
 | Historical reference                                                | Canonical reference                                                        |
 | ------------------------------------------------------------------- | -------------------------------------------------------------------------- |

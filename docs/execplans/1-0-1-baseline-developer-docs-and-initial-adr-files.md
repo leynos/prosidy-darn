@@ -23,10 +23,10 @@ visible when:
 
 - `docs/developers-guide.md` exists and points maintainers at the package
   boundaries from `docs/prosidy-darn-technical-design.md`.
-- `docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md`,
-  `docs/adrs/adr-0003-profile-rule-expression-policy.md`, and
-  `docs/adrs/adr-0004-import-boundary-fitness-check.md` exist as proposed
-  decision locations.
+- `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`,
+  `docs/adr-003-profile-rule-expression-policy.md`, and
+  `docs/adr-004-import-boundary-fitness-check.md` exist as proposed decision
+  locations.
 - The roadmap and developers' guide make those ADR paths discoverable.
 - Documentation and existing Python quality gates pass.
 
@@ -46,7 +46,7 @@ The technical design is the source of truth for this task:
 - Section 18 lists the open decisions that need ADR locations.
 
 The documentation style guide defines Markdown style, ADR names, and ADR
-sections. ADR-0006 scopes the Phase 1 test matrix to import-boundary checks,
+sections. ADR-006 scopes the Phase 1 test matrix to import-boundary checks,
 public import tests, developer documentation checks, and ADR link validation.
 
 ## Constraints
@@ -65,8 +65,8 @@ that `prosidy_darn.domain` and `prosidy_darn.application` must not import
 adapters, Cyclopts, parser packages, HTTP clients, filesystem delivery code, or
 vendor libraries.
 
-Do not mark ADR-0002, ADR-0003, or ADR-0004 as accepted unless their decisions
-are actually resolved. In this task they are proposed placeholders that create
+Do not mark ADR-002, ADR-003, or ADR-004 as accepted unless their decisions are
+actually resolved. In this task they are proposed placeholders that create
 stable review locations for later Phase 1 tasks.
 
 Do not change user-facing library or command-line behaviour. If
@@ -86,9 +86,9 @@ Stop and ask for direction if implementing the approved plan requires changes
 outside these paths:
 
 - `docs/developers-guide.md`
-- `docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md`
-- `docs/adrs/adr-0003-profile-rule-expression-policy.md`
-- `docs/adrs/adr-0004-import-boundary-fitness-check.md`
+- `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`
+- `docs/adr-003-profile-rule-expression-policy.md`
+- `docs/adr-004-import-boundary-fitness-check.md`
 - `docs/roadmap.md`
 - `docs/users-guide.md`
 - `docs/prosidy-darn-technical-design.md`
@@ -121,13 +121,13 @@ table from section 9, link back to the design, and add a test that checks key
 ADR paths are discoverable from the developer guide.
 
 Risk: Proposed ADR placeholders could look like accepted decisions. Severity:
-high. Likelihood: medium. Mitigation: Give ADR-0002, ADR-0003, and ADR-0004
+high. Likelihood: medium. Mitigation: Give ADR-002, ADR-003, and ADR-004
 `Proposed` status, include a clear "decision pending" outcome, and state which
 roadmap task owns acceptance.
 
 Risk: The user's broad test-tool requirements could be interpreted as adding
 all future test dependencies in this documentation task. Severity: medium.
-Likelihood: medium. Mitigation: Follow ADR-0006. Use existing `pytest` checks
+Likelihood: medium. Mitigation: Follow ADR-006. Use existing `pytest` checks
 for this task, and write the developer guide so future tasks know when to use
 `pytest-bdd`, `syrupy`, Hypothesis, CrossHair, Verus, and Vidai Mock.
 
@@ -167,9 +167,9 @@ Read these files before editing:
 - `docs/roadmap.md`
 - `docs/prosidy-darn-technical-design.md`
 - `docs/documentation-style-guide.md`
-- `docs/adrs/adr-0001-markdown-parser-boundary.md`
-- `docs/adrs/adr-0006-test-matrix-phase-scope.md`
-- `docs/adrs/adr-0007-cli-observability-scope.md`
+- `docs/adr-001-markdown-parser-boundary.md`
+- `docs/adr-006-test-matrix-phase-scope.md`
+- `docs/adr-007-cli-observability-scope.md`
 - `docs/users-guide.md`
 - `Makefile`
 
@@ -186,10 +186,10 @@ do not yet exist. The tests should verify:
 
 - `docs/developers-guide.md` exists.
 - The developer guide links to every initial Phase 1 ADR location:
-  `docs/adrs/adr-0001-markdown-parser-boundary.md`,
-  `docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md`,
-  `docs/adrs/adr-0003-profile-rule-expression-policy.md`, and
-  `docs/adrs/adr-0004-import-boundary-fitness-check.md`.
+  `docs/adr-001-markdown-parser-boundary.md`,
+  `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`,
+  `docs/adr-003-profile-rule-expression-policy.md`, and
+  `docs/adr-004-import-boundary-fitness-check.md`.
 - Each linked ADR file exists.
 - `docs/roadmap.md` mentions the same ADR paths.
 - The developer guide mentions the Phase 1 quality gates:
@@ -223,7 +223,7 @@ Include these sections:
   each other directly.
 - Local quality gates: name the Makefile targets and explain when to run each
   one.
-- Testing expectations by phase: summarize ADR-0006, including `pytest` for
+- Testing expectations by phase: summarize ADR-006, including `pytest` for
   current documentation checks, `pytest-bdd` for later behavioural scenarios,
   `syrupy` for stable output snapshots, and Hypothesis or a bounded checker for
   future invariants over generated inputs or state transitions.
@@ -232,27 +232,27 @@ Include these sections:
   success and failure cases.
 - Documentation update rules: state when to update `docs/users-guide.md`, the
   technical design, component architecture docs, and ADRs.
-- ADR locations: link to ADR-0001 through ADR-0004, plus ADR-0006 and ADR-0007
-  as already accepted scope constraints.
+- ADR locations: link to ADR-001 through ADR-004, plus ADR-006 and ADR-007 as
+  already accepted scope constraints.
 
 Acceptance: a contributor can read the developer guide and know where to place
 domain, application, adapter, and composition-root code in later tasks.
 
 ## Milestone 4: Add proposed ADR locations
 
-Create these files under `docs/adrs/`:
+Create these files under `docs/`:
 
-- `docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md`
-- `docs/adrs/adr-0003-profile-rule-expression-policy.md`
-- `docs/adrs/adr-0004-import-boundary-fitness-check.md`
+- `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`
+- `docs/adr-003-profile-rule-expression-policy.md`
+- `docs/adr-004-import-boundary-fitness-check.md`
 
 Each file must follow the ADR structure in `docs/documentation-style-guide.md`.
 Because task 1.0.1 creates locations but does not resolve the decisions, use
 `Proposed` status and state the owning roadmap task:
 
-- ADR-0002 is resolved by roadmap task 1.1.2.
-- ADR-0003 is resolved by roadmap task 1.1.4.
-- ADR-0004 is resolved by roadmap task 1.1.3.
+- ADR-002 is resolved by roadmap task 1.1.2.
+- ADR-003 is resolved by roadmap task 1.1.4.
+- ADR-004 is resolved by roadmap task 1.1.3.
 
 Each placeholder ADR should include:
 
@@ -271,9 +271,9 @@ future design decisions have already been made.
 ## Milestone 5: Update discoverability links
 
 Update `docs/roadmap.md` only if needed to keep task 1.0.1 discoverability
-clear. The roadmap already lists ADR-0001 through ADR-0004, ADR-0006, and
-ADR-0007, so the expected implementation change is to mark item 1.0.1 done only
-after all gates pass.
+clear. The roadmap already lists ADR-001 through ADR-004, ADR-006, and ADR-007,
+so the expected implementation change is to mark item 1.0.1 done only after all
+gates pass.
 
 Review `docs/users-guide.md`. Do not add maintainer-only package layout detail
 unless the file already needs a consistency correction. If it changes, keep the
@@ -382,7 +382,7 @@ ExecPlan work.
   commit. The service failed before producing review findings because the
   account is out of usage credits, so there were no concerns to clear.
 - [x] 2026-05-10: Created `docs/developers-guide.md` and proposed ADR
-  placeholders for ADR-0002, ADR-0003, and ADR-0004.
+  placeholders for ADR-002, ADR-003, and ADR-004.
 - [x] 2026-05-10: Re-ran `uv run pytest tests/test_developer_docs.py -v`;
   all 5 documentation contract tests passed.
 - [x] 2026-05-10: Ran `coderabbit review --agent` after the developer guide
@@ -390,7 +390,7 @@ ExecPlan work.
   findings because the account is out of usage credits, so there were no
   concerns to clear.
 - [x] 2026-05-10: Reviewed roadmap, users' guide, and technical design
-  discoverability. The roadmap already names ADR-0001 through ADR-0004, the
+  discoverability. The roadmap already names ADR-001 through ADR-004, the
   users' guide needs no change because no user-facing behaviour changed, and
   the technical design already covers the conventions summarized in the
   developer guide.
@@ -410,8 +410,8 @@ ExecPlan work.
 
 ## Surprises & Discoveries
 
-- ADR-0001, ADR-0006, and ADR-0007 already exist. Task 1.0.1 therefore needs to
-  create ADR-0002 through ADR-0004 as proposed locations, not all initial ADRs
+- ADR-001, ADR-006, and ADR-007 already exist. Task 1.0.1 therefore needs to
+  create ADR-002 through ADR-004 as proposed locations, not all initial ADRs
   from scratch.
 - The current project has only the package smoke-test surface. There is no CLI,
   renderer, inference service, parser adapter, or output format for
@@ -432,10 +432,10 @@ ExecPlan work.
   explicitly stated that the plan must be approved before it is implemented.
   Consequence: only the ExecPlan itself is created in the planning pass.
 - 2026-05-10: Scope validation for the implementation to existing `pytest`
-  documentation checks plus Makefile gates. Rationale: ADR-0006 limits Phase 1
+  documentation checks plus Makefile gates. Rationale: ADR-006 limits Phase 1
   to developer-doc checks and ADR link validation, while roadmap task 1.2.2
   owns adding `pytest-bdd`, `syrupy`, and Hypothesis.
-- 2026-05-10: Treat ADR-0002, ADR-0003, and ADR-0004 as proposed placeholders.
+- 2026-05-10: Treat ADR-002, ADR-003, and ADR-004 as proposed placeholders.
   Rationale: roadmap tasks 1.1.2, 1.1.4, and 1.1.3 own the substantive
   decisions.
 - 2026-05-10: Document Vidai Mock as a future inference-adapter behavioural
@@ -457,7 +457,7 @@ ExecPlan work.
 Implementation is complete. The branch now adds:
 
 - `docs/developers-guide.md`;
-- proposed ADR locations for ADR-0002, ADR-0003, and ADR-0004;
+- proposed ADR locations for ADR-002, ADR-003, and ADR-004;
 - `tests/test_developer_docs.py` for developer-guide and ADR discoverability;
 - roadmap completion for item 1.0.1.
 
@@ -470,10 +470,9 @@ returned no review findings because the account is out of usage credits.
 
 ## Addendum — 2026-11-12: Canonical ADR references
 
-This closed plan preserves its implementation scope, milestone status,
-progress, and outcomes. The references in the plan were mechanically updated to
-the canonical four-digit ADR paths; the mappings below record the names used
-when the work was completed.
+This plan preserves its original text. Historical ADR paths and identifiers
+remain as recorded when the work was written; the mappings below identify their
+canonical references after the naming migration.
 
 | Historical reference                                                | Canonical reference                                                        |
 | ------------------------------------------------------------------- | -------------------------------------------------------------------------- |

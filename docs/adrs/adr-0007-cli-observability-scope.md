@@ -17,7 +17,7 @@ or long-running adapters create a concrete need.
 
 ## Date
 
-2026-11-12.
+2026-05-09.
 
 ## Context and problem statement
 

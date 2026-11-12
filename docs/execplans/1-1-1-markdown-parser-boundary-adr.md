@@ -15,13 +15,12 @@ task matters because parser choice sits behind a hexagonal outbound adapter
 boundary. Once the CLI, domain segmenter, parser adapter and renderers depend
 on parser ranges, changing the contract becomes expensive.
 
-The repository already contains
-`docs/adrs/adr-0001-markdown-parser-boundary.md`, and that Architecture
-Decision Record (ADR) is marked accepted. This plan therefore treats 1.1.1 as a
-validation and closure task, not as a fresh decision from a blank page. After
-this plan is approved and implemented, a maintainer can observe success by
-reading the accepted ADR, seeing roadmap item 1.1.1 marked done, and running
-the documentation and Python quality gates without failures.
+The repository already contains `docs/adr-001-markdown-parser-boundary.md`, and
+that Architecture Decision Record (ADR) is marked accepted. This plan therefore
+treats 1.1.1 as a validation and closure task, not as a fresh decision from a
+blank page. After this plan is approved and implemented, a maintainer can
+observe success by reading the accepted ADR, seeing roadmap item 1.1.1 marked
+done, and running the documentation and Python quality gates without failures.
 
 The implementation carried out from this plan must not build the parser
 adapter. It records, validates and closes the decision that later parser work
@@ -31,8 +30,8 @@ must follow.
 
 `docs/roadmap.md` defines roadmap item 1.1.1 under "Ratify the v1 decisions
 that block implementation". The item requires
-`docs/adrs/adr-0001-markdown-parser-boundary.md`, and its success condition is
-one accepted ADR defining parser adapter order and fallback behaviour.
+`docs/adr-001-markdown-parser-boundary.md`, and its success condition is one
+accepted ADR defining parser adapter order and fallback behaviour.
 
 `docs/prosidy-darn-technical-design.md` is the architectural source of truth.
 Section 4 defines the hexagonal architecture: domain and application code may
@@ -42,12 +41,12 @@ clients or other adapters. Section 9 names the planned package boundary
 strategy: use `mdast` when version and compatibility probes pass, use plain
 text only for non-Markdown or explicit degraded mode, and keep a PyO3
 `markdown-rs` extractor as a contingency rather than a concurrent v1 adapter.
-Section 18 records ADR-0001 as the accepted decision for that open parser
+Section 18 records ADR-001 as the accepted decision for that open parser
 question.
 
 `docs/documentation-style-guide.md` defines ADR naming and content conventions.
-ADRs live under `docs/adrs/`, use names such as
-`adrs/adr-0001-markdown-parser-boundary.md`, and should make status, context,
+ADRs live under `docs/`, use names such as
+`adr-001-markdown-parser-boundary.md`, and should make status, context,
 decision drivers, options, outcome, risks and rationale easy to review.
 
 `docs/developers-guide.md` requires architecture and product decision changes
@@ -55,7 +54,7 @@ to update the relevant design or ADR document in the same change. It also
 defines Phase 1 quality gates and points contributors at the roadmap as the
 work sequence.
 
-`docs/adrs/adr-0006-test-matrix-phase-scope.md` scopes Phase 1 tests to
+`docs/adr-006-test-matrix-phase-scope.md` scopes Phase 1 tests to
 import-boundary checks, public import tests, developer documentation checks and
 ADR link validation. It deliberately defers `pytest-bdd`, `syrupy`, Hypothesis
 and parser compatibility tests until the product surfaces they validate exist.
@@ -118,7 +117,7 @@ The plan must be approved before implementation begins. Silence is not approval.
 Stop and ask for direction if implementation of the approved plan requires
 changes outside these paths:
 
-- `docs/adrs/adr-0001-markdown-parser-boundary.md`
+- `docs/adr-001-markdown-parser-boundary.md`
 - `docs/developers-guide.md`
 - `docs/prosidy-darn-technical-design.md`
 - `docs/roadmap.md`
@@ -129,7 +128,7 @@ Stop and ask for direction if more than 180 net lines of documentation or more
 than 80 net lines of test code are needed. This item closes an ADR decision; it
 should not become a parser implementation slice.
 
-Stop and ask for direction if the accepted decision in ADR-0001 must change
+Stop and ask for direction if the accepted decision in ADR-001 must change
 materially, if a public API signature must be introduced, or if a new
 dependency is required.
 
@@ -149,18 +148,18 @@ concerns, revise the plan or docs and rerun the relevant checks.
 Risk: The task already has an accepted ADR, so the implementer could duplicate
 or churn a settled decision instead of validating it. Severity: medium.
 Likelihood: medium. Mitigation: Treat the first milestone as evidence
-gathering; only edit ADR-0001 if the documentation and tests reveal a real gap.
+gathering; only edit ADR-001 if the documentation and tests reveal a real gap.
 
 Risk: The broad test-tool requirement could be over-applied to this Phase 1
 documentation task. Severity: medium. Likelihood: medium. Mitigation: Follow
-ADR-0006. Use `pytest` documentation-contract tests for this item, and record
+ADR-006. Use `pytest` documentation-contract tests for this item, and record
 that `pytest-bdd`, `syrupy`, Hypothesis, CrossHair and Verus become relevant
 only when corresponding behaviours, snapshots, input invariants or proof
 surfaces exist.
 
 Risk: Plain-text fallback might be documented too casually, weakening
 Markdown-aware structural protection. Severity: high. Likelihood: medium.
-Mitigation: Ensure ADR-0001 and any docs state that plain text is for
+Mitigation: Ensure ADR-001 and any docs state that plain text is for
 non-Markdown or explicit degraded mode, and that Markdown input using it must
 emit a degradation diagnostic.
 
@@ -191,13 +190,13 @@ medium. Likelihood: medium. Mitigation: Add or extend
 - [x] (2026-05-20T11:37:04+02:00) Received explicit user approval to
   implement the plan.
 - [x] (2026-05-20T11:37:04+02:00) Added documentation-contract tests for
-  ADR-0001 acceptance, parser adapter order, fallback behaviour and roadmap
+  ADR-001 acceptance, parser adapter order, fallback behaviour and roadmap
   closure.
 - [x] (2026-05-20T11:37:04+02:00) Ran the focused documentation test and
-  observed the expected failure: ADR-0001 passed the new contract checks, while
+  observed the expected failure: ADR-001 passed the new contract checks, while
   roadmap item 1.1.1 remained unchecked.
 - [x] (2026-05-20T11:37:04+02:00) Marked roadmap item 1.1.1 done after
-  validation evidence showed ADR-0001 already satisfies the parser-boundary
+  validation evidence showed ADR-001 already satisfies the parser-boundary
   contract.
 - [x] (2026-05-20T11:37:04+02:00) Reran the focused documentation test and
   confirmed all eight documentation-contract tests passed.
@@ -217,10 +216,10 @@ medium. Likelihood: medium. Mitigation: Add or extend
 
 ## Surprises & discoveries
 
-- Observation: `docs/adrs/adr-0001-markdown-parser-boundary.md` already exists
-  and is marked accepted. Evidence: The file status says, "Accepted on
-  2026-05-09" and chooses Option B. Impact: Implementation should validate and
-  close the existing decision rather than create a new ADR from scratch.
+- Observation: `docs/adr-001-markdown-parser-boundary.md` already exists and
+  is marked accepted. Evidence: The file status says, "Accepted on 2026-05-09"
+  and chooses Option B. Impact: Implementation should validate and close the
+  existing decision rather than create a new ADR from scratch.
 - Observation: The Python package layout is still scaffold-level.
   Evidence: Repository inspection found `prosidy_darn/__init__.py`,
   `prosidy_darn/_runtime.py`, and `prosidy_darn/pure.py`, but no domain,
@@ -254,24 +253,24 @@ medium. Likelihood: medium. Mitigation: Add or extend
 ## Decision log
 
 - Decision: Treat 1.1.1 as a documentation validation and closure task.
-  Rationale: ADR-0001 already exists and is accepted, while the roadmap
-  checkbox remains open. The missing work is evidence, alignment, and task
-  closure. Date/Author: 2026-05-18T22:32:17Z / Codex.
+  Rationale: ADR-001 already exists and is accepted, while the roadmap checkbox
+  remains open. The missing work is evidence, alignment, and task closure.
+  Date/Author: 2026-05-18T22:32:17Z / Codex.
 - Decision: Do not add `mdast`, PyO3, Rust crates or parser packages in this
   task. Rationale: The roadmap separates v1 decision ratification from
   dependency and parser implementation work, and the hexagonal boundary should
   be established before adapters exist. Date/Author: 2026-05-18T22:32:17Z /
   Codex.
 - Decision: Use `pytest` documentation-contract tests, not `pytest-bdd`,
-  `syrupy`, Hypothesis, CrossHair or Verus, for this item. Rationale: ADR-0006
+  `syrupy`, Hypothesis, CrossHair or Verus, for this item. Rationale: ADR-006
   scopes Phase 1 tests to documentation and link contracts until parser
   behaviour, output snapshots, input invariants or proof-worthy logic exist.
   Date/Author: 2026-05-18T22:32:17Z / Codex.
 
 ## Outcomes & retrospective
 
-ADR-0001 did not need clarification. The implementation added
-documentation-contract tests that assert ADR-0001 is accepted, records the v1
+ADR-001 did not need clarification. The implementation added
+documentation-contract tests that assert ADR-001 is accepted, records the v1
 parser adapter order, keeps PyO3 as a contingency, requires degradation
 reporting for Markdown plain-text fallback and closes roadmap item 1.1.1. The
 roadmap item is now marked done. Local validation passed through
@@ -294,8 +293,8 @@ The key files are:
 
 - `docs/roadmap.md`: the ordered implementation roadmap. Item 1.1.1 is
   currently the Markdown parser boundary ADR task.
-- `docs/adrs/adr-0001-markdown-parser-boundary.md`: the accepted ADR that
-  chooses one Markdown-aware parser adapter plus plain text for v1.
+- `docs/adr-001-markdown-parser-boundary.md`: the accepted ADR that chooses
+  one Markdown-aware parser adapter plus plain text for v1.
 - `docs/prosidy-darn-technical-design.md`: the authoritative technical design.
   Sections 4, 9, 10 and 18 are directly relevant.
 - `docs/developers-guide.md`: maintainer-facing implementation guidance,
@@ -328,24 +327,24 @@ Important terms:
 
 Milestone 1 prepares the branch and confirms the baseline. Confirm the current
 branch is `1-1-1-markdown-parser-boundary-adr`, inspect the worktree, and read
-the roadmap, ADR-0001, technical design, developer guide, documentation style
-guide, ADR-0006, tests and Makefile. If the branch is not named correctly,
+the roadmap, ADR-001, technical design, developer guide, documentation style
+guide, ADR-006, tests and Makefile. If the branch is not named correctly,
 rename it before editing. If the worktree contains unrelated changes, leave
 them alone and avoid touching those files.
 
 Milestone 2 adds failing documentation-contract tests first. Extend
 `tests/test_developer_docs.py` with tests that prove roadmap item 1.1.1 cannot
-be closed unless ADR-0001 is accepted and states the selected parser order and
+be closed unless ADR-001 is accepted and states the selected parser order and
 fallback behaviour. The tests should check for these observable facts:
 
-- ADR-0001 exists and is accepted.
-- ADR-0001 states that v1 ships one Markdown-aware parser adapter plus
+- ADR-001 exists and is accepted.
+- ADR-001 states that v1 ships one Markdown-aware parser adapter plus
   plain-text fallback.
-- ADR-0001 states that `mdast` is selected only when a version check and runtime
+- ADR-001 states that `mdast` is selected only when a version check and runtime
   compatibility probe pass.
-- ADR-0001 states that PyO3 `markdown-rs` is a contingency, not a concurrent v1
+- ADR-001 states that PyO3 `markdown-rs` is a contingency, not a concurrent v1
   adapter.
-- ADR-0001 states that plain-text fallback must report degraded Markdown
+- ADR-001 states that plain-text fallback must report degraded Markdown
   structural protection when used for Markdown input.
 - The roadmap item for 1.1.1 is marked done only when the ADR is accepted.
 
@@ -355,7 +354,7 @@ ADR fully satisfies it, document that in `Surprises & Discoveries` and proceed
 to Milestone 3 without forcing an artificial failure.
 
 Milestone 3 aligns documentation. Review
-`docs/adrs/adr-0001-markdown-parser-boundary.md` against the new test and the
+`docs/adr-001-markdown-parser-boundary.md` against the new test and the
 technical design. Make the smallest possible edit if the ADR lacks a required
 closure detail. Review `docs/prosidy-darn-technical-design.md` and
 `docs/developers-guide.md` for stale or conflicting wording. Update them only
@@ -412,7 +411,7 @@ Read the local context:
 
 ```bash
 sed -n '70,90p' docs/roadmap.md
-sed -n '1,140p' docs/adrs/adr-0001-markdown-parser-boundary.md
+sed -n '1,140p' docs/adr-001-markdown-parser-boundary.md
 sed -n '680,765p' docs/prosidy-darn-technical-design.md
 sed -n '1,140p' tests/test_developer_docs.py
 ```
@@ -495,14 +494,13 @@ https://lody.ai/leynos/sessions/${LODY_SESSION_ID}
 
 The approved implementation is accepted when all of these are true:
 
-- `tests/test_developer_docs.py` verifies that ADR-0001 is accepted and defines
+- `tests/test_developer_docs.py` verifies that ADR-001 is accepted and defines
   the parser adapter order, `mdast` probe gate, PyO3 contingency and degraded
   plain-text fallback behaviour.
 - `docs/roadmap.md` marks item 1.1.1 done only after validation passes.
-- `docs/adrs/adr-0001-markdown-parser-boundary.md` remains accepted and
-  continues to choose one Markdown-aware parser adapter plus one plain-text
-  fallback for v1.
-- The technical design and developer guide do not contradict ADR-0001.
+- `docs/adr-001-markdown-parser-boundary.md` remains accepted and continues to
+  choose one Markdown-aware parser adapter plus one plain-text fallback for v1.
+- The technical design and developer guide do not contradict ADR-001.
 - No parser implementation, parser dependency, CLI behaviour or user-facing API
   is added by this task.
 - `make check-fmt`, `make markdownlint`, `make nixie`, `make typecheck`,
@@ -563,7 +561,7 @@ Firecrawl evidence gathered during planning:
 
 Wyvern planning evidence:
 
-- ADR-0001 already exists and is accepted, so roadmap closure should validate
+- ADR-001 already exists and is accepted, so roadmap closure should validate
   the existing ADR rather than rewrite it wholesale.
 - The repository has not yet introduced the final hexagonal package layout or
   parser dependencies.
@@ -606,10 +604,9 @@ plan.
 
 ## Addendum — 2026-11-12: Canonical ADR references
 
-This closed plan preserves its implementation scope, milestone status,
-progress, and outcomes. The references in the plan were mechanically updated to
-the canonical four-digit ADR paths; the mappings below record the names used
-when the work was completed.
+This plan preserves its original text. Historical ADR paths and identifiers
+remain as recorded when the work was written; the mappings below identify their
+canonical references after the naming migration.
 
 | Historical reference                                   | Canonical reference                                           |
 | ------------------------------------------------------ | ------------------------------------------------------------- |
