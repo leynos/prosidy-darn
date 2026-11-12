@@ -1,5 +1,13 @@
 # Architectural decision record (ADR) 0007: CLI observability scope
 
+## Addendum — 2026-11-12: Canonical filename
+
+This accepted decision remains unchanged. The record moved from
+`docs/adr-007-cli-observability-scope.md` to
+`docs/adrs/adr-0007-cli-observability-scope.md`, and its identifier changed from
+`ADR 007` to `ADR 0007`. Cross-references now use the canonical identifier; no
+decision text or status changed.
+
 ## Status
 
 Accepted on 2026-05-09. V1 does not add a separate structured logging
@@ -9,7 +17,7 @@ or long-running adapters create a concrete need.
 
 ## Date
 
-2026-05-09.
+2026-11-12.
 
 ## Context and problem statement
 

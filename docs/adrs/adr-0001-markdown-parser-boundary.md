@@ -1,5 +1,13 @@
 # Architectural decision record (ADR) 0001: Markdown parser boundary
 
+## Addendum — 2026-11-12: Canonical filename
+
+This accepted decision remains unchanged. The record moved from
+`docs/adr-001-markdown-parser-boundary.md` to
+`docs/adrs/adr-0001-markdown-parser-boundary.md`, and its identifier changed
+from `ADR 001` to `ADR 0001`. Cross-references now use the canonical
+identifier; no decision text or status changed.
+
 ## Status
 
 Accepted on 2026-05-09. V1 ships one Markdown-aware parser adapter plus a
@@ -9,7 +17,7 @@ extractor is a contingency, not a concurrent v1 adapter.
 
 ## Date
 
-2026-05-09.
+2026-11-12.
 
 ## Context and problem statement
 

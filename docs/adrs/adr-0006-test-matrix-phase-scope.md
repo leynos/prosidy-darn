@@ -1,5 +1,13 @@
 # Architectural decision record (ADR) 0006: Test matrix phase scope
 
+## Addendum — 2026-11-12: Canonical filename
+
+This accepted decision remains unchanged. The record moved from
+`docs/adr-006-test-matrix-phase-scope.md` to
+`docs/adrs/adr-0006-test-matrix-phase-scope.md`, and its identifier changed from
+`ADR 006` to `ADR 0006`. Cross-references now use the canonical identifier; no
+decision text or status changed.
+
 ## Status
 
 Accepted on 2026-05-09. The project keeps `pytest`, `pytest-bdd`, `syrupy`, and
@@ -8,7 +16,7 @@ dimensions that exist in that phase.
 
 ## Date
 
-2026-05-09.
+2026-11-12.
 
 ## Context and problem statement
 

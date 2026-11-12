@@ -1,5 +1,13 @@
 # Architectural decision record (ADR) 0002: Tokenizer and semantic-scoring policy
 
+## Addendum — 2026-11-12: Canonical filename
+
+This accepted decision remains unchanged. The record moved from
+`docs/adr-002-tokenizer-and-semantic-scoring-policy.md` to
+`docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md`, and its
+identifier changed from `ADR 002` to `ADR 0002`. Cross-references now use the
+canonical identifier; no decision text or status changed.
+
 ## Status
 
 Accepted on 2026-05-26. V1 names `tiktoken` as the first `TokenCounter`
@@ -11,7 +19,7 @@ raise an explicit `ImportError` when their optional extra is missing.
 
 ## Date
 
-2026-05-26.
+2026-11-12.
 
 ## Context and problem statement
 

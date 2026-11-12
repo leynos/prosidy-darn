@@ -1,5 +1,13 @@
 # Architectural decision record (ADR) 0008: Two-tier linting architecture
 
+## Addendum — 2026-11-12: Canonical filename
+
+This accepted decision remains unchanged. The record moved from
+`docs/adr-008-two-tier-linting-architecture.md` to
+`docs/adrs/adr-0008-two-tier-linting-architecture.md`, and its identifier
+changed from `ADR 008` to `ADR 0008`. Cross-references now use the canonical
+identifier; no decision text or status changed.
+
 ## Status
 
 Accepted on 2026-05-15. Prosidy Darn uses Ruff as the primary lint tier and a
@@ -9,7 +17,7 @@ runner.
 
 ## Date
 
-2026-05-15.
+2026-11-12.
 
 ## Context and problem statement
 

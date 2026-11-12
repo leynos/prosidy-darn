@@ -856,3 +856,18 @@ prior-art research, a community-of-experts design review and its P0-P2
 revisions, the approval gate, implementation milestones, validation commands,
 and pull-request requirements for roadmap item 1.1.4. Implementation must not
 start until the user explicitly approves the plan.
+
+## Addendum — 2026-11-12: Canonical ADR references
+
+This closed plan preserves its implementation scope, milestone status,
+progress, and outcomes. The references in the plan were mechanically updated to
+the canonical four-digit ADR paths; the mappings below record the names used
+when the work was completed.
+
+| Historical reference                                                | Canonical reference                                                        |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `docs/adr-001-markdown-parser-boundary.md` (`ADR-001`)              | `docs/adrs/adr-0001-markdown-parser-boundary.md` (`ADR-0001`)              |
+| `docs/adr-002-tokenizer-and-semantic-scoring-policy.md` (`ADR-002`) | `docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md` (`ADR-0002`) |
+| `docs/adr-003-profile-rule-expression-policy.md` (`ADR-003`)        | `docs/adrs/adr-0003-profile-rule-expression-policy.md` (`ADR-0003`)        |
+| `docs/adr-004-import-boundary-fitness-check.md` (`ADR-004`)         | `docs/adrs/adr-0004-import-boundary-fitness-check.md` (`ADR-0004`)         |
+| `docs/adr-006-test-matrix-phase-scope.md` (`ADR-006`)               | `docs/adrs/adr-0006-test-matrix-phase-scope.md` (`ADR-0006`)               |

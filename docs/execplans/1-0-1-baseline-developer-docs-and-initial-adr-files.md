@@ -467,3 +467,19 @@ passing. `make fmt` was attempted and remains blocked by pre-existing
 repository formatter churn described in `Surprises & Discoveries`. CodeRabbit
 was invoked after the major milestones and at close-out, but the service
 returned no review findings because the account is out of usage credits.
+
+## Addendum — 2026-11-12: Canonical ADR references
+
+This closed plan preserves its implementation scope, milestone status,
+progress, and outcomes. The references in the plan were mechanically updated to
+the canonical four-digit ADR paths; the mappings below record the names used
+when the work was completed.
+
+| Historical reference                                                | Canonical reference                                                        |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `docs/adr-001-markdown-parser-boundary.md` (`ADR-001`)              | `docs/adrs/adr-0001-markdown-parser-boundary.md` (`ADR-0001`)              |
+| `docs/adr-002-tokenizer-and-semantic-scoring-policy.md` (`ADR-002`) | `docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md` (`ADR-0002`) |
+| `docs/adr-003-profile-rule-expression-policy.md` (`ADR-003`)        | `docs/adrs/adr-0003-profile-rule-expression-policy.md` (`ADR-0003`)        |
+| `docs/adr-004-import-boundary-fitness-check.md` (`ADR-004`)         | `docs/adrs/adr-0004-import-boundary-fitness-check.md` (`ADR-0004`)         |
+| `docs/adr-006-test-matrix-phase-scope.md` (`ADR-006`)               | `docs/adrs/adr-0006-test-matrix-phase-scope.md` (`ADR-0006`)               |
+| `docs/adr-007-cli-observability-scope.md` (`ADR-007`)               | `docs/adrs/adr-0007-cli-observability-scope.md` (`ADR-0007`)               |

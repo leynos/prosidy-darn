@@ -5,13 +5,16 @@ text-to-speech (TTS) workflows. Its v1 design keeps the original source text
 immutable, emits literal source spans for each cue unit, and attaches metadata
 that can drive SSML, vendor payloads, cue review tools, or manual direction.
 
-The current repository is still in the design and scaffold stage. The only
-implemented import is the package smoke-test function, but the examples below
-show the intended v1 library and CLI contract so early users and implementers
-can align on the same shape.
+The current repository is still in the design and scaffold stage. This guide is
+a pre-implementation specification: planned library and CLI examples are not
+yet executable or exercised by the test suite. Their intended behaviour is
+specified in the [technical design](prosidy-darn-technical-design.md). The
+implemented package-install and smoke-test examples below are marked with
+`tested-example` identifiers.
 
 ## Install for local development
 
+<!-- tested-example: users-guide-development-install -->
 ```bash
 uv sync --group dev
 ```
@@ -19,6 +22,7 @@ uv sync --group dev
 Run the current package smoke test. The Rust extension is preferred when it is
 available; otherwise the package falls back to the pure-Python implementation:
 
+<!-- tested-example: users-guide-package-smoke-test -->
 ```bash
 uv run python - <<'PY'
 from prosidy_darn import hello
@@ -29,18 +33,21 @@ PY
 
 Expected output when the Rust extension is available:
 
+<!-- tested-example: users-guide-smoke-test-rust-output -->
 ```plaintext
 hello from Rust
 ```
 
 Expected output when the Rust extension is unavailable:
 
+<!-- tested-example: users-guide-smoke-test-python-output -->
 ```plaintext
 hello from Python
 ```
 
 Run the local lint gate with:
 
+<!-- tested-example: users-guide-make-lint -->
 ```bash
 make lint
 ```
