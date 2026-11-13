@@ -14,7 +14,8 @@ fn hello() -> &'static str {
 /// # Errors
 /// Returns a Python error if the module cannot be initialized.
 #[pymodule]
-fn _prosidy_darn_rs(module: &Bound<'_, PyModule>) -> PyResult<()> {
+#[pyo3(name = "_prosidy_darn_rs")]
+fn prosidy_darn_rs(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(hello, module)?)?;
     Ok(())
 }
