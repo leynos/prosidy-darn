@@ -23,16 +23,23 @@ host.
 
 The package builds native wheels with maturin and PyO3. The Rust workspace
 lives under `rust/`, and the extension crate is `rust/prosidy-darn-rs`.
-`rust-toolchain.toml` at the repository root pins Rust `1.99.0` with the
-`rustfmt` and `clippy` components. It sits at the root, not under `rust/`,
-because the Makefile and the commands below run `cargo` from the root with
-`--manifest-path`, and `rustup` selects the toolchain from the working
-directory. Install it with
-`rustup toolchain install 1.99.0 --component rustfmt --component clippy`.
-Dependabot's `rust-toolchain` entry proposes each new release as a pull
-request. The `cargo +1.95.0 install merman-cli` step in CI is a separate,
-explicit tool toolchain and is unaffected. Keep the maturin version
-synchronized across `pyproject.toml`, `.github/workflows/build-wheels.yml`,
+`rust-toolchain.toml` at the repository root pins the dated nightly
+`nightly-2026-11-13` with the `rustfmt` and `clippy` components. It sits at the
+root, not under `rust/`, because the Makefile and the commands below run
+`cargo` from the root with `--manifest-path`, and `rustup` selects the
+toolchain from the working directory. Install it with:
+
+```bash
+rustup toolchain install nightly-2026-11-13 \
+  --component rustfmt --component clippy
+```
+
+Dependabot's `rust-toolchain` entry proposes each new nightly as a pull
+request. The crate is `publish = false`, so it declares no MSRV, and Cranelift
+stays off because it gains nothing on a crate this small. The
+`cargo +1.95.0 install merman-cli` step in CI is a separate, explicit tool
+toolchain and is unaffected. Keep the maturin version synchronized across
+`pyproject.toml`, `.github/workflows/build-wheels.yml`,
 `.github/workflows/release.yml`, and `.github/actions/build-wheels/action.yml`;
 `tests/test_maturin_build.py` checks that contract. Keep the PyO3 version in
 `rust/prosidy-darn-rs/Cargo.toml` aligned with `rust/Cargo.lock`; the same test
