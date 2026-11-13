@@ -48,6 +48,11 @@ uv run pytest tests/test_maturin_build.py::test_maturin_wheel_build_summary \
 Commit the updated `tests/__snapshots__/test_maturin_build.ambr` file with the
 dependency change.
 
+The native-wheel test stores Cargo artefacts under `target/maturin-wheel-tests`
+and reuses one build for the snapshot and installed extension checks. Its
+900-second timeout allows the build to wait for the shared Cargo package-cache
+lock and compiler admission slots.
+
 ## Development overview
 
 Phase 1 establishes contracts before feature work depends on them. Keep changes

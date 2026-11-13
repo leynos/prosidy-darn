@@ -1,5 +1,11 @@
 # Architectural decision record (ADR) 0004: Import-boundary fitness check
 
+## Addendum — 2026-11-13: Canonical filename
+
+This proposed record moved from `docs/adr-004-import-boundary-fitness-check.md`
+to `docs/adrs/adr-0004-import-boundary-fitness-check.md`, and its identifier
+changed from `ADR 004` to `ADR 0004`. No decision text or status changed.
+
 ## Status
 
 Proposed. The decision is pending and is owned by roadmap task 1.1.3.

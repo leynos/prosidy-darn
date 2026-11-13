@@ -35,11 +35,9 @@
   - Preserve the
   accepted tokenization and scoring decision.
 - [ADR 0003: Profile rule expression policy](adrs/adr-0003-profile-rule-expression-policy.md)
-  - Preserve the accepted profile
-  rule expression decision.
+  - Review the proposed profile rule expression policy.
 - [ADR 0004: Import boundary fitness check](adrs/adr-0004-import-boundary-fitness-check.md)
-  - Preserve the accepted import
-  boundary enforcement decision.
+  - Review the proposed import-boundary fitness check.
 - [ADR 0006: Test matrix phase scope](adrs/adr-0006-test-matrix-phase-scope.md)
   - Preserve the accepted phased test matrix decision.
 - [ADR 0007: CLI observability scope](adrs/adr-0007-cli-observability-scope.md)
