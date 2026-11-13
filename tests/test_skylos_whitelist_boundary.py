@@ -30,10 +30,18 @@ _SHELL_SENSITIVE_TEXT = st.builds(
 )
 _TOML_BARE_KEY_CHARACTERS = string.ascii_letters + string.digits + "_-"
 _TOML_STRING_CHARACTERS = string.ascii_letters + string.digits + " _-."
+_NON_WHITESPACE_TOML_STRING_CHARACTERS = string.ascii_letters + string.digits + "_.-"
+# The helper rejects blank reasons, so construct a valid first character and
+# leave the suffix broad enough to include ordinary spaces.
+_WHITELIST_REASON = st.builds(
+    operator.add,
+    st.sampled_from(_NON_WHITESPACE_TOML_STRING_CHARACTERS),
+    st.text(alphabet=_TOML_STRING_CHARACTERS, max_size=23),
+)
 _CONCURRENT_WHITELIST_REQUESTS = st.lists(
     st.tuples(
         st.text(alphabet=_TOML_BARE_KEY_CHARACTERS, min_size=1, max_size=12),
-        st.text(alphabet=_TOML_STRING_CHARACTERS, min_size=1, max_size=24),
+        _WHITELIST_REASON,
     ),
     min_size=2,
     max_size=4,

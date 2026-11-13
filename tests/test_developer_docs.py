@@ -13,6 +13,7 @@ TOKENIZER_POLICY_ADR = (
     DOCS_DIR / "adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md"
 )
 ROADMAP = DOCS_DIR / "roadmap.md"
+USERS_GUIDE = DOCS_DIR / "users-guide.md"
 
 INITIAL_ADR_PATHS = (
     "docs/adrs/adr-0001-markdown-parser-boundary.md",
@@ -198,3 +199,15 @@ def test_tokenizer_policy_roadmap_item_is_closed() -> None:
         "- [x] 1.1.2. Record the token-limit and semantic-scoring dependency "
         "policy." in roadmap
     )
+
+
+def test_preimplementation_users_guide_has_no_unexercised_examples() -> None:
+    """Keep the status page free of code fences until user workflows exist."""
+    users_guide = read_document(USERS_GUIDE)
+    code_fence = re.search(r"(?m)^ {0,3}(?:`{3,}|~{3,})", users_guide)
+
+    assert code_fence is None, (
+        "The pre-implementation users' guide must not publish unexercised examples"
+    )
+    assert "no supported user-facing workflows" in normalize_whitespace(users_guide)
+    assert "tested-example:" not in users_guide

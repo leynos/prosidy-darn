@@ -1056,9 +1056,8 @@ import-boundary decision or the demonstration design.
 
 ## Addendum — 2026-11-12: Canonical ADR references
 
-This plan preserves its original text. Historical ADR paths and identifiers
-remain as recorded when the plan was written; the mappings below identify their
-canonical references after the naming migration.
+This draft plan uses canonical four-digit ADR paths and identifiers. The
+mapping below records the historical references formerly used in the plan.
 
 | Historical reference                                                | Canonical reference                                                        |
 | ------------------------------------------------------------------- | -------------------------------------------------------------------------- |

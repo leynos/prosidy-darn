@@ -335,6 +335,15 @@ use Vidai Mock for behavioural tests. Cover deterministic success, malformed
 responses, timeouts, and provider-style failure payloads before relying on a
 real service.
 
+## User-guide examples
+
+The segmentation library and command-line interface are not implemented yet, so
+`docs/users-guide.md` is a concise availability page without fenced examples.
+When user-facing behaviour lands, give every example fence a stable
+`tested-example` identifier. Load the examples from the published guide through
+one shared loader used by integration tests and behaviour-driven scenarios, and
+exercise each example in the test suite.
+
 ## Documentation update rules
 
 Update documentation in the same change that introduces or changes a contract:

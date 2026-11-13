@@ -5,8 +5,8 @@
 
 ## Guides
 
-- [Users' guide](users-guide.md) - Learn how to use Prosidy Darn, including
-  command-line workflows and observable behaviour.
+- [Users' guide](users-guide.md) - Check implementation status and find the
+  design documentation for planned workflows.
 - [Developers' guide](developers-guide.md) - Work on the codebase, run quality
   gates, and understand maintainer-facing practices.
 - [Repository layout](repository-layout.md) - Locate source code, tests,
