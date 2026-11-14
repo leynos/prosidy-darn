@@ -190,14 +190,17 @@ focuses on logging interpolation, structural pattern matching hazards,
 control-flow simplification, resource handling, deprecated standard-library
 usage, mutable-iteration hazards, and selected design limits.
 
-Skylos is separately provisioned at the exact Makefile pin, not added to the
-project environment. `SKYLOS_CLI` uses Python 3.14 because Skylos parses source
+Skylos runs as the installed `df12-skylos` command from df12-python-lints,
+pinned by `DF12_GATES_SHA` and not added to the project environment; its
+`skylos` extra carries the one Skylos pin, and CI runs the shared-actions
+`df12-skylos` action. `SKYLOS` uses Python 3.14 because Skylos parses source
 with its own runtime abstract syntax tree (AST); the pin prevents phantom
-dead-code findings on syntax older runtimes cannot parse. `SKYLOS` adds the
-scan-only `--config-file` option. Its production-only graph excludes tests so
-test-only references cannot mask a dead production symbol. The command disables
-uploads, provenance collection, and grep verification; it performs no cloud or
-Large Language Model (LLM) analysis and never modifies source files.
+dead-code findings on syntax older runtimes cannot parse. The production roots
+live in `[tool.df12_skylos]`. Its production-only graph excludes tests (via
+`[tool.skylos] exclude`) so test-only references cannot mask a dead production
+symbol. The command disables uploads, provenance collection, and grep
+verification; it performs no cloud or Large Language Model (LLM) analysis and
+never modifies source files.
 
 Treat every finding as dead code until a runtime caller has been verified.
 Remove genuine dead code. Record a verified false positive with:
@@ -207,15 +210,15 @@ make skylos-allow SYMBOL=registered_handler \
   REASON="Loaded by the plugin registry; verified in the registry contract test"
 ```
 
-`SYMBOL` avoids WSL's injected `NAME` hostname variable. The target rejects a
-missing or whitespace-only symbol or reason, then records the explanation under
-`[tool.skylos.whitelist.documented]`. Prefer a typed
+`SYMBOL` avoids WSL's injected `NAME` hostname variable. `df12-skylos allow`
+rejects a missing or whitespace-only symbol or reason, then records the
+explanation under `[tool.skylos.whitelist.documented]`. Prefer a typed
 `[tool.skylos.dead_code.entrypoints]` rule for implicit runtime callers. Use a
 documented allow-list exception only when an entry-point rule cannot model that
 boundary. Do not add bulk or unexplained exceptions, and remove an allow-list
-entry when its dynamic boundary no longer exists. `skylos-allow` uses `flock`
-with the repository-local `.skylos-whitelist.lock` file, so concurrent
-documented updates cannot discard one another.
+entry when its dynamic boundary no longer exists. The command holds the ignored
+`.pyproject.toml.df12.lock` file, so concurrent documented updates cannot
+discard one another.
 
 The lint architecture and dead-code decision are recorded in
 [ADR 0008: Two-tier linting architecture](adrs/adr-0008-two-tier-linting-architecture.md)
@@ -240,15 +243,8 @@ The lint target is controlled by these Makefile variables:
   combines package, test, and extra targets.
 - `PYLINT`: the complete `uv tool run` command that invokes Pylint under
   `PYLINT_PYTHON` at `PYLINT_VERSION`.
-- `SKYLOS_VERSION`: the exact externally provisioned Skylos release.
-- `SKYLOS_CLI`: the command-only Skylos invocation, pinned to Python 3.14.
-- `SKYLOS`: `SKYLOS_CLI` plus scan-only configuration options.
-- `SKYLOS_PRODUCTION_TARGETS`: the production source paths scanned for dead
-  code. Tests remain excluded so they cannot change source liveness.
-- `SKYLOS_EXCLUDE_FOLDERS`: paths explicitly excluded from the Skylos graph;
-  the default is `tests`.
-- `SKYLOS_WHITELIST_LOCK`: the repository-local lock file used to serialize
-  `skylos-allow` updates.
+- `DF12_GATES_SHA`: the df12-python-lints commit that provides `df12-skylos`.
+- `SKYLOS`: the installed `df12-skylos` command under Python 3.14.
 
 Override `PYLINT_TARGETS` only for local diagnosis. Committed changes should
 extend `PYLINT_PACKAGE_TARGETS`, `PYLINT_TEST_TARGETS`, or
@@ -312,22 +308,6 @@ The lint configuration lives in these `pyproject.toml` sections:
 Keep comments in the lint sections close to the rule or threshold they explain.
 This makes future imports from `episodic` easier to review and keeps policy
 changes auditable.
-
-## Makefile contract-test bootstrap
-
-`tests/test_skylos_lint_contract.py` parses the Makefile with the independently
-installed `makeutil` executable. `make test` checks that binary before pytest,
-so install the same pinned parser used in CI before running the full local test
-suite:
-
-```bash
-rustup toolchain install nightly-2026-05-28 --profile minimal
-RUSTFLAGS="-Zpolonius=next" cargo +nightly-2026-05-28 install \
-  --git https://github.com/leynos/makeutil \
-  --rev 29fc5a1634ffbaa18a773eed9dff1b2838a45d9c \
-  --locked --force makeutil
-make test
-```
 
 ## Testing expectations by phase
 
