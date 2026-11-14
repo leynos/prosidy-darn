@@ -313,6 +313,16 @@ timeout = 30
 [tool.uv]
 package = true
 
+# The dead-code gate is the installed `df12-skylos` command from
+# df12-python-lints. `roots` limits liveness analysis to production sources and
+# the exclusion keeps the test tree out of the liveness graph.
+[tool.df12_skylos]
+roots = ["prosidy_darn"]
+python = "3.14"
+
+[tool.skylos]
+exclude = ["tests"]
+
 [tool.skylos.gate]
 strict = true
 

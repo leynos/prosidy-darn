@@ -68,6 +68,14 @@ before invoking Skylos. Its documented allow-list update holds the ignored,
 repository-local `.skylos-whitelist.lock` with `flock`, preventing concurrent
 writes from losing verified exceptions.
 
+Update, 2026-11-14: the Skylos command and its allow-list helper are now the
+installed `df12-skylos` command from df12-python-lints, run in CI through the
+shared-actions `df12-skylos` action. The production roots live in
+`[tool.df12_skylos]` and the exclusion in `[tool.skylos] exclude`; the allow
+update holds the ignored `.pyproject.toml.df12.lock` instead of
+`.skylos-whitelist.lock`, and the Makefile variables and contract tests
+described above were removed.
+
 `pyproject.toml` enables strict gate handling and contains the allow-list
 configuration. A genuine finding must be removed. Prefer a typed
 `[tool.skylos.dead_code.entrypoints]` rule for an implicit runtime caller. A
