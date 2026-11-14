@@ -135,7 +135,7 @@
     [Rust specific guidance](#rust-specific-guidance).
 - **For Markdown files (`.md` only):**
   - **Linting:** Passes markdown lint checks (`make markdownlint`).
-  - **Spelling:** Passes `make spelling`, which runs as part of
+  - **Spelling:** Passes the spelling gate, which runs as part of
     `make markdownlint`; see [Spelling](#spelling).
   - **Mermaid diagrams:** Passes validation using nixie (`make nixie`).
 - **Before review:** Inspect the complete diff, including tests, fixtures,
@@ -242,8 +242,11 @@ The native extension is written in Rust under `rust/` (the extension crate is
 `missing_docs` and forbids `unsafe_code`. Contributors should follow these
 practices when working on it:
 
-- Run `make lint` (which includes `make lint-clippy`) and `make lint-rust`
-  before committing Rust changes:
+- Before committing Rust changes, run
+  `cargo fmt --manifest-path rust/Cargo.toml --check` and
+  `cargo check --manifest-path rust/Cargo.toml` (neither `make fmt` nor
+  `make check-fmt` covers Rust formatting), then `make lint` (which includes
+  `make lint-clippy`) and `make lint-rust`:
   - `make lint-clippy` executes:
 
     ```sh
