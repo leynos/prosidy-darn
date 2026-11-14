@@ -219,7 +219,9 @@ def build_native_wheel_artefact(
 ) -> pathlib.Path:
     """Build a native wheel with the pinned maturin version."""
     out_dir.mkdir(parents=True, exist_ok=True)
-    build_env = os.environ | {"CARGO_TARGET_DIR": str(out_dir / "target")}
+    # Reuse release artifacts when xdist runs both wheel contract tests.
+    cargo_target_dir = root / "target" / "maturin-wheel-tests"
+    build_env = os.environ | {"CARGO_TARGET_DIR": str(cargo_target_dir)}
     command = [
         sys.executable,
         "-m",

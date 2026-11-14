@@ -1,4 +1,11 @@
-# Architectural decision record (ADR) 003: Profile rule-expression policy
+# Architectural decision record (ADR) 0003: Profile rule-expression policy
+
+## Addendum — 2026-11-13: Canonical filename
+
+This proposed record moved from
+`docs/adr-003-profile-rule-expression-policy.md` to
+`docs/adrs/adr-0003-profile-rule-expression-policy.md`, and its identifier
+changed from `ADR 003` to `ADR 0003`. No decision text or status changed.
 
 ## Status
 

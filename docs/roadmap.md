@@ -7,8 +7,8 @@ carries one testable idea at the GIST level; each step answers a sequencing
 question; each task is a review-sized execution unit.
 
 The roadmap treats the technical design as the source of truth. Architectural
-decision records (ADRs) should be added under `docs/` as the open decisions in
-the design are resolved.
+decision records (ADRs) should be added under `docs/adrs/` as the open
+decisions in the design are resolved.
 
 Assumed team: one primary engineer with part-time review capacity. The v1 scope
 is Phases 1-3; that scope is negotiable if capacity is constrained. The full
@@ -18,23 +18,24 @@ separately.
 Open design decisions from SS18 map to these resolution deadlines and tasks:
 
 - Markdown parser strategy: resolve before Phase 1 exit in task 1.1.1. Record
-  `docs/adr-001-markdown-parser-boundary.md`.
+  `docs/adrs/adr-0001-markdown-parser-boundary.md`.
 - Tokenizer and semantic-scoring dependency policy: resolve before Phase 1 exit
-  in task 1.1.2. Record `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`.
+  in task 1.1.2. Record
+  `docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md`.
 - Profile custom rule-expression policy: resolve before Phase 2 start in task
-  1.1.4. Record `docs/adr-003-profile-rule-expression-policy.md`.
+  1.1.4. Record `docs/adrs/adr-0003-profile-rule-expression-policy.md`.
 - Import-boundary checker: resolve before Phase 1 exit in task 1.1.3. Record
-  `docs/adr-004-import-boundary-fitness-check.md`.
+  `docs/adrs/adr-0004-import-boundary-fitness-check.md`.
 - First non-SSML vendor renderer: defer until Phase 5+ and resolve in task
-  6.2.1. Record `docs/adr-005-first-vendor-renderer.md` only when that task
-  starts.
+  6.2.1. Record `docs/adrs/adr-0005-first-vendor-renderer.md` only when that
+  task starts.
 
 Additional accepted ADRs constrain implementation scope:
 
 - Test-matrix phase scope is recorded in
-  `docs/adr-006-test-matrix-phase-scope.md`.
+  `docs/adrs/adr-0006-test-matrix-phase-scope.md`.
 - Observability scope is recorded in
-  `docs/adr-007-cli-observability-scope.md`.
+  `docs/adrs/adr-0007-cli-observability-scope.md`.
 
 ## 1. Foundational contracts and build spine
 
@@ -49,7 +50,7 @@ CLI, parser adapters, and renderers depend on them.
 Phase 1 acceptance checklist:
 
 - developer documentation checks pass;
-- initial ADRs exist under `docs/` for the v1 blocking decisions;
+- initial ADRs exist under `docs/adrs/` for the v1 blocking decisions;
 - local formatting, Markdown linting, and diagram validation pass.
 
 ### 1.0. Establish baseline developer documentation and ADR locations
@@ -62,7 +63,7 @@ and 18.
 - [x] 1.0.1. Create baseline developer docs and initial ADR files.
   - Add `docs/developers-guide.md` with the hexagonal package layout, local
     quality gates, testing expectations, and documentation update rules.
-  - Place the initial ADR files under `docs/` so Phase 1 decisions have stable
+  - Place the initial ADR files under `docs/adrs/` so Phase 1 has stable
     review locations before implementation begins.
   - See prosidy-darn-technical-design.md §§4, 9, 16, and 18.
   - Success: developer documentation checks pass, and ADR paths are discoverable
@@ -79,7 +80,7 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - Requires 1.0.1.
   - Decide whether v1 ships one Markdown-aware parser plus plain text or ships
     both `mdast` and a PyO3 `markdown-rs` range extractor immediately.
-  - Write `docs/adr-001-markdown-parser-boundary.md`.
+  - Write `docs/adrs/adr-0001-markdown-parser-boundary.md`.
   - See prosidy-darn-technical-design.md §§1 and 10.
   - Success: one accepted ADR defines the parser adapter order and fallback
     behaviour.
@@ -87,7 +88,7 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - Requires 1.0.1 and 1.1.1.
   - Decide which token counter is optional in v1 and how embedding adapters stay
     out of the core import path.
-  - Write `docs/adr-002-tokenizer-and-semantic-scoring-policy.md`.
+  - Write `docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md`.
   - See prosidy-darn-technical-design.md §§7, 10, and 18.
   - Success: optional dependencies can be installed or omitted without changing
     the public segmentation API.
@@ -95,7 +96,7 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - Requires 1.0.1 and 1.1.1.
   - Select the CI fitness function that prevents `domain` and `application`
     modules from importing adapters, Cyclopts, or renderer infrastructure.
-  - Write `docs/adr-004-import-boundary-fitness-check.md`.
+  - Write `docs/adrs/adr-0004-import-boundary-fitness-check.md`.
   - See prosidy-darn-technical-design.md §§4, 5, 9, and 16.
   - Success: the chosen check can fail a boundary violation in a minimal
     fixture branch.
@@ -103,7 +104,7 @@ prosidy-darn-technical-design.md §§8, 10, and 18.
   - Requires 1.0.1 and 1.1.2.
   - Decide whether profile files allow arbitrary custom rule expressions or only
     named rule weights before Phase 2 starts.
-  - Write `docs/adr-003-profile-rule-expression-policy.md`.
+  - Write `docs/adrs/adr-0003-profile-rule-expression-policy.md`.
   - See prosidy-darn-technical-design.md §§7, 8, and 18.
   - Success: profile configuration can be implemented without adding a new
     expression-language decision in the segmenter.
@@ -206,7 +207,7 @@ See prosidy-darn-technical-design.md §§6, 7.1, and 10.
   - Requires 2.1.2 and 1.1.1.
   - Add the selected Markdown parser adapter, its version and compatibility
     probes, and a plain-text fallback adapter.
-  - Keep the PyO3 range extractor as a contingency only if ADR-001 selects it
+  - Keep the PyO3 range extractor as a contingency only if ADR-0001 selects it
     before implementation.
   - See prosidy-darn-technical-design.md §10.
   - Success: parser adapters return source ranges without rendering Markdown
@@ -535,7 +536,7 @@ prosidy-darn-technical-design.md §§11, 12, and 18.
   - Requires phase 4.
   - Compare provider payload shape, mark support, voice-span support, and
     synthesis-window compatibility.
-  - Write `docs/adr-005-first-vendor-renderer.md`.
+  - Write `docs/adrs/adr-0005-first-vendor-renderer.md`.
   - Success: one ADR names the first vendor target and the renderer capability
     constraints it introduces.
 - [ ] 6.2.2. Decide whether WebVTT-like timing export belongs in core.

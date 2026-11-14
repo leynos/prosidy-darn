@@ -22,6 +22,9 @@ from tests.helpers.maturin import (
     wheel_build_summary,
 )
 
+# Allow native release builds to wait for the shared Cargo cache and compiler pool.
+NATIVE_WHEEL_BUILD_TIMEOUT_SECONDS = 900
+
 if typ.TYPE_CHECKING:
     import pathlib as pth
 
@@ -64,12 +67,12 @@ def test_pyo3_pin_matches_lockfile() -> None:
     }, "PyO3 manifest and lockfile pins must match the expected constant"
 
 
-@pytest.mark.timeout(300)
+@pytest.mark.timeout(NATIVE_WHEEL_BUILD_TIMEOUT_SECONDS)
 def test_maturin_wheel_build_summary(
     tmp_path: pth.Path,
     snapshot: SnapshotAssertion,
 ) -> None:
-    """Native wheel metadata and layout match the expected maturin output."""
+    """Validate wheel metadata and execute the installed Rust extension."""
     root = repo_root()
     expected = read_expected_maturin_version(root)
     if not toolchain_available():
@@ -85,22 +88,6 @@ def test_maturin_wheel_build_summary(
     assert summary == snapshot, (
         "Native wheel metadata, SBOM, and extension layout must match the snapshot"
     )
-
-
-@pytest.mark.timeout(300)
-def test_rust_extension_hello_returns_expected_greeting(tmp_path: pth.Path) -> None:
-    """Import the built Rust extension and execute its public function."""
-    root = repo_root()
-    expected = read_expected_maturin_version(root)
-    if not toolchain_available():
-        pytest.skip("Rust toolchain unavailable.")
-    if sys.version_info >= (3, 15):
-        pytest.fail(
-            f"maturin {expected} must be updated and wheel contracts refreshed "
-            "before native-wheel tests run on Python 3.15+",
-        )
-
-    wheel_path = build_native_wheel_artefact(root, tmp_path / "wheelhouse")
     site_dir = tmp_path / "site"
     subprocess.run(  # noqa: S603 - command list uses trusted paths and local wheel.
         [

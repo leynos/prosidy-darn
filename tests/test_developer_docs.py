@@ -8,15 +8,30 @@ import re
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOCS_DIR = REPO_ROOT / "docs"
 DEVELOPERS_GUIDE = DOCS_DIR / "developers-guide.md"
-MARKDOWN_PARSER_ADR = DOCS_DIR / "adr-001-markdown-parser-boundary.md"
-TOKENIZER_POLICY_ADR = DOCS_DIR / "adr-002-tokenizer-and-semantic-scoring-policy.md"
+MARKDOWN_PARSER_ADR = DOCS_DIR / "adrs/adr-0001-markdown-parser-boundary.md"
+TOKENIZER_POLICY_ADR = (
+    DOCS_DIR / "adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md"
+)
 ROADMAP = DOCS_DIR / "roadmap.md"
+CONTENTS = DOCS_DIR / "contents.md"
+USERS_GUIDE = DOCS_DIR / "users-guide.md"
+
+ALL_ADR_PATHS = (
+    "docs/adrs/adr-0001-markdown-parser-boundary.md",
+    "docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md",
+    "docs/adrs/adr-0003-profile-rule-expression-policy.md",
+    "docs/adrs/adr-0004-import-boundary-fitness-check.md",
+    "docs/adrs/adr-0006-test-matrix-phase-scope.md",
+    "docs/adrs/adr-0007-cli-observability-scope.md",
+    "docs/adrs/adr-0008-two-tier-linting-architecture.md",
+    "docs/adrs/adr-0009-skylos-dead-code-detection.md",
+)
 
 INITIAL_ADR_PATHS = (
-    "docs/adr-001-markdown-parser-boundary.md",
-    "docs/adr-002-tokenizer-and-semantic-scoring-policy.md",
-    "docs/adr-003-profile-rule-expression-policy.md",
-    "docs/adr-004-import-boundary-fitness-check.md",
+    "docs/adrs/adr-0001-markdown-parser-boundary.md",
+    "docs/adrs/adr-0002-tokenizer-and-semantic-scoring-policy.md",
+    "docs/adrs/adr-0003-profile-rule-expression-policy.md",
+    "docs/adrs/adr-0004-import-boundary-fitness-check.md",
 )
 
 PHASE_ONE_QUALITY_GATES = (
@@ -44,15 +59,25 @@ def test_developers_guide_exists() -> None:
     assert DEVELOPERS_GUIDE.is_file(), f"missing developer guide: {DEVELOPERS_GUIDE}"
 
 
-def test_initial_adr_locations_exist() -> None:
-    """Keep Phase 1 ADR review locations stable before decision work starts."""
+def test_all_adr_locations_exist() -> None:
+    """Keep every ADR at its canonical four-digit location."""
     missing_paths = [
-        adr_path
-        for adr_path in INITIAL_ADR_PATHS
-        if not (REPO_ROOT / adr_path).is_file()
+        adr_path for adr_path in ALL_ADR_PATHS if not (REPO_ROOT / adr_path).is_file()
     ]
 
     assert missing_paths == [], f"missing ADR files: {missing_paths}"
+
+
+def test_all_adrs_are_discoverable_from_contents() -> None:
+    """Keep every canonical ADR path linked from the contents index."""
+    contents = read_document(CONTENTS)
+    missing_links = [
+        adr_path
+        for adr_path in ALL_ADR_PATHS
+        if adr_path.removeprefix("docs/") not in contents
+    ]
+
+    assert missing_links == [], f"missing ADR links in {CONTENTS}: {missing_links}"
 
 
 def test_initial_adrs_are_discoverable_from_developers_guide() -> None:
@@ -125,7 +150,7 @@ def test_markdown_parser_boundary_adr_defines_v1_adapter_order() -> None:
 
 
 def test_markdown_parser_boundary_roadmap_item_is_closed() -> None:
-    """Mark roadmap item 1.1.1 done only once ADR-001 is accepted."""
+    """Mark roadmap item 1.1.1 done only once ADR-0001 is accepted."""
     roadmap = read_document(ROADMAP)
     markdown_parser_adr = read_document(MARKDOWN_PARSER_ADR)
 
@@ -142,7 +167,7 @@ def test_tokenizer_policy_adr_is_accepted() -> None:
 
 
 def test_tokenizer_policy_adr_defines_v1_adapter_policy() -> None:
-    """Lock the accepted ADR-002 policy before downstream adapter work."""
+    """Lock the accepted ADR-0002 policy before downstream adapter work."""
     tokenizer_policy_adr = normalize_whitespace(read_document(TOKENIZER_POLICY_ADR))
     required_phrases = (
         "`tiktoken` is the first v1 `TokenCounter` candidate behind the port",
@@ -187,7 +212,7 @@ def test_tokenizer_policy_adr_defines_v1_adapter_policy() -> None:
 
 
 def test_tokenizer_policy_roadmap_item_is_closed() -> None:
-    """Mark roadmap item 1.1.2 done only once ADR-002 is accepted."""
+    """Mark roadmap item 1.1.2 done only once ADR-0002 is accepted."""
     roadmap = read_document(ROADMAP)
     tokenizer_policy_adr = read_document(TOKENIZER_POLICY_ADR)
 
@@ -196,3 +221,16 @@ def test_tokenizer_policy_roadmap_item_is_closed() -> None:
         "- [x] 1.1.2. Record the token-limit and semantic-scoring dependency "
         "policy." in roadmap
     )
+
+
+def test_preimplementation_users_guide_has_no_unexercised_examples() -> None:
+    """Keep the status page free of fenced examples until user workflows exist."""
+    users_guide = read_document(USERS_GUIDE)
+    code_fence = re.search(r"(?m)^ *(?:`{3,}|~{3,})", users_guide)
+
+    assert code_fence is None, (
+        "The pre-implementation users' guide must not publish unexercised examples"
+    )
+    assert "no supported user-facing workflows" in normalize_whitespace(users_guide)
+    assert "[technical design](prosidy-darn-technical-design.md)" in users_guide
+    assert "tested-example:" not in users_guide

@@ -1,4 +1,12 @@
-# Architectural decision record (ADR) 009: Skylos dead-code detection
+# Architectural decision record (ADR) 0009: Skylos dead-code detection
+
+## Addendum — 2026-11-12: Canonical filename
+
+This accepted decision remains unchanged. The record moved from
+`docs/adr-009-skylos-dead-code-detection.md` to
+`docs/adrs/adr-0009-skylos-dead-code-detection.md`, and its identifier changed
+from `ADR 009` to `ADR 0009`. Cross-references now use the canonical
+identifier; no decision text or status changed.
 
 ## Status
 
