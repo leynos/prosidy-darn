@@ -143,6 +143,14 @@ For Rust extension changes, also run:
   install it with
   `cargo install --locked whitaker-installer && whitaker-installer`.
 
+Cognitive complexity is gated by Whitaker's experimental
+`macro_aware_cognitive_complexity` at `max_complexity = 9`, CodeScene's ceiling.
+`rust/dylint.toml` opts in with
+`[whitaker] experimental = ["macro_aware_cognitive_complexity"]`. Clippy's own
+`cognitive_complexity` is not enabled, because it scores code after macro
+expansion and counts branching a macro generated. Fix a finding by extracting
+named helpers, never by raising the threshold.
+
 For Markdown-only changes, run:
 
 - `make markdownlint`: lint Markdown files and enforce Oxford spelling.
