@@ -127,7 +127,8 @@ make
 For code changes, run the relevant gates before committing:
 
 - `make check-fmt`: verify Python and Markdown-adjacent formatting.
-- `make lint`: run Ruff, Pylint, and blocking Skylos dead-code detection, then
+- `make lint`: run `yamllint` and `actionlint` over the tracked YAML and the
+  workflows, then Ruff, Pylint, and blocking Skylos dead-code detection, then
   Clippy over the Rust workspace (`make lint-clippy`). The Rust workspace denies
   `missing_docs`, so every public item in the extension needs a doc comment.
 - `make typecheck`: run `ty check`.
@@ -173,7 +174,8 @@ patterns; do not add bare accepted words for machine interfaces or formal names.
 
 ## Linting and dead-code detection
 
-`make lint` runs these checks in order:
+`make lint` first runs its `yamllint` and `actionlint` prerequisites (see
+[YAML lint](#yaml-lint)), then these checks in order:
 
 1. Ruff runs first with the repository's broad lint profile.
 2. Pylint runs second, invoked through `uv tool run` under the managed
@@ -410,3 +412,25 @@ Always pin a full 40-character commit: a fix to the contract arrives as a pin
 bump, never as a local copy of the rules. The command exits 0 when every clause
 holds, 1 with one `clause: message` line per violation, and 2 when the tree or
 the configuration cannot be read.
+
+## YAML lint
+
+`make lint` runs `make yamllint` and `make actionlint` as prerequisites.
+`make yamllint` runs `yamllint --strict` over every tracked `.yml` and `.yaml`
+file, reading `.yamllint.yml`, which extends the estate base
+`.yamllint-estate.yml` (a verbatim copy of the concordat canon; do not edit
+it). The base ignores Helm chart templates (`**/charts/**/templates/`), so a
+tracked file there is passed to yamllint but not checked, and a local `ignore`
+in `.yamllint.yml` replaces that entry rather than adding to it. Run it from
+the repository root, because yamllint resolves `extends` against the current
+directory. `make actionlint` checks the GitHub Actions workflows, accepting the
+runner labels in `.github/actionlint.yaml`, and runs ShellCheck over their
+`run:` scripts when it is on `PATH`.
+
+Install the tools locally at the versions CI uses:
+`uv tool install yamllint==1.38.0`, and the `actionlint` 1.7.12 and
+`shellcheck` 0.11.0 release binaries (a package manager's builds can differ and
+change what the lint reports). CI installs the same pinned versions with the
+`install-yaml-lint` action of `leynos/shared-actions` before it runs
+`make lint`. The `YAMLLINT` and `ACTIONLINT` variables name the commands when
+they are not on `PATH`.
