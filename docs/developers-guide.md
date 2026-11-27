@@ -127,7 +127,8 @@ make
 For code changes, run the relevant gates before committing:
 
 - `make check-fmt`: verify Python and Markdown-adjacent formatting.
-- `make lint`: run Ruff, Pylint, and blocking Skylos dead-code detection, then
+- `make lint`: run `yamllint` and `actionlint` over the tracked YAML and the
+  workflows, then Ruff, Pylint, and blocking Skylos dead-code detection, then
   Clippy over the Rust workspace (`make lint-clippy`). The Rust workspace denies
   `missing_docs`, so every public item in the extension needs a doc comment.
 - `make typecheck`: run `ty check`.
@@ -173,7 +174,8 @@ patterns; do not add bare accepted words for machine interfaces or formal names.
 
 ## Linting and dead-code detection
 
-`make lint` runs these checks in order:
+`make lint` first runs its `yamllint` and `actionlint` prerequisites (see
+[YAML lint](#yaml-lint)), then these checks in order:
 
 1. Ruff runs first with the repository's broad lint profile.
 2. Pylint runs second, invoked through `uv tool run` under the managed
